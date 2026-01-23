@@ -84,11 +84,30 @@ function LaborRateCalculator() {
 
   // Calculations
   const calculations = useMemo(() => {
-    // Step 1 calculations
+    // Step 1 calculations - Individual field percentages
+    const hoursNotWorkedPercentages = Object.fromEntries(
+      Object.entries(hoursNotWorked).map(([id, hours]) => [
+        id,
+        PAID_CAPACITY > 0 ? ((parseFloat(hours) || 0) / PAID_CAPACITY) * 100 : 0
+      ])
+    )
+    
+    const nonBillableHoursPercentages = Object.fromEntries(
+      Object.entries(nonBillableHours).map(([id, hours]) => [
+        id,
+        PAID_CAPACITY > 0 ? ((parseFloat(hours) || 0) / PAID_CAPACITY) * 100 : 0
+      ])
+    )
+    
+    // Step 1 calculations - Totals
     const totalHoursNotWorked = Object.values(hoursNotWorked).reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
     const totalNonBillableHours = Object.values(nonBillableHours).reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
     const totalHoursAvailable = PAID_CAPACITY - totalHoursNotWorked - totalNonBillableHours
     const utilizationPercent = totalHoursAvailable / PAID_CAPACITY
+    
+    // Total percentages
+    const totalHoursNotWorkedPercent = PAID_CAPACITY > 0 ? (totalHoursNotWorked / PAID_CAPACITY) * 100 : 0
+    const totalNonBillableHoursPercent = PAID_CAPACITY > 0 ? (totalNonBillableHours / PAID_CAPACITY) * 100 : 0
 
     // Step 2 calculations - Workers Wage Charged is the key rate
     const workersWageCharged = utilizationPercent > 0 ? workersWage / utilizationPercent : 0
@@ -153,9 +172,13 @@ function LaborRateCalculator() {
                           profitCharged
 
     return {
+      hoursNotWorkedPercentages,
+      nonBillableHoursPercentages,
       totalHoursNotWorked,
       totalNonBillableHours,
       totalHoursAvailable,
+      totalHoursNotWorkedPercent,
+      totalNonBillableHoursPercent,
       utilizationPercent,
       workersWageCharged,
       mandatoryBurdenCharged,
@@ -236,28 +259,43 @@ function LaborRateCalculator() {
                 <h3 className="text-lg font-semibold text-neutral mb-3">
                   Hours Not Worked
                 </h3>
-                <div className="space-y-2">
-                  {allHoursNotWorkedOptions.map(option => (
-                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
-                      <label className="text-gray-700 text-sm font-medium flex-1">
-                        {option.label}:
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="1"
-                          value={hoursNotWorked[option.id] || ''}
-                          onChange={(e) => setHoursNotWorked(prev => ({
-                            ...prev,
-                            [option.id]: e.target.value
-                          }))}
-                          className="w-24 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                          placeholder="0"
-                        />
-                        <span className="text-gray-500 text-xs">hrs</span>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div>Field</div>
+                  <div className="text-center">Burden Per Hour Employee Earned (Hours)</div>
+                  <div className="text-center">Burden Per Hour Charged (%)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  {allHoursNotWorkedOptions.map(option => {
+                    const hours = parseFloat(hoursNotWorked[option.id]) || 0
+                    const percent = calculations.hoursNotWorkedPercentages[option.id] || 0
+                    return (
+                      <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {option.label}
+                        </label>
+                        <div className="flex items-center justify-center gap-1">
+                          <input
+                            type="number"
+                            step="1"
+                            value={hoursNotWorked[option.id] || ''}
+                            onChange={(e) => setHoursNotWorked(prev => ({
+                              ...prev,
+                              [option.id]: e.target.value
+                            }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            placeholder="0"
+                          />
+                          <span className="text-gray-500 text-xs">hrs</span>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          {percent.toFixed(2)}%
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* Add Custom Hours Not Worked */}
@@ -279,6 +317,17 @@ function LaborRateCalculator() {
                     </button>
                   </div>
                 </div>
+                
+                {/* Total PTO, Holidays and Sick Time */}
+                <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
+                  <div className="text-gray-700 text-sm font-semibold">Total PTO, Holidays and Sick Time</div>
+                  <div className="text-center text-sm font-semibold text-gray-700">
+                    {calculations.totalHoursNotWorked} hrs
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    {calculations.totalHoursNotWorkedPercent.toFixed(2)}%
+                  </div>
+                </div>
               </div>
 
               {/* Non-Billable Hours */}
@@ -286,28 +335,43 @@ function LaborRateCalculator() {
                 <h3 className="text-lg font-semibold text-neutral mb-3">
                   Non-Billable Hours
                 </h3>
-                <div className="space-y-2">
-                  {allNonBillableOptions.map(option => (
-                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
-                      <label className="text-gray-700 text-sm font-medium flex-1">
-                        {option.label}:
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="1"
-                          value={nonBillableHours[option.id] || ''}
-                          onChange={(e) => setNonBillableHours(prev => ({
-                            ...prev,
-                            [option.id]: e.target.value
-                          }))}
-                          className="w-24 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                          placeholder="0"
-                        />
-                        <span className="text-gray-500 text-xs">hrs</span>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div>Field</div>
+                  <div className="text-center">Burden Per Hour Employee Earned (Hours)</div>
+                  <div className="text-center">Burden Per Hour Charged (%)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  {allNonBillableOptions.map(option => {
+                    const hours = parseFloat(nonBillableHours[option.id]) || 0
+                    const percent = calculations.nonBillableHoursPercentages[option.id] || 0
+                    return (
+                      <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {option.label}
+                        </label>
+                        <div className="flex items-center justify-center gap-1">
+                          <input
+                            type="number"
+                            step="1"
+                            value={nonBillableHours[option.id] || ''}
+                            onChange={(e) => setNonBillableHours(prev => ({
+                              ...prev,
+                              [option.id]: e.target.value
+                            }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            placeholder="0"
+                          />
+                          <span className="text-gray-500 text-xs">hrs</span>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          {percent.toFixed(2)}%
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* Add Custom Non-Billable */}
@@ -329,26 +393,28 @@ function LaborRateCalculator() {
                     </button>
                   </div>
                 </div>
+                
+                {/* Total Non-Billable Hours */}
+                <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
+                  <div className="text-gray-700 text-sm font-semibold">Total Non-Billable Hours</div>
+                  <div className="text-center text-sm font-semibold text-gray-700">
+                    {calculations.totalNonBillableHours} hrs
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    {calculations.totalNonBillableHoursPercent.toFixed(2)}%
+                  </div>
+                </div>
               </div>
 
-              {/* Summary */}
-              <div className="p-4 bg-primary/10 rounded-lg">
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-700">Total Hours Not Worked:</span>
-                    <span className="font-semibold">{calculations.totalHoursNotWorked} hrs</span>
+              {/* Total Hours Available For Work */}
+              <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <div className="text-gray-700 text-sm font-bold">Total Hours Available For Work</div>
+                  <div className="text-center text-sm font-bold text-gray-700">
+                    {calculations.totalHoursAvailable.toFixed(0)} hrs
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-700">Total Non-Billable Hours:</span>
-                    <span className="font-semibold">{calculations.totalNonBillableHours} hrs</span>
-                  </div>
-                  <div className="flex justify-between border-t border-primary/20 pt-2 mt-2">
-                    <span className="font-semibold text-gray-700">Hours Available:</span>
-                    <span className="font-bold text-primary">{calculations.totalHoursAvailable.toFixed(0)} hrs</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-700">Utilization:</span>
-                    <span className="font-semibold text-primary">{(calculations.utilizationPercent * 100).toFixed(2)}%</span>
+                  <div className="text-center text-sm font-bold text-primary">
+                    {(calculations.utilizationPercent * 100).toFixed(2)}%
                   </div>
                 </div>
               </div>

@@ -52,8 +52,6 @@ const EMPLOYEE_COSTS_OPTIONS = [
 const PAID_CAPACITY = 2080 // 52 weeks * 40 hours
 
 function LaborRateCalculator() {
-  const [currentStep, setCurrentStep] = useState(1)
-  
   // Step 1: Hours data
   const [hoursNotWorked, setHoursNotWorked] = useState({})
   const [nonBillableHours, setNonBillableHours] = useState({})
@@ -203,627 +201,557 @@ function LaborRateCalculator() {
 
   return (
     <div className="min-h-screen bg-light py-8">
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="container mx-auto px-4 max-w-7xl">
         <h1 className="text-4xl font-bold text-primary mb-8 text-center">
           Building Your Labor Rate Calculator
         </h1>
 
-        {/* Step Indicator */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center space-x-4">
-            {[1, 2, 3].map(step => (
-              <div key={step} className="flex items-center">
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
-                    currentStep >= step
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-300 text-gray-600'
-                  }`}
-                >
-                  {step}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Step 1: Paid Capacity */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+              <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
+                Step 1: Paid Capacity
+              </h2>
+              
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-gray-700">Paid Capacity:</span>
+                  <span className="text-xl font-bold text-primary">{PAID_CAPACITY.toLocaleString()} hours</span>
                 </div>
-                {step < 3 && (
-                  <div
-                    className={`w-16 h-1 mx-2 ${
-                      currentStep > step ? 'bg-primary' : 'bg-gray-300'
-                    }`}
-                  />
-                )}
               </div>
-            ))}
+
+              {/* Hours Not Worked */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
+                  Hours Not Worked
+                </h3>
+                <div className="space-y-2">
+                  {HOURS_NOT_WORKED_OPTIONS.map(option => (
+                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                      <label className="text-gray-700 text-sm font-medium flex-1">
+                        {option.label}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="1"
+                          value={hoursNotWorked[option.id] || ''}
+                          onChange={(e) => setHoursNotWorked(prev => ({
+                            ...prev,
+                            [option.id]: e.target.value
+                          }))}
+                          className="w-24 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          placeholder="0"
+                        />
+                        <span className="text-gray-500 text-xs">hrs</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Non-Billable Hours */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
+                  Non-Billable Hours
+                </h3>
+                <div className="space-y-2">
+                  {allNonBillableOptions.map(option => (
+                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                      <label className="text-gray-700 text-sm font-medium flex-1">
+                        {option.label}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="1"
+                          value={nonBillableHours[option.id] || ''}
+                          onChange={(e) => setNonBillableHours(prev => ({
+                            ...prev,
+                            [option.id]: e.target.value
+                          }))}
+                          className="w-24 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          placeholder="0"
+                        />
+                        <span className="text-gray-500 text-xs">hrs</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add Custom Non-Billable */}
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCustomNonBillable}
+                      onChange={(e) => setNewCustomNonBillable(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
+                      placeholder="Custom category"
+                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <button
+                      onClick={handleAddCustomNonBillable}
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Summary */}
+              <div className="p-4 bg-primary/10 rounded-lg">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Total Hours Not Worked:</span>
+                    <span className="font-semibold">{calculations.totalHoursNotWorked} hrs</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Total Non-Billable Hours:</span>
+                    <span className="font-semibold">{calculations.totalNonBillableHours} hrs</span>
+                  </div>
+                  <div className="flex justify-between border-t border-primary/20 pt-2 mt-2">
+                    <span className="font-semibold text-gray-700">Hours Available:</span>
+                    <span className="font-bold text-primary">{calculations.totalHoursAvailable.toFixed(0)} hrs</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Utilization:</span>
+                    <span className="font-semibold text-primary">{(calculations.utilizationPercent * 100).toFixed(2)}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="text-center mt-4 text-neutral font-semibold">
-            Step {currentStep} of 3
+
+          {/* Step 2: Burden Per Hour Employee Earned */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+              <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
+                Step 2: Burden Per Hour Employee Earned
+              </h2>
+
+              {/* Workers Wage */}
+              <div className="mb-6 p-4 border-2 border-primary rounded-lg">
+                <h3 className="text-lg font-semibold text-primary mb-3">
+                  Workers Wage
+                </h3>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">
+                    Hourly Rate:
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">$</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={workersWage}
+                      onChange={(e) => setWorkersWage(parseFloat(e.target.value) || 0)}
+                      className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold"
+                    />
+                    <span className="text-gray-500">/hr</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mandatory Burden */}
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
+                  Mandatory Burden
+                </h3>
+                <div className="space-y-2">
+                  {MANDATORY_BURDEN_OPTIONS.map(option => (
+                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                      <label className="text-gray-700 text-sm font-medium flex-1">
+                        {option.label}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={mandatoryBurdenPercents[option.id] || ''}
+                          onChange={(e) => setMandatoryBurdenPercents(prev => ({
+                            ...prev,
+                            [option.id]: parseFloat(e.target.value) || 0
+                          }))}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          placeholder="0.00"
+                        />
+                        <span className="text-gray-500 text-xs w-6">%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Benefits Burden */}
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
+                  Benefits Burden
+                </h3>
+                <div className="space-y-2">
+                  {BENEFITS_BURDEN_OPTIONS.map(option => (
+                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                      <label className="text-gray-700 text-sm font-medium flex-1">
+                        {option.label}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={benefitsBurdenPercents[option.id] || ''}
+                          onChange={(e) => setBenefitsBurdenPercents(prev => ({
+                            ...prev,
+                            [option.id]: parseFloat(e.target.value) || 0
+                          }))}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          placeholder="0.00"
+                        />
+                        <span className="text-gray-500 text-xs w-6">%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Additional Overheads */}
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
+                  Additional Overheads
+                </h3>
+                <div className="space-y-2">
+                  {ADDITIONAL_OVERHEADS_OPTIONS.map(option => (
+                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                      <label className="text-gray-700 text-sm font-medium flex-1">
+                        {option.label}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={additionalOverheadsPercents[option.id] || ''}
+                          onChange={(e) => setAdditionalOverheadsPercents(prev => ({
+                            ...prev,
+                            [option.id]: parseFloat(e.target.value) || 0
+                          }))}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          placeholder="0.00"
+                        />
+                        <span className="text-gray-500 text-xs w-6">%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Employee Costs */}
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
+                  Employee Costs
+                </h3>
+                <div className="space-y-2">
+                  {EMPLOYEE_COSTS_OPTIONS.map(option => (
+                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                      <label className="text-gray-700 text-sm font-medium flex-1">
+                        {option.label}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={employeeCostsPercents[option.id] || ''}
+                          onChange={(e) => setEmployeeCostsPercents(prev => ({
+                            ...prev,
+                            [option.id]: parseFloat(e.target.value) || 0
+                          }))}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          placeholder="0.00"
+                        />
+                        <span className="text-gray-500 text-xs w-6">%</span>
+                      </div>
+                    </div>
+                  ))}
+                  {customEmployeeCosts.map((cost, idx) => (
+                    <div key={cost.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg bg-gray-50">
+                      <label className="text-gray-700 text-sm font-medium flex-1">
+                        {cost.label}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={cost.percent}
+                          onChange={(e) => {
+                            const updated = [...customEmployeeCosts]
+                            updated[idx].percent = parseFloat(e.target.value) || 0
+                            setCustomEmployeeCosts(updated)
+                          }}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        />
+                        <span className="text-gray-500 text-xs w-6">%</span>
+                        <button
+                          onClick={() => setCustomEmployeeCosts(prev => prev.filter((_, i) => i !== idx))}
+                          className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-sm"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add Custom Employee Cost */}
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCustomEmployeeCost.name}
+                      onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Cost name"
+                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newCustomEmployeeCost.percent || ''}
+                      onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, percent: e.target.value }))}
+                      placeholder="%"
+                      className="w-16 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                    />
+                    <button
+                      onClick={handleAddCustomEmployeeCost}
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Step 3: Results - Burden Per Hour Charged */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+              <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
+                Step 3: Results - Burden Per Hour Charged
+              </h2>
+
+              {/* Key Calculation Display */}
+              <div className="mb-4 p-4 bg-primary/10 rounded-lg border-2 border-primary">
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-xs text-gray-600">Workers Wage (Earned)</div>
+                    <div className="text-xl font-bold text-primary">${workersWage.toFixed(2)}/hr</div>
+                  </div>
+                  <div className="border-t border-primary/20 pt-2">
+                    <div className="text-xs text-gray-600">Workers Wage (Charged)</div>
+                    <div className="text-xl font-bold text-primary">${calculations.workersWageCharged.toFixed(2)}/hr</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      = ${workersWage.toFixed(2)} ÷ {(calculations.utilizationPercent * 100).toFixed(2)}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Detailed Breakdown */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-3">
+                  Detailed Breakdown
+                </h3>
+                
+                <div className="space-y-3 text-sm">
+                  {/* Workers Wage */}
+                  <div className="border-b border-gray-200 pb-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-700">Workers Wage</span>
+                      <span className="font-bold text-primary">${calculations.workersWageCharged.toFixed(2)}/hr</span>
+                    </div>
+                  </div>
+
+                  {/* Mandatory Burden */}
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-1 text-xs">Mandatory Burden</h4>
+                    <div className="ml-2 space-y-1">
+                      {MANDATORY_BURDEN_OPTIONS.map(opt => {
+                        const charged = calculations.mandatoryBurdenCharged[opt.id]
+                        if (!charged) return null
+                        return (
+                          <div key={opt.id} className="flex justify-between text-xs">
+                            <span className="text-gray-600">{opt.label}:</span>
+                            <span className="font-semibold text-primary">${charged.toFixed(2)}/hr</span>
+                          </div>
+                        )
+                      })}
+                      <div className="flex justify-between font-semibold text-gray-700 pt-1 border-t border-gray-200 mt-1">
+                        <span className="text-xs">Total:</span>
+                        <span className="text-primary text-xs">${calculations.mandatoryBurdenCharged.total.toFixed(2)}/hr</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Benefits Burden */}
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-1 text-xs">Benefits Burden</h4>
+                    <div className="ml-2 space-y-1">
+                      {BENEFITS_BURDEN_OPTIONS.map(opt => (
+                        <div key={opt.id} className="flex justify-between text-xs">
+                          <span className="text-gray-600">{opt.label}:</span>
+                          <span className="font-semibold text-primary">
+                            ${(calculations.benefitsBurdenCharged[opt.id] || 0).toFixed(2)}/hr
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Additional Overheads */}
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-1 text-xs">Additional Overheads</h4>
+                    <div className="ml-2 space-y-1">
+                      {ADDITIONAL_OVERHEADS_OPTIONS.map(opt => (
+                        <div key={opt.id} className="flex justify-between text-xs">
+                          <span className="text-gray-600">{opt.label}:</span>
+                          <span className="font-semibold text-primary">
+                            ${(calculations.additionalOverheadsCharged[opt.id] || 0).toFixed(2)}/hr
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Employee Costs */}
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-1 text-xs">Employee Costs</h4>
+                    <div className="ml-2 space-y-1">
+                      {EMPLOYEE_COSTS_OPTIONS.map(opt => (
+                        <div key={opt.id} className="flex justify-between text-xs">
+                          <span className="text-gray-600">{opt.label}:</span>
+                          <span className="font-semibold text-primary">
+                            ${(calculations.employeeCostsCharged[opt.id] || 0).toFixed(2)}/hr
+                          </span>
+                        </div>
+                      ))}
+                      {customEmployeeCosts.map((cost, idx) => (
+                        <div key={cost.id} className="flex justify-between text-xs">
+                          <span className="text-gray-600">{cost.label}:</span>
+                          <span className="font-semibold text-primary">
+                            ${(calculations.employeeCostsCharged[`custom-${idx}`] || 0).toFixed(2)}/hr
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Division Overhead */}
+                  <div className="border-t border-gray-200 pt-2">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-gray-700 text-xs">Division Overhead</span>
+                        <span className="text-xs text-gray-500 ml-1">({divisionOverheadPercent}%)</span>
+                      </div>
+                      <span className="font-bold text-primary text-xs">${calculations.divisionOverheadCharged.toFixed(2)}/hr</span>
+                    </div>
+                  </div>
+
+                  {/* General Company Overhead */}
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-gray-700 text-xs">General Company Overhead</span>
+                        <span className="text-xs text-gray-500 ml-1">({generalCompanyOverheadPercent}%)</span>
+                      </div>
+                      <span className="font-bold text-primary text-xs">${calculations.generalCompanyOverheadCharged.toFixed(2)}/hr</span>
+                    </div>
+                  </div>
+
+                  {/* Profit */}
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-gray-700 text-xs">Profit</span>
+                        <span className="text-xs text-gray-500 ml-1">({profitPercent}%)</span>
+                      </div>
+                      <span className="font-bold text-primary text-xs">${calculations.profitCharged.toFixed(2)}/hr</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Total Labor Rate */}
+              <div className="bg-primary/10 rounded-lg p-4 mb-4 border-2 border-primary">
+                <h3 className="text-base font-semibold text-primary mb-2">
+                  Total Labor Rate
+                </h3>
+                <div className="text-3xl font-bold text-primary">
+                  ${calculations.totalLaborRate.toFixed(2)}/hr
+                </div>
+                <div className="text-xs text-gray-600 mt-1">
+                  Rate to charge for this employee's time
+                </div>
+              </div>
+
+              {/* Step 3 Inputs */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-neutral mb-3">
+                  Adjust Overhead & Profit
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-gray-700 text-sm font-medium">Division Overhead:</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={divisionOverheadPercent}
+                        onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
+                        className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                      />
+                      <span className="text-gray-500 text-xs w-6">%</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-gray-700 text-sm font-medium">General Company Overhead:</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={generalCompanyOverheadPercent}
+                        onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
+                        className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                      />
+                      <span className="text-gray-500 text-xs w-6">%</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-gray-700 text-sm font-medium">Profit:</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={profitPercent}
+                        onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
+                        className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                      />
+                      <span className="text-gray-500 text-xs w-6">%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Print Button */}
+              <div className="mt-4">
+                <button
+                  onClick={() => window.print()}
+                  className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                >
+                  Print Results
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Step 1: Paid Capacity - Hours Not Worked and Non-Billable Hours */}
-        {currentStep === 1 && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-primary mb-6">
-              Step 1: Paid Capacity
-            </h2>
-            <p className="text-neutral mb-6">
-              Enter hours for each category. Paid Capacity is 2,080 hours (52 weeks × 40 hours).
-            </p>
-
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700">Paid Capacity:</span>
-                <span className="text-xl font-bold text-primary">{PAID_CAPACITY.toLocaleString()} hours</span>
-              </div>
-            </div>
-
-            {/* Hours Not Worked */}
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold text-neutral mb-4">
-                Hours Not Worked
-              </h3>
-              <div className="space-y-3">
-                {HOURS_NOT_WORKED_OPTIONS.map(option => (
-                  <div key={option.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                    <label className="text-gray-700 font-medium flex-1">
-                      {option.label}:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="1"
-                        value={hoursNotWorked[option.id] || ''}
-                        onChange={(e) => setHoursNotWorked(prev => ({
-                          ...prev,
-                          [option.id]: e.target.value
-                        }))}
-                        className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                        placeholder="0"
-                      />
-                      <span className="text-gray-500">hours</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Non-Billable Hours */}
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold text-neutral mb-4">
-                Non-Billable Hours
-              </h3>
-              <div className="space-y-3">
-                {allNonBillableOptions.map(option => (
-                  <div key={option.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                    <label className="text-gray-700 font-medium flex-1">
-                      {option.label}:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="1"
-                        value={nonBillableHours[option.id] || ''}
-                        onChange={(e) => setNonBillableHours(prev => ({
-                          ...prev,
-                          [option.id]: e.target.value
-                        }))}
-                        className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                        placeholder="0"
-                      />
-                      <span className="text-gray-500">hours</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add Custom Non-Billable */}
-              <div className="mt-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">Add Custom Non-Billable Hours</h4>
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={newCustomNonBillable}
-                    onChange={(e) => setNewCustomNonBillable(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
-                    placeholder="Enter custom category name"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <button
-                    onClick={handleAddCustomNonBillable}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Summary */}
-            <div className="mb-6 p-4 bg-primary/10 rounded-lg">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Total Hours Not Worked:</span>
-                  <span className="font-semibold">{calculations.totalHoursNotWorked} hours</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Total Non-Billable Hours:</span>
-                  <span className="font-semibold">{calculations.totalNonBillableHours} hours</span>
-                </div>
-                <div className="flex justify-between border-t border-primary/20 pt-2 mt-2">
-                  <span className="font-semibold text-gray-700">Total Hours Available For Work:</span>
-                  <span className="font-bold text-primary text-lg">{calculations.totalHoursAvailable.toFixed(0)} hours</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Utilization Percentage:</span>
-                  <span className="font-semibold text-primary">{(calculations.utilizationPercent * 100).toFixed(2)}%</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-end">
-              <button
-                onClick={() => setCurrentStep(2)}
-                className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-              >
-                Next: Step 2
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Burden Per Hour Employee Earned */}
-        {currentStep === 2 && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-primary mb-6">
-              Step 2: Burden Per Hour Employee Earned
-            </h2>
-            <p className="text-neutral mb-6">
-              Enter hourly wage and percentages for each burden category.
-            </p>
-
-            {/* Workers Wage */}
-            <div className="mb-8 p-4 border-2 border-primary rounded-lg">
-              <h3 className="text-xl font-semibold text-primary mb-4">
-                Workers Wage
-              </h3>
-              <div className="flex items-center justify-between">
-                <label className="text-gray-700 font-medium text-lg">
-                  Hourly Rate:
-                </label>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">$</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={workersWage}
-                    onChange={(e) => setWorkersWage(parseFloat(e.target.value) || 0)}
-                    className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-lg font-semibold"
-                  />
-                  <span className="text-gray-500">/hr</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Mandatory Burden */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-neutral mb-4">
-                Mandatory Burden
-              </h3>
-              <div className="space-y-3">
-                {MANDATORY_BURDEN_OPTIONS.map(option => (
-                  <div key={option.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                    <label className="text-gray-700 font-medium flex-1">
-                      {option.label}:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={mandatoryBurdenPercents[option.id] || ''}
-                        onChange={(e) => setMandatoryBurdenPercents(prev => ({
-                          ...prev,
-                          [option.id]: parseFloat(e.target.value) || 0
-                        }))}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                        placeholder="0.00"
-                      />
-                      <span className="text-gray-500 w-8">%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Benefits Burden */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-neutral mb-4">
-                Benefits Burden
-              </h3>
-              <div className="space-y-3">
-                {BENEFITS_BURDEN_OPTIONS.map(option => (
-                  <div key={option.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                    <label className="text-gray-700 font-medium flex-1">
-                      {option.label}:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={benefitsBurdenPercents[option.id] || ''}
-                        onChange={(e) => setBenefitsBurdenPercents(prev => ({
-                          ...prev,
-                          [option.id]: parseFloat(e.target.value) || 0
-                        }))}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                        placeholder="0.00"
-                      />
-                      <span className="text-gray-500 w-8">%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Overheads */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-neutral mb-4">
-                Additional Overheads
-              </h3>
-              <div className="space-y-3">
-                {ADDITIONAL_OVERHEADS_OPTIONS.map(option => (
-                  <div key={option.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                    <label className="text-gray-700 font-medium flex-1">
-                      {option.label}:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={additionalOverheadsPercents[option.id] || ''}
-                        onChange={(e) => setAdditionalOverheadsPercents(prev => ({
-                          ...prev,
-                          [option.id]: parseFloat(e.target.value) || 0
-                        }))}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                        placeholder="0.00"
-                      />
-                      <span className="text-gray-500 w-8">%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Employee Costs */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-neutral mb-4">
-                Employee Costs
-              </h3>
-              <div className="space-y-3">
-                {EMPLOYEE_COSTS_OPTIONS.map(option => (
-                  <div key={option.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                    <label className="text-gray-700 font-medium flex-1">
-                      {option.label}:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={employeeCostsPercents[option.id] || ''}
-                        onChange={(e) => setEmployeeCostsPercents(prev => ({
-                          ...prev,
-                          [option.id]: parseFloat(e.target.value) || 0
-                        }))}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                        placeholder="0.00"
-                      />
-                      <span className="text-gray-500 w-8">%</span>
-                    </div>
-                  </div>
-                ))}
-                {customEmployeeCosts.map((cost, idx) => (
-                  <div key={cost.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    <label className="text-gray-700 font-medium flex-1">
-                      {cost.label}:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={cost.percent}
-                        onChange={(e) => {
-                          const updated = [...customEmployeeCosts]
-                          updated[idx].percent = parseFloat(e.target.value) || 0
-                          setCustomEmployeeCosts(updated)
-                        }}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                      />
-                      <span className="text-gray-500 w-8">%</span>
-                      <button
-                        onClick={() => setCustomEmployeeCosts(prev => prev.filter((_, i) => i !== idx))}
-                        className="px-2 py-1 text-red-600 hover:bg-red-50 rounded"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add Custom Employee Cost */}
-              <div className="mt-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">Add Custom Employee Cost</h4>
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={newCustomEmployeeCost.name}
-                    onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Cost name"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={newCustomEmployeeCost.percent || ''}
-                    onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, percent: e.target.value }))}
-                    placeholder="%"
-                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                  />
-                  <button
-                    onClick={handleAddCustomEmployeeCost}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-between">
-              <button
-                onClick={() => setCurrentStep(1)}
-                className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors font-semibold"
-              >
-                Back
-              </button>
-              <button
-                onClick={() => setCurrentStep(3)}
-                className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-              >
-                Next: Step 3
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Results - Burden Per Hour Charged */}
-        {currentStep === 3 && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-primary mb-6">
-              Step 3: Results - Burden Per Hour Charged
-            </h2>
-            <p className="text-neutral mb-6">
-              Calculated rates based on your inputs and utilization percentage.
-            </p>
-
-            {/* Key Calculation Display */}
-            <div className="mb-6 p-4 bg-primary/10 rounded-lg border-2 border-primary">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-sm text-gray-600">Workers Wage (Employee Earned)</div>
-                  <div className="text-2xl font-bold text-primary">${workersWage.toFixed(2)}/hr</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Workers Wage (Charged)</div>
-                  <div className="text-2xl font-bold text-primary">${calculations.workersWageCharged.toFixed(2)}/hr</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    = ${workersWage.toFixed(2)} ÷ {(calculations.utilizationPercent * 100).toFixed(2)}%
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Detailed Breakdown */}
-            <div className="bg-gray-50 rounded-lg p-6 mb-6">
-              <h3 className="text-xl font-semibold text-neutral mb-4">
-                Detailed Breakdown
-              </h3>
-              
-              <div className="space-y-4">
-                {/* Workers Wage */}
-                <div className="border-b border-gray-200 pb-3">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-gray-700">Workers Wage</span>
-                    <span className="font-bold text-primary">${calculations.workersWageCharged.toFixed(2)}/hr</span>
-                  </div>
-                </div>
-
-                {/* Mandatory Burden */}
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">Mandatory Burden</h4>
-                  <div className="ml-4 space-y-1">
-                    {MANDATORY_BURDEN_OPTIONS.map(opt => {
-                      const charged = calculations.mandatoryBurdenCharged[opt.id]
-                      if (!charged) return null
-                      return (
-                        <div key={opt.id} className="flex justify-between text-sm">
-                          <span className="text-gray-600">{opt.label}:</span>
-                          <span className="font-semibold text-primary">${charged.toFixed(2)}/hr</span>
-                        </div>
-                      )
-                    })}
-                    <div className="flex justify-between font-semibold text-gray-700 pt-2 border-t border-gray-200 mt-2">
-                      <span>Total Mandatory Burden:</span>
-                      <span className="text-primary">${calculations.mandatoryBurdenCharged.total.toFixed(2)}/hr</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Benefits Burden */}
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">Benefits Burden</h4>
-                  <div className="ml-4 space-y-1">
-                    {BENEFITS_BURDEN_OPTIONS.map(opt => (
-                      <div key={opt.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">{opt.label}:</span>
-                        <span className="font-semibold text-primary">
-                          ${(calculations.benefitsBurdenCharged[opt.id] || 0).toFixed(2)}/hr
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Additional Overheads */}
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">Additional Overheads</h4>
-                  <div className="ml-4 space-y-1">
-                    {ADDITIONAL_OVERHEADS_OPTIONS.map(opt => (
-                      <div key={opt.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">{opt.label}:</span>
-                        <span className="font-semibold text-primary">
-                          ${(calculations.additionalOverheadsCharged[opt.id] || 0).toFixed(2)}/hr
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Employee Costs */}
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">Employee Costs</h4>
-                  <div className="ml-4 space-y-1">
-                    {EMPLOYEE_COSTS_OPTIONS.map(opt => (
-                      <div key={opt.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">{opt.label}:</span>
-                        <span className="font-semibold text-primary">
-                          ${(calculations.employeeCostsCharged[opt.id] || 0).toFixed(2)}/hr
-                        </span>
-                      </div>
-                    ))}
-                    {customEmployeeCosts.map((cost, idx) => (
-                      <div key={cost.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">{cost.label}:</span>
-                        <span className="font-semibold text-primary">
-                          ${(calculations.employeeCostsCharged[`custom-${idx}`] || 0).toFixed(2)}/hr
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Division Overhead */}
-                <div className="border-t border-gray-200 pt-3">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="font-semibold text-gray-700">Division Overhead</span>
-                      <span className="text-sm text-gray-500 ml-2">({divisionOverheadPercent}%)</span>
-                    </div>
-                    <span className="font-bold text-primary">${calculations.divisionOverheadCharged.toFixed(2)}/hr</span>
-                  </div>
-                </div>
-
-                {/* General Company Overhead */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="font-semibold text-gray-700">General Company Overhead</span>
-                      <span className="text-sm text-gray-500 ml-2">({generalCompanyOverheadPercent}%)</span>
-                    </div>
-                    <span className="font-bold text-primary">${calculations.generalCompanyOverheadCharged.toFixed(2)}/hr</span>
-                  </div>
-                </div>
-
-                {/* Profit */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="font-semibold text-gray-700">Profit</span>
-                      <span className="text-sm text-gray-500 ml-2">({profitPercent}%)</span>
-                    </div>
-                    <span className="font-bold text-primary">${calculations.profitCharged.toFixed(2)}/hr</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Total Labor Rate */}
-            <div className="bg-primary/10 rounded-lg p-6 mb-6 border-2 border-primary">
-              <h3 className="text-xl font-semibold text-primary mb-2">
-                Total Labor Rate
-              </h3>
-              <div className="text-4xl font-bold text-primary">
-                ${calculations.totalLaborRate.toFixed(2)}/hr
-              </div>
-              <div className="text-sm text-gray-600 mt-2">
-                This is the rate you should charge for this employee's time
-              </div>
-            </div>
-
-            {/* Step 3 Inputs */}
-            <div className="bg-gray-50 rounded-lg p-6 mb-6">
-              <h3 className="text-lg font-semibold text-neutral mb-4">
-                Adjust Overhead & Profit Percentages
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="text-gray-700 font-medium">Division Overhead:</label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={divisionOverheadPercent}
-                      onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                    />
-                    <span className="text-gray-500 w-8">%</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-gray-700 font-medium">General Company Overhead:</label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={generalCompanyOverheadPercent}
-                      onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                    />
-                    <span className="text-gray-500 w-8">%</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="text-gray-700 font-medium">Profit:</label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={profitPercent}
-                      onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
-                    />
-                    <span className="text-gray-500 w-8">%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-between">
-              <button
-                onClick={() => setCurrentStep(2)}
-                className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors font-semibold"
-              >
-                Back
-              </button>
-              <button
-                onClick={() => {
-                  // Export functionality - could print or download as CSV
-                  window.print()
-                }}
-                className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-              >
-                Print Results
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

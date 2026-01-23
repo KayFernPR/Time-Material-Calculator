@@ -55,6 +55,8 @@ function LaborRateCalculator() {
   // Step 1: Hours data
   const [hoursNotWorked, setHoursNotWorked] = useState({})
   const [nonBillableHours, setNonBillableHours] = useState({})
+  const [customHoursNotWorked, setCustomHoursNotWorked] = useState([])
+  const [newCustomHoursNotWorked, setNewCustomHoursNotWorked] = useState('')
   const [customNonBillable, setCustomNonBillable] = useState([])
   const [newCustomNonBillable, setNewCustomNonBillable] = useState('')
   
@@ -179,6 +181,13 @@ function LaborRateCalculator() {
     profitPercent
   ])
 
+  const handleAddCustomHoursNotWorked = () => {
+    if (newCustomHoursNotWorked.trim()) {
+      setCustomHoursNotWorked(prev => [...prev, { id: `custom-${Date.now()}`, label: newCustomHoursNotWorked.trim() }])
+      setNewCustomHoursNotWorked('')
+    }
+  }
+
   const handleAddCustomNonBillable = () => {
     if (newCustomNonBillable.trim()) {
       setCustomNonBillable(prev => [...prev, { id: `custom-${Date.now()}`, label: newCustomNonBillable.trim() }])
@@ -197,6 +206,7 @@ function LaborRateCalculator() {
     }
   }
 
+  const allHoursNotWorkedOptions = [...HOURS_NOT_WORKED_OPTIONS, ...customHoursNotWorked]
   const allNonBillableOptions = [...NON_BILLABLE_HOURS_OPTIONS, ...customNonBillable]
 
   return (
@@ -227,7 +237,7 @@ function LaborRateCalculator() {
                   Hours Not Worked
                 </h3>
                 <div className="space-y-2">
-                  {HOURS_NOT_WORKED_OPTIONS.map(option => (
+                  {allHoursNotWorkedOptions.map(option => (
                     <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
                       <label className="text-gray-700 text-sm font-medium flex-1">
                         {option.label}:
@@ -248,6 +258,26 @@ function LaborRateCalculator() {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Add Custom Hours Not Worked */}
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCustomHoursNotWorked}
+                      onChange={(e) => setNewCustomHoursNotWorked(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddCustomHoursNotWorked()}
+                      placeholder="Custom category"
+                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <button
+                      onClick={handleAddCustomHoursNotWorked}
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
               </div>
 

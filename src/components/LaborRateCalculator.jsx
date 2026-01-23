@@ -18,11 +18,16 @@ const NON_BILLABLE_HOURS_OPTIONS = [
   { id: 'minimum-weekly-hours', label: 'Minimum Weekly Hours' }
 ]
 
-// Step 2: Mandatory Burden options
-const MANDATORY_BURDEN_OPTIONS = [
+// Step 2: Mandatory Payroll Tax Burden options
+const MANDATORY_PAYROLL_TAX_OPTIONS = [
+  { id: 'federal-taxes', label: 'Federal Taxes', defaultPercent: 0 },
   { id: 'social-security', label: 'Social Security', defaultPercent: 6.20 },
-  { id: 'medicare', label: 'Medicare', defaultPercent: 1.45 },
-  { id: 'ohio-unemployment', label: 'Ohio Unemployment', defaultPercent: 2.70 },
+  { id: 'medicare', label: 'Medicare', defaultPercent: 1.45 }
+]
+
+// Step 2: Mandatory Worker Burden options
+const MANDATORY_WORKER_BURDEN_OPTIONS = [
+  { id: 'state-unemployment', label: 'State Unemployment', defaultPercent: 2.70 },
   { id: 'federal-unemployment', label: 'Federal Unemployment', defaultPercent: 0.60 },
   { id: 'workers-compensation', label: 'Workers Compensation', defaultPercent: 3.00 }
 ]
@@ -62,9 +67,16 @@ function LaborRateCalculator() {
   
   // Step 2: Employee earned data
   const [workersWage, setWorkersWage] = useState(40.00)
-  const [mandatoryBurdenPercents, setMandatoryBurdenPercents] = useState(
-    Object.fromEntries(MANDATORY_BURDEN_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
+  const [mandatoryPayrollTaxPercents, setMandatoryPayrollTaxPercents] = useState(
+    Object.fromEntries(MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
   )
+  const [mandatoryWorkerBurdenPercents, setMandatoryWorkerBurdenPercents] = useState(
+    Object.fromEntries(MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
+  )
+  const [customPayrollTaxFields, setCustomPayrollTaxFields] = useState([])
+  const [customWorkerBurdenFields, setCustomWorkerBurdenFields] = useState([])
+  const [newCustomPayrollTax, setNewCustomPayrollTax] = useState({ name: '', percent: 0 })
+  const [newCustomWorkerBurden, setNewCustomWorkerBurden] = useState({ name: '', percent: 0 })
   const [benefitsBurdenPercents, setBenefitsBurdenPercents] = useState(
     Object.fromEntries(BENEFITS_BURDEN_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
   )
@@ -109,28 +121,69 @@ function LaborRateCalculator() {
     const totalHoursNotWorkedPercent = PAID_CAPACITY > 0 ? (totalHoursNotWorked / PAID_CAPACITY) * 100 : 0
     const totalNonBillableHoursPercent = PAID_CAPACITY > 0 ? (totalNonBillableHours / PAID_CAPACITY) * 100 : 0
 
-    // Step 2 calculations - Workers Wage Charged is the key rate
+    // Step 2 calculations - Workers Wage Charged is the key rate (Hourly Rate)
     const workersWageCharged = utilizationPercent > 0 ? workersWage / utilizationPercent : 0
 
-    // Mandatory Burden calculations
-    const combinedFederalPayrollTax = (mandatoryBurdenPercents['social-security'] || 0) + 
-                                      (mandatoryBurdenPercents['medicare'] || 0)
-    const workerBurden = (mandatoryBurdenPercents['ohio-unemployment'] || 0) + 
-                        (mandatoryBurdenPercents['federal-unemployment'] || 0) + 
-                        (mandatoryBurdenPercents['workers-compensation'] || 0)
-    const totalMandatoryBurdenPercent = combinedFederalPayrollTax + workerBurden
+    // Mandatory Payroll Tax Burden calculations
+    const payrollTaxHourlyRates = Object.fromEntries([
+      ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
+        opt.id,
+        workersWage * ((mandatoryPayrollTaxPercents[opt.id] || 0) / 100)
+      ]),
+      ...customPayrollTaxFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWage * ((field.percent || 0) / 100)
+      ])
+    ])
+    
+    const payrollTaxCharged = Object.fromEntries([
+      ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
+        opt.id,
+        workersWageCharged * ((mandatoryPayrollTaxPercents[opt.id] || 0) / 100)
+      ]),
+      ...customPayrollTaxFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWageCharged * ((field.percent || 0) / 100)
+      ])
+    ])
+    
+    const combinedFederalPayrollTaxPercent = Object.values(mandatoryPayrollTaxPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
+                                             customPayrollTaxFields.reduce((sum, field) => sum + (field.percent || 0), 0)
+    const combinedFederalPayrollTaxHourlyRate = Object.values(payrollTaxHourlyRates).reduce((sum, val) => sum + val, 0)
+    const combinedFederalPayrollTaxCharged = Object.values(payrollTaxCharged).reduce((sum, val) => sum + val, 0)
 
-    // Calculate all "Burden Per Hour Charged" values
-    const mandatoryBurdenCharged = {
-      'social-security': workersWageCharged * ((mandatoryBurdenPercents['social-security'] || 0) / 100),
-      'medicare': workersWageCharged * ((mandatoryBurdenPercents['medicare'] || 0) / 100),
-      'combined-federal': workersWageCharged * (combinedFederalPayrollTax / 100),
-      'ohio-unemployment': workersWageCharged * ((mandatoryBurdenPercents['ohio-unemployment'] || 0) / 100),
-      'federal-unemployment': workersWageCharged * ((mandatoryBurdenPercents['federal-unemployment'] || 0) / 100),
-      'workers-compensation': workersWageCharged * ((mandatoryBurdenPercents['workers-compensation'] || 0) / 100),
-      'worker-burden': workersWageCharged * (workerBurden / 100),
-      'total': workersWageCharged * (totalMandatoryBurdenPercent / 100)
-    }
+    // Mandatory Worker Burden calculations
+    const workerBurdenHourlyRates = Object.fromEntries([
+      ...MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [
+        opt.id,
+        workersWage * ((mandatoryWorkerBurdenPercents[opt.id] || 0) / 100)
+      ]),
+      ...customWorkerBurdenFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWage * ((field.percent || 0) / 100)
+      ])
+    ])
+    
+    const workerBurdenCharged = Object.fromEntries([
+      ...MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [
+        opt.id,
+        workersWageCharged * ((mandatoryWorkerBurdenPercents[opt.id] || 0) / 100)
+      ]),
+      ...customWorkerBurdenFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWageCharged * ((field.percent || 0) / 100)
+      ])
+    ])
+    
+    const workerBurdenPercent = Object.values(mandatoryWorkerBurdenPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
+                                customWorkerBurdenFields.reduce((sum, field) => sum + (field.percent || 0), 0)
+    const workerBurdenHourlyRate = Object.values(workerBurdenHourlyRates).reduce((sum, val) => sum + val, 0)
+    const workerBurdenChargedTotal = Object.values(workerBurdenCharged).reduce((sum, val) => sum + val, 0)
+
+    // Total Mandatory Burden
+    const totalMandatoryBurdenPercent = combinedFederalPayrollTaxPercent + workerBurdenPercent
+    const totalMandatoryBurdenHourlyRate = combinedFederalPayrollTaxHourlyRate + workerBurdenHourlyRate
+    const totalMandatoryBurdenCharged = combinedFederalPayrollTaxCharged + workerBurdenChargedTotal
 
     const benefitsBurdenCharged = Object.fromEntries(
       BENEFITS_BURDEN_OPTIONS.map(opt => [
@@ -163,7 +216,7 @@ function LaborRateCalculator() {
 
     // Total Labor Rate
     const totalLaborRate = workersWageCharged + 
-                          mandatoryBurdenCharged.total +
+                          totalMandatoryBurdenCharged +
                           Object.values(benefitsBurdenCharged).reduce((sum, val) => sum + val, 0) +
                           Object.values(additionalOverheadsCharged).reduce((sum, val) => sum + val, 0) +
                           Object.values(employeeCostsCharged).reduce((sum, val) => sum + val, 0) +
@@ -181,7 +234,19 @@ function LaborRateCalculator() {
       totalNonBillableHoursPercent,
       utilizationPercent,
       workersWageCharged,
-      mandatoryBurdenCharged,
+      payrollTaxHourlyRates,
+      payrollTaxCharged,
+      combinedFederalPayrollTaxPercent,
+      combinedFederalPayrollTaxHourlyRate,
+      combinedFederalPayrollTaxCharged,
+      workerBurdenHourlyRates,
+      workerBurdenCharged,
+      workerBurdenPercent,
+      workerBurdenHourlyRate,
+      workerBurdenChargedTotal,
+      totalMandatoryBurdenPercent,
+      totalMandatoryBurdenHourlyRate,
+      totalMandatoryBurdenCharged,
       benefitsBurdenCharged,
       additionalOverheadsCharged,
       employeeCostsCharged,
@@ -194,7 +259,10 @@ function LaborRateCalculator() {
     hoursNotWorked,
     nonBillableHours,
     workersWage,
-    mandatoryBurdenPercents,
+    mandatoryPayrollTaxPercents,
+    mandatoryWorkerBurdenPercents,
+    customPayrollTaxFields,
+    customWorkerBurdenFields,
     benefitsBurdenPercents,
     additionalOverheadsPercents,
     employeeCostsPercents,
@@ -215,6 +283,28 @@ function LaborRateCalculator() {
     if (newCustomNonBillable.trim()) {
       setCustomNonBillable(prev => [...prev, { id: `custom-${Date.now()}`, label: newCustomNonBillable.trim() }])
       setNewCustomNonBillable('')
+    }
+  }
+
+  const handleAddCustomPayrollTax = () => {
+    if (newCustomPayrollTax.name.trim() && newCustomPayrollTax.percent >= 0) {
+      setCustomPayrollTaxFields(prev => [...prev, {
+        id: `custom-${Date.now()}`,
+        label: newCustomPayrollTax.name.trim(),
+        percent: parseFloat(newCustomPayrollTax.percent) || 0
+      }])
+      setNewCustomPayrollTax({ name: '', percent: 0 })
+    }
+  }
+
+  const handleAddCustomWorkerBurden = () => {
+    if (newCustomWorkerBurden.name.trim() && newCustomWorkerBurden.percent >= 0) {
+      setCustomWorkerBurdenFields(prev => [...prev, {
+        id: `custom-${Date.now()}`,
+        label: newCustomWorkerBurden.name.trim(),
+        percent: parseFloat(newCustomWorkerBurden.percent) || 0
+      }])
+      setNewCustomWorkerBurden({ name: '', percent: 0 })
     }
   }
 
@@ -421,63 +511,320 @@ function LaborRateCalculator() {
             </div>
           </div>
 
-          {/* Step 2: Burden Per Hour Employee Earned */}
+          {/* Step 2: Mandatory Burden */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
-                Step 2: Burden Per Hour Employee Earned
+                Step 2: Mandatory Burden
               </h2>
 
-              {/* Workers Wage */}
+              {/* Workers Wage Box */}
               <div className="mb-6 p-4 border-2 border-primary rounded-lg">
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Workers Wage
                 </h3>
-                <div className="flex items-center justify-between">
-                  <label className="text-gray-700 font-medium">
-                    Hourly Rate:
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500">$</span>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={workersWage}
-                      onChange={(e) => setWorkersWage(parseFloat(e.target.value) || 0)}
-                      className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold"
-                    />
-                    <span className="text-gray-500">/hr</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-gray-700 font-medium">
+                      Workers Wage:
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500">$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={workersWage}
+                        onChange={(e) => setWorkersWage(parseFloat(e.target.value) || 0)}
+                        className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold"
+                      />
+                      <span className="text-gray-500">/hr</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-primary/20">
+                    <label className="text-gray-700 font-medium">
+                      Burden/hour to charge:
+                    </label>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-primary">
+                        ${calculations.workersWageCharged.toFixed(2)}/hr
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        = ${workersWage.toFixed(2)} ÷ {(calculations.utilizationPercent * 100).toFixed(2)}%
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Mandatory Burden */}
-              <div className="mb-4">
-                <h3 className="text-base font-semibold text-neutral mb-2">
-                  Mandatory Burden
+              {/* Mandatory Payroll Tax Burden */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
+                  Mandatory Payroll Tax Burden
                 </h3>
-                <div className="space-y-2">
-                  {MANDATORY_BURDEN_OPTIONS.map(option => (
-                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
-                      <label className="text-gray-700 text-sm font-medium flex-1">
-                        {option.label}:
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={mandatoryBurdenPercents[option.id] || ''}
-                          onChange={(e) => setMandatoryBurdenPercents(prev => ({
-                            ...prev,
-                            [option.id]: parseFloat(e.target.value) || 0
-                          }))}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                          placeholder="0.00"
-                        />
-                        <span className="text-gray-500 text-xs w-6">%</span>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-4 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div>Field</div>
+                  <div className="text-center">Fillable Field (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  {MANDATORY_PAYROLL_TAX_OPTIONS.map(option => {
+                    const percent = mandatoryPayrollTaxPercents[option.id] || 0
+                    const hourlyRate = calculations.payrollTaxHourlyRates[option.id] || 0
+                    const charged = calculations.payrollTaxCharged[option.id] || 0
+                    return (
+                      <div key={option.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {option.label}
+                        </label>
+                        <div className="flex items-center justify-center">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={mandatoryPayrollTaxPercents[option.id] || ''}
+                            onChange={(e) => setMandatoryPayrollTaxPercents(prev => ({
+                              ...prev,
+                              [option.id]: parseFloat(e.target.value) || 0
+                            }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            placeholder="0.00"
+                          />
+                          <span className="text-gray-500 text-xs ml-1">%</span>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
+                  {customPayrollTaxFields.map((field, idx) => {
+                    const hourlyRate = calculations.payrollTaxHourlyRates[`custom-${idx}`] || 0
+                    const charged = calculations.payrollTaxCharged[`custom-${idx}`] || 0
+                    return (
+                      <div key={field.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {field.label}
+                        </label>
+                        <div className="flex items-center justify-center gap-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={field.percent}
+                            onChange={(e) => {
+                              const updated = [...customPayrollTaxFields]
+                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              setCustomPayrollTaxFields(updated)
+                            }}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          />
+                          <span className="text-gray-500 text-xs">%</span>
+                          <button
+                            onClick={() => setCustomPayrollTaxFields(prev => prev.filter((_, i) => i !== idx))}
+                            className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-sm ml-1"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Add Custom Payroll Tax Field */}
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCustomPayrollTax.name}
+                      onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Field name"
+                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newCustomPayrollTax.percent || ''}
+                      onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, percent: e.target.value }))}
+                      placeholder="%"
+                      className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                    />
+                    <button
+                      onClick={handleAddCustomPayrollTax}
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+
+                {/* Combined Federal Payroll Tax */}
+                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
+                  <div className="text-gray-700 text-sm font-semibold">Combined Federal Payroll Tax</div>
+                  <div className="text-center text-sm font-semibold text-primary">
+                    {calculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
+                  </div>
+                  <div className="text-center text-sm font-bold text-gray-700">
+                    ${calculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    ${calculations.combinedFederalPayrollTaxCharged.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Mandatory Worker Burden */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
+                  Mandatory Worker Burden
+                </h3>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-4 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div>Field</div>
+                  <div className="text-center">Fillable Field (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  {MANDATORY_WORKER_BURDEN_OPTIONS.map(option => {
+                    const percent = mandatoryWorkerBurdenPercents[option.id] || 0
+                    const hourlyRate = calculations.workerBurdenHourlyRates[option.id] || 0
+                    const charged = calculations.workerBurdenCharged[option.id] || 0
+                    return (
+                      <div key={option.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {option.label}
+                        </label>
+                        <div className="flex items-center justify-center">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={mandatoryWorkerBurdenPercents[option.id] || ''}
+                            onChange={(e) => setMandatoryWorkerBurdenPercents(prev => ({
+                              ...prev,
+                              [option.id]: parseFloat(e.target.value) || 0
+                            }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            placeholder="0.00"
+                          />
+                          <span className="text-gray-500 text-xs ml-1">%</span>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                  {customWorkerBurdenFields.map((field, idx) => {
+                    const hourlyRate = calculations.workerBurdenHourlyRates[`custom-${idx}`] || 0
+                    const charged = calculations.workerBurdenCharged[`custom-${idx}`] || 0
+                    return (
+                      <div key={field.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {field.label}
+                        </label>
+                        <div className="flex items-center justify-center gap-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={field.percent}
+                            onChange={(e) => {
+                              const updated = [...customWorkerBurdenFields]
+                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              setCustomWorkerBurdenFields(updated)
+                            }}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          />
+                          <span className="text-gray-500 text-xs">%</span>
+                          <button
+                            onClick={() => setCustomWorkerBurdenFields(prev => prev.filter((_, i) => i !== idx))}
+                            className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-sm ml-1"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Add Custom Worker Burden Field */}
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCustomWorkerBurden.name}
+                      onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Field name"
+                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newCustomWorkerBurden.percent || ''}
+                      onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, percent: e.target.value }))}
+                      placeholder="%"
+                      className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                    />
+                    <button
+                      onClick={handleAddCustomWorkerBurden}
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+
+                {/* Worker Burden Total */}
+                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
+                  <div className="text-gray-700 text-sm font-semibold">Worker Burden</div>
+                  <div className="text-center text-sm font-semibold text-primary">
+                    {calculations.workerBurdenPercent.toFixed(2)}%
+                  </div>
+                  <div className="text-center text-sm font-bold text-gray-700">
+                    ${calculations.workerBurdenHourlyRate.toFixed(2)}
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    ${calculations.workerBurdenChargedTotal.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Total Mandatory Burden */}
+              <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
+                <div className="grid grid-cols-4 gap-2 items-center">
+                  <div className="text-gray-700 text-sm font-bold">Total Mandatory Burden</div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    {calculations.totalMandatoryBurdenPercent.toFixed(2)}%
+                  </div>
+                  <div className="text-center text-sm font-bold text-gray-700">
+                    ${calculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    ${calculations.totalMandatoryBurdenCharged.toFixed(2)}
+                  </div>
                 </div>
               </div>
 

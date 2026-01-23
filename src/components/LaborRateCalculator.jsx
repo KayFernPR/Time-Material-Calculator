@@ -322,6 +322,39 @@ function LaborRateCalculator() {
   const allHoursNotWorkedOptions = [...HOURS_NOT_WORKED_OPTIONS, ...customHoursNotWorked]
   const allNonBillableOptions = [...NON_BILLABLE_HOURS_OPTIONS, ...customNonBillable]
 
+  // Ensure calculations object is always defined
+  const safeCalculations = calculations || {
+    hoursNotWorkedPercentages: {},
+    nonBillableHoursPercentages: {},
+    totalHoursNotWorked: 0,
+    totalNonBillableHours: 0,
+    totalHoursAvailable: PAID_CAPACITY,
+    totalHoursNotWorkedPercent: 0,
+    totalNonBillableHoursPercent: 0,
+    utilizationPercent: 1,
+    workersWageCharged: workersWage,
+    payrollTaxHourlyRates: {},
+    payrollTaxCharged: {},
+    combinedFederalPayrollTaxPercent: 0,
+    combinedFederalPayrollTaxHourlyRate: 0,
+    combinedFederalPayrollTaxCharged: 0,
+    workerBurdenHourlyRates: {},
+    workerBurdenCharged: {},
+    workerBurdenPercent: 0,
+    workerBurdenHourlyRate: 0,
+    workerBurdenChargedTotal: 0,
+    totalMandatoryBurdenPercent: 0,
+    totalMandatoryBurdenHourlyRate: 0,
+      totalMandatoryBurdenCharged: 0,
+    benefitsBurdenCharged: {},
+    additionalOverheadsCharged: {},
+    employeeCostsCharged: {},
+    divisionOverheadCharged: 0,
+    generalCompanyOverheadCharged: 0,
+    profitCharged: 0,
+    totalLaborRate: workersWage
+  }
+
   return (
     <div className="min-h-screen bg-light py-8">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -360,7 +393,7 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {allHoursNotWorkedOptions.map(option => {
                     const hours = parseFloat(hoursNotWorked[option.id]) || 0
-                    const percent = calculations.hoursNotWorkedPercentages[option.id] || 0
+                    const percent = safeCalculations.hoursNotWorkedPercentages[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
                         <label className="text-gray-700 text-sm font-medium">
@@ -412,10 +445,10 @@ function LaborRateCalculator() {
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total PTO, Holidays and Sick Time</div>
                   <div className="text-center text-sm font-semibold text-gray-700">
-                    {calculations.totalHoursNotWorked} hrs
+                    {safeCalculations.totalHoursNotWorked} hrs
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
-                    {calculations.totalHoursNotWorkedPercent.toFixed(2)}%
+                    {safeCalculations.totalHoursNotWorkedPercent.toFixed(2)}%
                   </div>
                 </div>
               </div>
@@ -436,7 +469,7 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {allNonBillableOptions.map(option => {
                     const hours = parseFloat(nonBillableHours[option.id]) || 0
-                    const percent = calculations.nonBillableHoursPercentages[option.id] || 0
+                    const percent = safeCalculations.nonBillableHoursPercentages[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
                         <label className="text-gray-700 text-sm font-medium">
@@ -488,10 +521,10 @@ function LaborRateCalculator() {
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total Non-Billable Hours</div>
                   <div className="text-center text-sm font-semibold text-gray-700">
-                    {calculations.totalNonBillableHours} hrs
+                    {safeCalculations.totalNonBillableHours} hrs
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
-                    {calculations.totalNonBillableHoursPercent.toFixed(2)}%
+                    {safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%
                   </div>
                 </div>
               </div>
@@ -501,10 +534,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-3 gap-2 items-center">
                   <div className="text-gray-700 text-sm font-bold">Total Hours Available For Work</div>
                   <div className="text-center text-sm font-bold text-gray-700">
-                    {calculations.totalHoursAvailable.toFixed(0)} hrs
+                    {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
-                    {(calculations.utilizationPercent * 100).toFixed(2)}%
+                    {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                   </div>
                 </div>
               </div>
@@ -546,10 +579,10 @@ function LaborRateCalculator() {
                     </label>
                     <div className="text-right">
                       <div className="text-lg font-bold text-primary">
-                        ${calculations.workersWageCharged.toFixed(2)}/hr
+                        ${safeCalculations.workersWageCharged.toFixed(2)}/hr
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
-                        = ${workersWage.toFixed(2)} ÷ {(calculations.utilizationPercent * 100).toFixed(2)}%
+                        = ${workersWage.toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                       </div>
                     </div>
                   </div>
@@ -573,8 +606,8 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {MANDATORY_PAYROLL_TAX_OPTIONS.map(option => {
                     const percent = mandatoryPayrollTaxPercents[option.id] || 0
-                    const hourlyRate = calculations.payrollTaxHourlyRates[option.id] || 0
-                    const charged = calculations.payrollTaxCharged[option.id] || 0
+                    const hourlyRate = safeCalculations.payrollTaxHourlyRates[option.id] || 0
+                    const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
                         <label className="text-gray-700 text-sm font-medium">
@@ -604,8 +637,8 @@ function LaborRateCalculator() {
                     )
                   })}
                   {customPayrollTaxFields.map((field, idx) => {
-                    const hourlyRate = calculations.payrollTaxHourlyRates[`custom-${idx}`] || 0
-                    const charged = calculations.payrollTaxCharged[`custom-${idx}`] || 0
+                    const hourlyRate = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] || 0
+                    const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] || 0
                     return (
                       <div key={field.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50">
                         <label className="text-gray-700 text-sm font-medium">
@@ -673,13 +706,13 @@ function LaborRateCalculator() {
                 <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Combined Federal Payroll Tax</div>
                   <div className="text-center text-sm font-semibold text-primary">
-                    {calculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
+                    {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>
                   <div className="text-center text-sm font-bold text-gray-700">
-                    ${calculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
+                    ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
-                    ${calculations.combinedFederalPayrollTaxCharged.toFixed(2)}
+                    ${safeCalculations.combinedFederalPayrollTaxCharged.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -701,8 +734,8 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {MANDATORY_WORKER_BURDEN_OPTIONS.map(option => {
                     const percent = mandatoryWorkerBurdenPercents[option.id] || 0
-                    const hourlyRate = calculations.workerBurdenHourlyRates[option.id] || 0
-                    const charged = calculations.workerBurdenCharged[option.id] || 0
+                    const hourlyRate = safeCalculations.workerBurdenHourlyRates[option.id] || 0
+                    const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
                         <label className="text-gray-700 text-sm font-medium">
@@ -732,8 +765,8 @@ function LaborRateCalculator() {
                     )
                   })}
                   {customWorkerBurdenFields.map((field, idx) => {
-                    const hourlyRate = calculations.workerBurdenHourlyRates[`custom-${idx}`] || 0
-                    const charged = calculations.workerBurdenCharged[`custom-${idx}`] || 0
+                    const hourlyRate = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] || 0
+                    const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] || 0
                     return (
                       <div key={field.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50">
                         <label className="text-gray-700 text-sm font-medium">
@@ -801,13 +834,13 @@ function LaborRateCalculator() {
                 <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Worker Burden</div>
                   <div className="text-center text-sm font-semibold text-primary">
-                    {calculations.workerBurdenPercent.toFixed(2)}%
+                    {safeCalculations.workerBurdenPercent.toFixed(2)}%
                   </div>
                   <div className="text-center text-sm font-bold text-gray-700">
-                    ${calculations.workerBurdenHourlyRate.toFixed(2)}
+                    ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
-                    ${calculations.workerBurdenChargedTotal.toFixed(2)}
+                    ${safeCalculations.workerBurdenChargedTotal.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -817,13 +850,13 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-4 gap-2 items-center">
                   <div className="text-gray-700 text-sm font-bold">Total Mandatory Burden</div>
                   <div className="text-center text-sm font-bold text-primary">
-                    {calculations.totalMandatoryBurdenPercent.toFixed(2)}%
+                    {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                   </div>
                   <div className="text-center text-sm font-bold text-gray-700">
-                    ${calculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
+                    ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
-                    ${calculations.totalMandatoryBurdenCharged.toFixed(2)}
+                    ${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -990,9 +1023,9 @@ function LaborRateCalculator() {
                   </div>
                   <div className="border-t border-primary/20 pt-2">
                     <div className="text-xs text-gray-600">Workers Wage (Charged)</div>
-                    <div className="text-xl font-bold text-primary">${calculations.workersWageCharged.toFixed(2)}/hr</div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      = ${workersWage.toFixed(2)} ÷ {(calculations.utilizationPercent * 100).toFixed(2)}%
+                    <div className="text-xl font-bold text-primary">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        = ${workersWage.toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                     </div>
                   </div>
                 </div>
@@ -1009,7 +1042,7 @@ function LaborRateCalculator() {
                   <div className="border-b border-gray-200 pb-2">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-gray-700">Workers Wage</span>
-                      <span className="font-bold text-primary">${calculations.workersWageCharged.toFixed(2)}/hr</span>
+                      <span className="font-bold text-primary">${safeCalculations.workersWageCharged.toFixed(2)}/hr</span>
                     </div>
                   </div>
 
@@ -1017,9 +1050,19 @@ function LaborRateCalculator() {
                   <div>
                     <h4 className="font-semibold text-gray-700 mb-1 text-xs">Mandatory Burden</h4>
                     <div className="ml-2 space-y-1">
-                      {MANDATORY_BURDEN_OPTIONS.map(opt => {
-                        const charged = calculations.mandatoryBurdenCharged[opt.id]
-                        if (!charged) return null
+                      {/* Mandatory Payroll Tax Burden items */}
+                      {MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => {
+                        const charged = safeCalculations.payrollTaxCharged[opt.id] || 0
+                        return (
+                          <div key={opt.id} className="flex justify-between text-xs">
+                            <span className="text-gray-600">{opt.label}:</span>
+                            <span className="font-semibold text-primary">${charged.toFixed(2)}/hr</span>
+                          </div>
+                        )
+                      })}
+                      {/* Mandatory Worker Burden items */}
+                      {MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => {
+                        const charged = safeCalculations.workerBurdenCharged[opt.id] || 0
                         return (
                           <div key={opt.id} className="flex justify-between text-xs">
                             <span className="text-gray-600">{opt.label}:</span>
@@ -1029,7 +1072,7 @@ function LaborRateCalculator() {
                       })}
                       <div className="flex justify-between font-semibold text-gray-700 pt-1 border-t border-gray-200 mt-1">
                         <span className="text-xs">Total:</span>
-                        <span className="text-primary text-xs">${calculations.mandatoryBurdenCharged.total.toFixed(2)}/hr</span>
+                        <span className="text-primary text-xs">${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}/hr</span>
                       </div>
                     </div>
                   </div>
@@ -1042,7 +1085,7 @@ function LaborRateCalculator() {
                         <div key={opt.id} className="flex justify-between text-xs">
                           <span className="text-gray-600">{opt.label}:</span>
                           <span className="font-semibold text-primary">
-                            ${(calculations.benefitsBurdenCharged[opt.id] || 0).toFixed(2)}/hr
+                            ${(safeCalculations.benefitsBurdenCharged[opt.id] || 0).toFixed(2)}/hr
                           </span>
                         </div>
                       ))}
@@ -1057,7 +1100,7 @@ function LaborRateCalculator() {
                         <div key={opt.id} className="flex justify-between text-xs">
                           <span className="text-gray-600">{opt.label}:</span>
                           <span className="font-semibold text-primary">
-                            ${(calculations.additionalOverheadsCharged[opt.id] || 0).toFixed(2)}/hr
+                            ${(safeCalculations.additionalOverheadsCharged[opt.id] || 0).toFixed(2)}/hr
                           </span>
                         </div>
                       ))}
@@ -1072,7 +1115,7 @@ function LaborRateCalculator() {
                         <div key={opt.id} className="flex justify-between text-xs">
                           <span className="text-gray-600">{opt.label}:</span>
                           <span className="font-semibold text-primary">
-                            ${(calculations.employeeCostsCharged[opt.id] || 0).toFixed(2)}/hr
+                            ${(safeCalculations.employeeCostsCharged[opt.id] || 0).toFixed(2)}/hr
                           </span>
                         </div>
                       ))}
@@ -1080,7 +1123,7 @@ function LaborRateCalculator() {
                         <div key={cost.id} className="flex justify-between text-xs">
                           <span className="text-gray-600">{cost.label}:</span>
                           <span className="font-semibold text-primary">
-                            ${(calculations.employeeCostsCharged[`custom-${idx}`] || 0).toFixed(2)}/hr
+                            ${(safeCalculations.employeeCostsCharged[`custom-${idx}`] || 0).toFixed(2)}/hr
                           </span>
                         </div>
                       ))}
@@ -1094,7 +1137,7 @@ function LaborRateCalculator() {
                         <span className="font-semibold text-gray-700 text-xs">Division Overhead</span>
                         <span className="text-xs text-gray-500 ml-1">({divisionOverheadPercent}%)</span>
                       </div>
-                      <span className="font-bold text-primary text-xs">${calculations.divisionOverheadCharged.toFixed(2)}/hr</span>
+                      <span className="font-bold text-primary text-xs">${safeCalculations.divisionOverheadCharged.toFixed(2)}/hr</span>
                     </div>
                   </div>
 
@@ -1105,7 +1148,7 @@ function LaborRateCalculator() {
                         <span className="font-semibold text-gray-700 text-xs">General Company Overhead</span>
                         <span className="text-xs text-gray-500 ml-1">({generalCompanyOverheadPercent}%)</span>
                       </div>
-                      <span className="font-bold text-primary text-xs">${calculations.generalCompanyOverheadCharged.toFixed(2)}/hr</span>
+                      <span className="font-bold text-primary text-xs">${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}/hr</span>
                     </div>
                   </div>
 
@@ -1116,7 +1159,7 @@ function LaborRateCalculator() {
                         <span className="font-semibold text-gray-700 text-xs">Profit</span>
                         <span className="text-xs text-gray-500 ml-1">({profitPercent}%)</span>
                       </div>
-                      <span className="font-bold text-primary text-xs">${calculations.profitCharged.toFixed(2)}/hr</span>
+                      <span className="font-bold text-primary text-xs">${safeCalculations.profitCharged.toFixed(2)}/hr</span>
                     </div>
                   </div>
                 </div>
@@ -1128,7 +1171,7 @@ function LaborRateCalculator() {
                   Total Labor Rate
                 </h3>
                 <div className="text-3xl font-bold text-primary">
-                  ${calculations.totalLaborRate.toFixed(2)}/hr
+                  ${safeCalculations.totalLaborRate.toFixed(2)}/hr
                 </div>
                 <div className="text-xs text-gray-600 mt-1">
                   Rate to charge for this employee's time

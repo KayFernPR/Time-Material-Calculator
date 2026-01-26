@@ -1213,9 +1213,25 @@ function LaborRateCalculator() {
                 
                 <div className="space-y-1">
                   <div className="grid grid-cols-[minmax(100px,1.5fr)_minmax(80px,0.9fr)_minmax(80px,0.9fr)_minmax(100px,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
-                    <label className="text-gray-700 text-sm font-medium break-words min-w-0">
-                      Management, Non-Billable and General Warehouse Space, Non-Billable Vehicles, General Overheads
-                    </label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                        Division Overhead
+                      </label>
+                      <div className="relative group">
+                        <svg 
+                          className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" 
+                          fill="currentColor" 
+                          viewBox="0 0 20 20"
+                        >
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                        </svg>
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none">
+                          <div className="font-semibold mb-1">Division Overhead includes:</div>
+                          <div>Management, Non-Billable and General Warehouse Space, Non-Billable Vehicles, General Overheads</div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                        </div>
+                      </div>
+                    </div>
                     <div className="flex items-center justify-center">
                       <input
                         type="number"

@@ -709,7 +709,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -837,7 +840,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -981,7 +987,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1045,7 +1054,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1109,7 +1121,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1237,7 +1252,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1293,7 +1311,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1333,7 +1354,10 @@ function LaborRateCalculator() {
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Burden/Hour</div>
+                    <div>Charged ($)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">

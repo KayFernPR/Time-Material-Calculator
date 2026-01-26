@@ -94,27 +94,24 @@ function LaborRateCalculator() {
   const [generalCompanyOverheadPercent, setGeneralCompanyOverheadPercent] = useState(0)
   const [profitPercent, setProfitPercent] = useState(0)
 
-  // Scroll behavior: Step 1 must scroll to bottom before Step 2 becomes scrollable
+  // Scroll behavior: Independent scrolling with visual indicators
   const step1Ref = useRef(null)
   const step2Ref = useRef(null)
-  const [step1ScrolledToBottom, setStep1ScrolledToBottom] = useState(false)
+  const step3Ref = useRef(null)
 
+  // Auto-scroll inputs into view when focused
   useEffect(() => {
-    const step1Container = step1Ref.current
-    if (!step1Container) return
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = step1Container
-      const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 1
-      setStep1ScrolledToBottom(isAtBottom)
+    const handleInputFocus = (e) => {
+      if (e.target.tagName === 'INPUT') {
+        setTimeout(() => {
+          e.target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+        }, 100)
+      }
     }
 
-    step1Container.addEventListener('scroll', handleScroll)
-    // Check initial state
-    handleScroll()
-
+    document.addEventListener('focusin', handleInputFocus)
     return () => {
-      step1Container.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('focusin', handleInputFocus)
     }
   }, [])
 
@@ -466,7 +463,8 @@ function LaborRateCalculator() {
           <div className="lg:col-span-1">
             <div 
               ref={step1Ref}
-              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto"
+              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
                 Step 1: Paid Capacity
@@ -655,9 +653,8 @@ function LaborRateCalculator() {
           <div className="lg:col-span-1">
             <div 
               ref={step2Ref}
-              className={`bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] ${
-                step1ScrolledToBottom ? 'overflow-y-auto' : 'overflow-hidden'
-              }`}
+              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
                 Step 2: Mandatory Burden
@@ -1369,7 +1366,11 @@ function LaborRateCalculator() {
 
           {/* Step 3: Results - Burden Per Hour Charged */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+            <div 
+              ref={step3Ref}
+              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
+            >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
                 Step 3: Results - Burden Per Hour Charged
               </h2>

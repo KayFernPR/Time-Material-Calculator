@@ -1110,8 +1110,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.employeeCostsCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={cost.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium">
+                      <div key={cost.id} className="grid grid-cols-[minmax(120px,1fr)_auto_auto_auto] gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
                           {cost.label}
                         </label>
                         <div className="flex items-center justify-center gap-1">

@@ -708,7 +708,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>
@@ -839,7 +842,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>
@@ -986,7 +992,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>
@@ -1053,7 +1062,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>
@@ -1120,7 +1132,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>
@@ -1251,7 +1266,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>
@@ -1310,7 +1328,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>
@@ -1353,7 +1374,10 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
-                  <div className="text-center break-words">Hourly Rate ($)</div>
+                  <div className="text-center break-words leading-tight">
+                    <div>Hourly</div>
+                    <div>Rate ($)</div>
+                  </div>
                   <div className="text-center break-words leading-tight">
                     <div>Burden/Hour</div>
                     <div>Charged ($)</div>

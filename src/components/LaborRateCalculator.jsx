@@ -185,20 +185,56 @@ function LaborRateCalculator() {
     const totalMandatoryBurdenHourlyRate = combinedFederalPayrollTaxHourlyRate + workerBurdenHourlyRate
     const totalMandatoryBurdenCharged = combinedFederalPayrollTaxCharged + workerBurdenChargedTotal
 
+    // Benefits Burden calculations
+    const benefitsBurdenHourlyRates = Object.fromEntries(
+      BENEFITS_BURDEN_OPTIONS.map(opt => [
+        opt.id,
+        workersWage * ((benefitsBurdenPercents[opt.id] || 0) / 100)
+      ])
+    )
+    
     const benefitsBurdenCharged = Object.fromEntries(
       BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
         workersWageCharged * ((benefitsBurdenPercents[opt.id] || 0) / 100)
       ])
     )
+    
+    const benefitsBurdenPercent = Object.values(benefitsBurdenPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
+    const benefitsBurdenHourlyRate = Object.values(benefitsBurdenHourlyRates).reduce((sum, val) => sum + val, 0)
+    const benefitsBurdenChargedTotal = Object.values(benefitsBurdenCharged).reduce((sum, val) => sum + val, 0)
 
+    // Additional Overheads calculations
+    const additionalOverheadsHourlyRates = Object.fromEntries(
+      ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
+        opt.id,
+        workersWage * ((additionalOverheadsPercents[opt.id] || 0) / 100)
+      ])
+    )
+    
     const additionalOverheadsCharged = Object.fromEntries(
       ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
         workersWageCharged * ((additionalOverheadsPercents[opt.id] || 0) / 100)
       ])
     )
+    
+    const additionalOverheadsPercent = Object.values(additionalOverheadsPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
+    const additionalOverheadsHourlyRate = Object.values(additionalOverheadsHourlyRates).reduce((sum, val) => sum + val, 0)
+    const additionalOverheadsChargedTotal = Object.values(additionalOverheadsCharged).reduce((sum, val) => sum + val, 0)
 
+    // Employee Costs calculations
+    const employeeCostsHourlyRates = Object.fromEntries([
+      ...EMPLOYEE_COSTS_OPTIONS.map(opt => [
+        opt.id,
+        workersWage * ((employeeCostsPercents[opt.id] || 0) / 100)
+      ]),
+      ...customEmployeeCosts.map((cost, idx) => [
+        `custom-${idx}`,
+        workersWage * ((cost.percent || 0) / 100)
+      ])
+    ])
+    
     const employeeCostsCharged = Object.fromEntries([
       ...EMPLOYEE_COSTS_OPTIONS.map(opt => [
         opt.id,
@@ -209,6 +245,11 @@ function LaborRateCalculator() {
         workersWageCharged * ((cost.percent || 0) / 100)
       ])
     ])
+    
+    const employeeCostsPercent = Object.values(employeeCostsPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
+                                 customEmployeeCosts.reduce((sum, cost) => sum + (cost.percent || 0), 0)
+    const employeeCostsHourlyRate = Object.values(employeeCostsHourlyRates).reduce((sum, val) => sum + val, 0)
+    const employeeCostsChargedTotal = Object.values(employeeCostsCharged).reduce((sum, val) => sum + val, 0)
 
     const divisionOverheadCharged = workersWageCharged * (divisionOverheadPercent / 100)
     const generalCompanyOverheadCharged = workersWageCharged * (generalCompanyOverheadPercent / 100)
@@ -217,9 +258,9 @@ function LaborRateCalculator() {
     // Total Labor Rate
     const totalLaborRate = workersWageCharged + 
                           totalMandatoryBurdenCharged +
-                          Object.values(benefitsBurdenCharged).reduce((sum, val) => sum + val, 0) +
-                          Object.values(additionalOverheadsCharged).reduce((sum, val) => sum + val, 0) +
-                          Object.values(employeeCostsCharged).reduce((sum, val) => sum + val, 0) +
+                          benefitsBurdenChargedTotal +
+                          additionalOverheadsChargedTotal +
+                          employeeCostsChargedTotal +
                           divisionOverheadCharged +
                           generalCompanyOverheadCharged +
                           profitCharged
@@ -247,9 +288,21 @@ function LaborRateCalculator() {
       totalMandatoryBurdenPercent,
       totalMandatoryBurdenHourlyRate,
       totalMandatoryBurdenCharged,
+      benefitsBurdenHourlyRates,
       benefitsBurdenCharged,
+      benefitsBurdenPercent,
+      benefitsBurdenHourlyRate,
+      benefitsBurdenChargedTotal,
+      additionalOverheadsHourlyRates,
       additionalOverheadsCharged,
+      additionalOverheadsPercent,
+      additionalOverheadsHourlyRate,
+      additionalOverheadsChargedTotal,
+      employeeCostsHourlyRates,
       employeeCostsCharged,
+      employeeCostsPercent,
+      employeeCostsHourlyRate,
+      employeeCostsChargedTotal,
       divisionOverheadCharged,
       generalCompanyOverheadCharged,
       profitCharged,
@@ -346,9 +399,21 @@ function LaborRateCalculator() {
     totalMandatoryBurdenPercent: 0,
     totalMandatoryBurdenHourlyRate: 0,
       totalMandatoryBurdenCharged: 0,
-    benefitsBurdenCharged: {},
-    additionalOverheadsCharged: {},
-    employeeCostsCharged: {},
+      benefitsBurdenHourlyRates: {},
+      benefitsBurdenCharged: {},
+      benefitsBurdenPercent: 0,
+      benefitsBurdenHourlyRate: 0,
+      benefitsBurdenChargedTotal: 0,
+      additionalOverheadsHourlyRates: {},
+      additionalOverheadsCharged: {},
+      additionalOverheadsPercent: 0,
+      additionalOverheadsHourlyRate: 0,
+      additionalOverheadsChargedTotal: 0,
+      employeeCostsHourlyRates: {},
+      employeeCostsCharged: {},
+      employeeCostsPercent: 0,
+      employeeCostsHourlyRate: 0,
+      employeeCostsChargedTotal: 0,
     divisionOverheadCharged: 0,
     generalCompanyOverheadCharged: 0,
     profitCharged: 0,
@@ -862,119 +927,217 @@ function LaborRateCalculator() {
               </div>
 
               {/* Benefits Burden */}
-              <div className="mb-4">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
                   Benefits Burden
                 </h3>
-                <div className="space-y-2">
-                  {BENEFITS_BURDEN_OPTIONS.map(option => (
-                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
-                      <label className="text-gray-700 text-sm font-medium flex-1">
-                        {option.label}:
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={benefitsBurdenPercents[option.id] || ''}
-                          onChange={(e) => setBenefitsBurdenPercents(prev => ({
-                            ...prev,
-                            [option.id]: parseFloat(e.target.value) || 0
-                          }))}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                          placeholder="0.00"
-                        />
-                        <span className="text-gray-500 text-xs w-6">%</span>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-4 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div>Field</div>
+                  <div className="text-center">Fillable Field (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  {BENEFITS_BURDEN_OPTIONS.map(option => {
+                    const percent = benefitsBurdenPercents[option.id] || 0
+                    const hourlyRate = safeCalculations.benefitsBurdenHourlyRates[option.id] || 0
+                    const charged = safeCalculations.benefitsBurdenCharged[option.id] || 0
+                    return (
+                      <div key={option.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {option.label}
+                        </label>
+                        <div className="flex items-center justify-center">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={benefitsBurdenPercents[option.id] || ''}
+                            onChange={(e) => setBenefitsBurdenPercents(prev => ({
+                              ...prev,
+                              [option.id]: parseFloat(e.target.value) || 0
+                            }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            placeholder="0.00"
+                          />
+                          <span className="text-gray-500 text-xs ml-1">%</span>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
+                </div>
+
+                {/* Benefits Burden Total */}
+                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
+                  <div className="text-gray-700 text-sm font-semibold">Total Benefits Burden</div>
+                  <div className="text-center text-sm font-semibold text-primary">
+                    {safeCalculations.benefitsBurdenPercent.toFixed(2)}%
+                  </div>
+                  <div className="text-center text-sm font-bold text-gray-700">
+                    ${safeCalculations.benefitsBurdenHourlyRate.toFixed(2)}
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    ${safeCalculations.benefitsBurdenChargedTotal.toFixed(2)}
+                  </div>
                 </div>
               </div>
 
               {/* Additional Overheads */}
-              <div className="mb-4">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
                   Additional Overheads
                 </h3>
-                <div className="space-y-2">
-                  {ADDITIONAL_OVERHEADS_OPTIONS.map(option => (
-                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
-                      <label className="text-gray-700 text-sm font-medium flex-1">
-                        {option.label}:
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={additionalOverheadsPercents[option.id] || ''}
-                          onChange={(e) => setAdditionalOverheadsPercents(prev => ({
-                            ...prev,
-                            [option.id]: parseFloat(e.target.value) || 0
-                          }))}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                          placeholder="0.00"
-                        />
-                        <span className="text-gray-500 text-xs w-6">%</span>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-4 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div>Field</div>
+                  <div className="text-center">Fillable Field (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  {ADDITIONAL_OVERHEADS_OPTIONS.map(option => {
+                    const percent = additionalOverheadsPercents[option.id] || 0
+                    const hourlyRate = safeCalculations.additionalOverheadsHourlyRates[option.id] || 0
+                    const charged = safeCalculations.additionalOverheadsCharged[option.id] || 0
+                    return (
+                      <div key={option.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {option.label}
+                        </label>
+                        <div className="flex items-center justify-center">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={additionalOverheadsPercents[option.id] || ''}
+                            onChange={(e) => setAdditionalOverheadsPercents(prev => ({
+                              ...prev,
+                              [option.id]: parseFloat(e.target.value) || 0
+                            }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            placeholder="0.00"
+                          />
+                          <span className="text-gray-500 text-xs ml-1">%</span>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
+                </div>
+
+                {/* Additional Overheads Total */}
+                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
+                  <div className="text-gray-700 text-sm font-semibold">Total Additional Overheads</div>
+                  <div className="text-center text-sm font-semibold text-primary">
+                    {safeCalculations.additionalOverheadsPercent.toFixed(2)}%
+                  </div>
+                  <div className="text-center text-sm font-bold text-gray-700">
+                    ${safeCalculations.additionalOverheadsHourlyRate.toFixed(2)}
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    ${safeCalculations.additionalOverheadsChargedTotal.toFixed(2)}
+                  </div>
                 </div>
               </div>
 
               {/* Employee Costs */}
-              <div className="mb-4">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
                   Employee Costs
                 </h3>
-                <div className="space-y-2">
-                  {EMPLOYEE_COSTS_OPTIONS.map(option => (
-                    <div key={option.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
-                      <label className="text-gray-700 text-sm font-medium flex-1">
-                        {option.label}:
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={employeeCostsPercents[option.id] || ''}
-                          onChange={(e) => setEmployeeCostsPercents(prev => ({
-                            ...prev,
-                            [option.id]: parseFloat(e.target.value) || 0
-                          }))}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                          placeholder="0.00"
-                        />
-                        <span className="text-gray-500 text-xs w-6">%</span>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-4 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div>Field</div>
+                  <div className="text-center">Fillable Field (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  {EMPLOYEE_COSTS_OPTIONS.map(option => {
+                    const percent = employeeCostsPercents[option.id] || 0
+                    const hourlyRate = safeCalculations.employeeCostsHourlyRates[option.id] || 0
+                    const charged = safeCalculations.employeeCostsCharged[option.id] || 0
+                    return (
+                      <div key={option.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {option.label}
+                        </label>
+                        <div className="flex items-center justify-center">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={employeeCostsPercents[option.id] || ''}
+                            onChange={(e) => setEmployeeCostsPercents(prev => ({
+                              ...prev,
+                              [option.id]: parseFloat(e.target.value) || 0
+                            }))}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            placeholder="0.00"
+                          />
+                          <span className="text-gray-500 text-xs ml-1">%</span>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  {customEmployeeCosts.map((cost, idx) => (
-                    <div key={cost.id} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg bg-gray-50">
-                      <label className="text-gray-700 text-sm font-medium flex-1">
-                        {cost.label}:
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={cost.percent}
-                          onChange={(e) => {
-                            const updated = [...customEmployeeCosts]
-                            updated[idx].percent = parseFloat(e.target.value) || 0
-                            setCustomEmployeeCosts(updated)
-                          }}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                        />
-                        <span className="text-gray-500 text-xs w-6">%</span>
-                        <button
-                          onClick={() => setCustomEmployeeCosts(prev => prev.filter((_, i) => i !== idx))}
-                          className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-sm"
-                        >
-                          ×
-                        </button>
+                    )
+                  })}
+                  {customEmployeeCosts.map((cost, idx) => {
+                    const hourlyRate = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0
+                    const charged = safeCalculations.employeeCostsCharged[`custom-${idx}`] || 0
+                    return (
+                      <div key={cost.id} className="grid grid-cols-4 gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium">
+                          {cost.label}
+                        </label>
+                        <div className="flex items-center justify-center gap-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={cost.percent}
+                            onChange={(e) => {
+                              const updated = [...customEmployeeCosts]
+                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              setCustomEmployeeCosts(updated)
+                            }}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                          />
+                          <span className="text-gray-500 text-xs">%</span>
+                          <button
+                            onClick={() => setCustomEmployeeCosts(prev => prev.filter((_, i) => i !== idx))}
+                            className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-sm ml-1"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="text-center text-sm font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-sm font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* Add Custom Employee Cost */}
@@ -993,7 +1156,7 @@ function LaborRateCalculator() {
                       value={newCustomEmployeeCost.percent || ''}
                       onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, percent: e.target.value }))}
                       placeholder="%"
-                      className="w-16 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                      className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
                     />
                     <button
                       onClick={handleAddCustomEmployeeCost}
@@ -1001,6 +1164,20 @@ function LaborRateCalculator() {
                     >
                       Add
                     </button>
+                  </div>
+                </div>
+
+                {/* Employee Costs Total */}
+                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
+                  <div className="text-gray-700 text-sm font-semibold">Total Employee Costs</div>
+                  <div className="text-center text-sm font-semibold text-primary">
+                    {safeCalculations.employeeCostsPercent.toFixed(2)}%
+                  </div>
+                  <div className="text-center text-sm font-bold text-gray-700">
+                    ${safeCalculations.employeeCostsHourlyRate.toFixed(2)}
+                  </div>
+                  <div className="text-center text-sm font-bold text-primary">
+                    ${safeCalculations.employeeCostsChargedTotal.toFixed(2)}
                   </div>
                 </div>
               </div>

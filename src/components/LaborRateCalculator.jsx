@@ -90,9 +90,9 @@ function LaborRateCalculator() {
   const [newCustomEmployeeCost, setNewCustomEmployeeCost] = useState({ name: '', percent: 0 })
   
   // Step 3: Overhead and Profit
-  const [divisionOverheadPercent, setDivisionOverheadPercent] = useState(14.00)
-  const [generalCompanyOverheadPercent, setGeneralCompanyOverheadPercent] = useState(8.00)
-  const [profitPercent, setProfitPercent] = useState(20.00)
+  const [divisionOverheadPercent, setDivisionOverheadPercent] = useState(0)
+  const [generalCompanyOverheadPercent, setGeneralCompanyOverheadPercent] = useState(0)
+  const [profitPercent, setProfitPercent] = useState(0)
 
   // Calculations
   const calculations = useMemo(() => {
@@ -1236,7 +1236,7 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={divisionOverheadPercent}
+                        value={divisionOverheadPercent || ''}
                         onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
                         className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
                         placeholder="0.00"
@@ -1276,7 +1276,7 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={generalCompanyOverheadPercent}
+                        value={generalCompanyOverheadPercent || ''}
                         onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
                         className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
                         placeholder="0.00"
@@ -1316,7 +1316,7 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={profitPercent}
+                        value={profitPercent || ''}
                         onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
                         className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
                         placeholder="0.00"

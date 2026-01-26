@@ -21,37 +21,37 @@ const NON_BILLABLE_HOURS_OPTIONS = [
 // Step 2: Mandatory Payroll Tax Burden options
 const MANDATORY_PAYROLL_TAX_OPTIONS = [
   { id: 'federal-taxes', label: 'Federal Taxes', defaultPercent: 0 },
-  { id: 'social-security', label: 'Social Security', defaultPercent: 6.20 },
-  { id: 'medicare', label: 'Medicare', defaultPercent: 1.45 }
+  { id: 'social-security', label: 'Social Security', defaultPercent: 0 },
+  { id: 'medicare', label: 'Medicare', defaultPercent: 0 }
 ]
 
 // Step 2: Mandatory Worker Burden options
 const MANDATORY_WORKER_BURDEN_OPTIONS = [
-  { id: 'state-unemployment', label: 'State Unemployment', defaultPercent: 2.70 },
-  { id: 'federal-unemployment', label: 'Federal Unemployment', defaultPercent: 0.60 },
-  { id: 'workers-compensation', label: 'Workers Compensation', defaultPercent: 3.00 }
+  { id: 'state-unemployment', label: 'State Unemployment', defaultPercent: 0 },
+  { id: 'federal-unemployment', label: 'Federal Unemployment', defaultPercent: 0 },
+  { id: 'workers-compensation', label: 'Workers Compensation', defaultPercent: 0 }
 ]
 
 // Step 2: Benefits Burden options
 const BENEFITS_BURDEN_OPTIONS = [
-  { id: 'health-insurance', label: 'Health Insurance Premiums', defaultPercent: 12.00 },
-  { id: 'retirement-match', label: 'Retirement Match', defaultPercent: 2.00 }
+  { id: 'health-insurance', label: 'Health Insurance Premiums', defaultPercent: 0 },
+  { id: 'retirement-match', label: 'Retirement Match', defaultPercent: 0 }
 ]
 
 // Step 2: Additional Overheads options
 const ADDITIONAL_OVERHEADS_OPTIONS = [
-  { id: 'uniforms', label: 'Uniforms', defaultPercent: 0.50 },
-  { id: 'boot-allowance', label: 'Boot Allowance', defaultPercent: 0.10 },
-  { id: 'phone-data', label: 'Phone & Data', defaultPercent: 1.00 },
-  { id: 'computer-tablet', label: 'Computer / Tablet & Software', defaultPercent: 3.00 }
+  { id: 'uniforms', label: 'Uniforms', defaultPercent: 0 },
+  { id: 'boot-allowance', label: 'Boot Allowance', defaultPercent: 0 },
+  { id: 'phone-data', label: 'Phone & Data', defaultPercent: 0 },
+  { id: 'computer-tablet', label: 'Computer / Tablet & Software', defaultPercent: 0 }
 ]
 
 // Step 2: Employee Costs options
 const EMPLOYEE_COSTS_OPTIONS = [
-  { id: 'training-certifications', label: 'Training & Certifications', defaultPercent: 5.00 },
-  { id: 'christmas-bonus', label: 'Christmas Bonus', defaultPercent: 1.00 },
-  { id: 'performance-bonus', label: 'Performance Bonus', defaultPercent: 5.00 },
-  { id: 'non-billable-tools', label: 'Other: Non-Billable Tools', defaultPercent: 6.25 }
+  { id: 'training-certifications', label: 'Training & Certifications', defaultPercent: 0 },
+  { id: 'christmas-bonus', label: 'Christmas Bonus', defaultPercent: 0 },
+  { id: 'performance-bonus', label: 'Performance Bonus', defaultPercent: 0 },
+  { id: 'non-billable-tools', label: 'Other: Non-Billable Tools', defaultPercent: 0 }
 ]
 
 const PAID_CAPACITY = 2080 // 52 weeks * 40 hours

@@ -303,8 +303,11 @@ function LaborRateCalculator() {
       employeeCostsPercent,
       employeeCostsHourlyRate,
       employeeCostsChargedTotal,
+      divisionOverheadHourlyRate,
       divisionOverheadCharged,
+      generalCompanyOverheadHourlyRate,
       generalCompanyOverheadCharged,
+      profitHourlyRate,
       profitCharged,
       totalLaborRate
     }
@@ -414,10 +417,13 @@ function LaborRateCalculator() {
       employeeCostsPercent: 0,
       employeeCostsHourlyRate: 0,
       employeeCostsChargedTotal: 0,
-    divisionOverheadCharged: 0,
-    generalCompanyOverheadCharged: 0,
-    profitCharged: 0,
-    totalLaborRate: workersWage
+      divisionOverheadHourlyRate: 0,
+      divisionOverheadCharged: 0,
+      generalCompanyOverheadHourlyRate: 0,
+      generalCompanyOverheadCharged: 0,
+      profitHourlyRate: 0,
+      profitCharged: 0,
+      totalLaborRate: workersWage
   }
 
   return (
@@ -1183,6 +1189,126 @@ function LaborRateCalculator() {
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
                     ${safeCalculations.employeeCostsChargedTotal.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Division Overhead */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
+                  Division Overhead
+                </h3>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-[minmax(100px,1.5fr)_minmax(80px,0.9fr)_minmax(80px,0.9fr)_minmax(100px,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div></div>
+                  <div className="text-center">Burden Per Hour (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="grid grid-cols-[minmax(100px,1.5fr)_minmax(80px,0.9fr)_minmax(80px,0.9fr)_minmax(100px,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      Management, Non-Billable and General Warehouse Space, Non-Billable Vehicles, General Overheads
+                    </label>
+                    <div className="flex items-center justify-center">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={divisionOverheadPercent}
+                        onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
+                        className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                        placeholder="0.00"
+                      />
+                      <span className="text-gray-500 text-xs ml-0.5">%</span>
+                    </div>
+                    <div className="text-center text-xs font-semibold text-gray-700">
+                      ${safeCalculations.divisionOverheadHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-semibold text-primary">
+                      ${safeCalculations.divisionOverheadCharged.toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* General Company Overhead */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
+                  General Company Overhead
+                </h3>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-[minmax(100px,1.5fr)_minmax(80px,0.9fr)_minmax(80px,0.9fr)_minmax(100px,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div></div>
+                  <div className="text-center">Burden Per Hour (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="grid grid-cols-[minmax(100px,1.5fr)_minmax(80px,0.9fr)_minmax(80px,0.9fr)_minmax(100px,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      General Company Overhead
+                    </label>
+                    <div className="flex items-center justify-center">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={generalCompanyOverheadPercent}
+                        onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
+                        className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                        placeholder="0.00"
+                      />
+                      <span className="text-gray-500 text-xs ml-0.5">%</span>
+                    </div>
+                    <div className="text-center text-xs font-semibold text-gray-700">
+                      ${safeCalculations.generalCompanyOverheadHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-semibold text-primary">
+                      ${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Profit */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral mb-3">
+                  Profit
+                </h3>
+                
+                {/* Table Header */}
+                <div className="grid grid-cols-[minmax(100px,1.5fr)_minmax(80px,0.9fr)_minmax(80px,0.9fr)_minmax(100px,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                  <div></div>
+                  <div className="text-center">Burden Per Hour (%)</div>
+                  <div className="text-center">Hourly Rate ($)</div>
+                  <div className="text-center">Burden Per Hour Charged ($)</div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="grid grid-cols-[minmax(100px,1.5fr)_minmax(80px,0.9fr)_minmax(80px,0.9fr)_minmax(100px,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      Profit
+                    </label>
+                    <div className="flex items-center justify-center">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={profitPercent}
+                        onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
+                        className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                        placeholder="0.00"
+                      />
+                      <span className="text-gray-500 text-xs ml-0.5">%</span>
+                    </div>
+                    <div className="text-center text-xs font-semibold text-gray-700">
+                      ${safeCalculations.profitHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-semibold text-primary">
+                      ${safeCalculations.profitCharged.toFixed(2)}
+                    </div>
                   </div>
                 </div>
               </div>

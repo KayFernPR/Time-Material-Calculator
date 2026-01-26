@@ -251,8 +251,12 @@ function LaborRateCalculator() {
     const employeeCostsHourlyRate = Object.values(employeeCostsHourlyRates).reduce((sum, val) => sum + val, 0)
     const employeeCostsChargedTotal = Object.values(employeeCostsCharged).reduce((sum, val) => sum + val, 0)
 
+    // Division Overhead, General Company Overhead, and Profit calculations
+    const divisionOverheadHourlyRate = workersWage * (divisionOverheadPercent / 100)
     const divisionOverheadCharged = workersWageCharged * (divisionOverheadPercent / 100)
+    const generalCompanyOverheadHourlyRate = workersWage * (generalCompanyOverheadPercent / 100)
     const generalCompanyOverheadCharged = workersWageCharged * (generalCompanyOverheadPercent / 100)
+    const profitHourlyRate = workersWage * (profitPercent / 100)
     const profitCharged = workersWageCharged * (profitPercent / 100)
 
     // Total Labor Rate

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 
 // Step 1: Hours Not Worked options
 const HOURS_NOT_WORKED_OPTIONS = [
@@ -93,6 +93,30 @@ function LaborRateCalculator() {
   const [divisionOverheadPercent, setDivisionOverheadPercent] = useState(0)
   const [generalCompanyOverheadPercent, setGeneralCompanyOverheadPercent] = useState(0)
   const [profitPercent, setProfitPercent] = useState(0)
+
+  // Scroll behavior: Step 1 must scroll to bottom before Step 2 becomes scrollable
+  const step1Ref = useRef(null)
+  const step2Ref = useRef(null)
+  const [step1ScrolledToBottom, setStep1ScrolledToBottom] = useState(false)
+
+  useEffect(() => {
+    const step1Container = step1Ref.current
+    if (!step1Container) return
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = step1Container
+      const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 1
+      setStep1ScrolledToBottom(isAtBottom)
+    }
+
+    step1Container.addEventListener('scroll', handleScroll)
+    // Check initial state
+    handleScroll()
+
+    return () => {
+      step1Container.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   // Calculations
   const calculations = useMemo(() => {
@@ -440,7 +464,10 @@ function LaborRateCalculator() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Step 1: Paid Capacity */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+            <div 
+              ref={step1Ref}
+              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto"
+            >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
                 Step 1: Paid Capacity
               </h2>
@@ -626,7 +653,12 @@ function LaborRateCalculator() {
 
           {/* Step 2: Mandatory Burden */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+            <div 
+              ref={step2Ref}
+              className={`bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] ${
+                step1ScrolledToBottom ? 'overflow-y-auto' : 'overflow-hidden'
+              }`}
+            >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
                 Step 2: Mandatory Burden
               </h2>

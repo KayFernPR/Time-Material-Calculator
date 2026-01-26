@@ -484,30 +484,6 @@ function LaborRateCalculator() {
                     )
                   })}
                 </div>
-                        <label className="text-gray-700 text-sm font-medium">
-                          {option.label}
-                        </label>
-                        <div className="flex items-center justify-center gap-1">
-                          <input
-                            type="number"
-                            step="1"
-                            value={hoursNotWorked[option.id] || ''}
-                            onChange={(e) => setHoursNotWorked(prev => ({
-                              ...prev,
-                              [option.id]: e.target.value
-                            }))}
-                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
-                            placeholder="0"
-                          />
-                          <span className="text-gray-500 text-xs">hrs</span>
-                        </div>
-                        <div className="text-center text-sm font-semibold text-primary">
-                          {percent.toFixed(2)}%
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
 
                 {/* Add Custom Hours Not Worked */}
                 <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">

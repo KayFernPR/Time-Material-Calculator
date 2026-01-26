@@ -705,7 +705,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -724,8 +724,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[option.id] || 0
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center">
@@ -755,8 +755,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {field.label}
                         </label>
                         <div className="flex items-center justify-center gap-1">
@@ -839,7 +839,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -858,8 +858,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[option.id] || 0
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center">
@@ -889,8 +889,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {field.label}
                         </label>
                         <div className="flex items-center justify-center gap-1">
@@ -989,7 +989,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -1008,8 +1008,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.benefitsBurdenHourlyRates[option.id] || 0
                     const charged = safeCalculations.benefitsBurdenCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center">
@@ -1059,7 +1059,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -1078,8 +1078,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.additionalOverheadsHourlyRates[option.id] || 0
                     const charged = safeCalculations.additionalOverheadsCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center">
@@ -1129,7 +1129,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -1148,8 +1148,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.employeeCostsHourlyRates[option.id] || 0
                     const charged = safeCalculations.employeeCostsCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center">
@@ -1179,8 +1179,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.employeeCostsCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={cost.id} className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
+                      <div key={cost.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {cost.label}
                         </label>
                         <div className="flex items-center justify-center gap-1">
@@ -1263,7 +1263,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -1277,7 +1277,7 @@ function LaborRateCalculator() {
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
                     <div className="flex items-center gap-2">
                       <label className="text-gray-700 text-sm font-medium break-words min-w-0">
                         Division Overhead
@@ -1325,7 +1325,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -1339,7 +1339,7 @@ function LaborRateCalculator() {
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
                     <label className="text-gray-700 text-sm font-medium break-words min-w-0">
                       General Company Overhead
                     </label>
@@ -1371,7 +1371,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words leading-tight">
@@ -1385,7 +1385,7 @@ function LaborRateCalculator() {
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(90px,1fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                  <div className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
                     <label className="text-gray-700 text-sm font-medium break-words min-w-0">
                       Profit
                     </label>

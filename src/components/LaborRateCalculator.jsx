@@ -438,7 +438,12 @@ function LaborRateCalculator() {
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-gray-700">Paid Capacity:</span>
-                  <span className="text-xl font-bold text-primary">{PAID_CAPACITY.toLocaleString()} hours</span>
+                  <div className="text-right">
+                    <div className="text-xl font-bold text-primary">{PAID_CAPACITY.toLocaleString()} hours</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      = 52 weeks × 40 hours/week
+                    </div>
+                  </div>
                 </div>
               </div>
 

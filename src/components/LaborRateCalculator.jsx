@@ -492,7 +492,7 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center">Hours Allocated</div>
-                  <div className="text-center">Burden Per Hour Charged (%)</div>
+                  <div className="text-center">Burden / Hour Charged (%)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -568,7 +568,7 @@ function LaborRateCalculator() {
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center">Hours Allocated</div>
-                  <div className="text-center">Burden Per Hour Charged (%)</div>
+                  <div className="text-center">Burden / Hour Charged (%)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -707,9 +707,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -835,9 +835,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -979,9 +979,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1043,9 +1043,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1107,9 +1107,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1235,9 +1235,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1291,9 +1291,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1331,9 +1331,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(90px,1.2fr)_minmax(75px,0.8fr)_minmax(75px,0.8fr)_minmax(130px,1.2fr)] gap-0.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center break-words">Burden Per Hour (%)</div>
+                  <div className="text-center break-words">Burden / Hour (%)</div>
                   <div className="text-center break-words">Hourly Rate ($)</div>
-                  <div className="text-center break-words">Burden Per Hour Charged ($)</div>
+                  <div className="text-center break-words">Burden / Hour Charged ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1364,7 +1364,7 @@ function LaborRateCalculator() {
             </div>
           </div>
 
-          {/* Step 3: Results - Burden Per Hour Charged */}
+          {/* Step 3: Results - Burden / Hour Charged */}
           <div className="lg:col-span-1">
             <div 
               ref={step3Ref}
@@ -1372,7 +1372,7 @@ function LaborRateCalculator() {
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
-                Step 3: Results - Burden Per Hour Charged
+                Step 3: Results - Burden / Hour Charged
               </h2>
 
               {/* Key Calculation Display */}

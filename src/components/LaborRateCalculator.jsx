@@ -766,7 +766,7 @@ function LaborRateCalculator() {
                       <div className="text-lg font-bold text-primary">
                         ${safeCalculations.workersWageCharged.toFixed(2)}/hr
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
                         = ${workersWage.toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                       </div>
                     </div>
@@ -1602,7 +1602,7 @@ function LaborRateCalculator() {
                   <div className="border-t border-primary/20 pt-1.5">
                     <div className="text-xs text-gray-600">Workers Wage (Charged)</div>
                     <div className="text-lg font-bold text-primary">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
                         = ${workersWage.toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                     </div>
                   </div>

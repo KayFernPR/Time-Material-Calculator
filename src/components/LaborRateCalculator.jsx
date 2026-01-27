@@ -537,7 +537,7 @@ function LaborRateCalculator() {
                       value={newCustomHoursNotWorked}
                       onChange={(e) => setNewCustomHoursNotWorked(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomHoursNotWorked()}
-                      placeholder="Custom category"
+                      placeholder="Custom Entry"
                       className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
@@ -616,7 +616,7 @@ function LaborRateCalculator() {
                       value={newCustomNonBillable}
                       onChange={(e) => setNewCustomNonBillable(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
-                      placeholder="Custom category"
+                      placeholder="Custom Entry"
                       className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
@@ -803,7 +803,7 @@ function LaborRateCalculator() {
                       type="text"
                       value={newCustomPayrollTax.name}
                       onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Field name"
+                      placeholder="Custom Entry"
                       className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <input
@@ -937,7 +937,7 @@ function LaborRateCalculator() {
                       type="text"
                       value={newCustomWorkerBurden.name}
                       onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Field name"
+                      placeholder="Custom Entry"
                       className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <input
@@ -1227,7 +1227,7 @@ function LaborRateCalculator() {
                       type="text"
                       value={newCustomEmployeeCost.name}
                       onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Cost name"
+                      placeholder="Custom Entry"
                       className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <input

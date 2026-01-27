@@ -101,6 +101,7 @@ function LaborRateCalculator() {
   // Scroll behavior: Independent scrolling with visual indicators
   const step1Ref = useRef(null)
   const step2Ref = useRef(null)
+  const step3MandatoryRef = useRef(null)
   const step3Ref = useRef(null)
 
   // Auto-scroll inputs into view when focused
@@ -504,7 +505,7 @@ function LaborRateCalculator() {
           Building Your Labor Rate Calculator
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Step 1: Paid Capacity */}
           <div className="lg:col-span-1">
             <div 
@@ -1033,10 +1034,23 @@ function LaborRateCalculator() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Step 3: Mandatory Burden */}
+          <div className="lg:col-span-1">
+            <div 
+              ref={step3MandatoryRef}
+              className="bg-white rounded-lg shadow-lg p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
+            >
+              <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
+                Step 3: Mandatory Burden
+              </h2>
 
               {/* Benefits Burden */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
                   Benefits Burden
                 </h3>
                 
@@ -1169,8 +1183,8 @@ function LaborRateCalculator() {
               </div>
 
               {/* Additional Overheads */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
                   Additional Overheads
                 </h3>
                 
@@ -1303,8 +1317,8 @@ function LaborRateCalculator() {
               </div>
 
               {/* Employee Costs */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
                   Employee Costs
                 </h3>
                 
@@ -1499,8 +1513,8 @@ function LaborRateCalculator() {
               </div>
 
               {/* General Company Overhead */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
                   General Company Overhead
                 </h3>
                 
@@ -1545,8 +1559,8 @@ function LaborRateCalculator() {
               </div>
 
               {/* Profit */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-neutral mb-2">
                   Profit
                 </h3>
                 
@@ -1592,27 +1606,27 @@ function LaborRateCalculator() {
             </div>
           </div>
 
-          {/* Step 3: Results - Burden / Hour Charged */}
+          {/* Step 4: Results - Burden / Hour Charged */}
           <div className="lg:col-span-1">
             <div 
               ref={step3Ref}
-              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
+              className="bg-white rounded-lg shadow-lg p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
-              <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
-                Step 3: Results - Burden / Hour Charged
+              <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
+                Step 4: Results - Burden / Hour Charged
               </h2>
 
               {/* Key Calculation Display */}
-              <div className="mb-4 p-4 bg-primary/10 rounded-lg border-2 border-primary">
-                <div className="space-y-2">
+              <div className="mb-3 p-3 bg-primary/10 rounded-lg border-2 border-primary">
+                <div className="space-y-1.5">
                   <div>
                     <div className="text-xs text-gray-600">Workers Wage (Earned)</div>
-                    <div className="text-xl font-bold text-primary">${workersWage.toFixed(2)}/hr</div>
+                    <div className="text-lg font-bold text-primary">${workersWage.toFixed(2)}/hr</div>
                   </div>
-                  <div className="border-t border-primary/20 pt-2">
+                  <div className="border-t border-primary/20 pt-1.5">
                     <div className="text-xs text-gray-600">Workers Wage (Charged)</div>
-                    <div className="text-xl font-bold text-primary">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
+                    <div className="text-lg font-bold text-primary">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
                       <div className="text-xs text-gray-500 mt-1">
                         = ${workersWage.toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                     </div>
@@ -1621,8 +1635,8 @@ function LaborRateCalculator() {
               </div>
 
               {/* Detailed Breakdown */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h3 className="text-base font-semibold text-neutral mb-3">
+              <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                <h3 className="text-sm font-semibold text-neutral mb-2">
                   Detailed Breakdown
                 </h3>
                 

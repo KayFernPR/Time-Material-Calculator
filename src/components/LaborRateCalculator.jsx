@@ -20,16 +20,16 @@ const NON_BILLABLE_HOURS_OPTIONS = [
 
 // Step 2: Mandatory Payroll Tax Burden options
 const MANDATORY_PAYROLL_TAX_OPTIONS = [
-  { id: 'federal-taxes', label: 'Federal Taxes', defaultPercent: 0 },
-  { id: 'social-security', label: 'Social Security', defaultPercent: 0 },
+  { id: 'federal-taxes', label: 'Federal\nTaxes', defaultPercent: 0 },
+  { id: 'social-security', label: 'Social\nSecurity', defaultPercent: 0 },
   { id: 'medicare', label: 'Medicare', defaultPercent: 0 }
 ]
 
 // Step 2: Mandatory Worker Burden options
 const MANDATORY_WORKER_BURDEN_OPTIONS = [
-  { id: 'state-unemployment', label: 'State Unemployment', defaultPercent: 0 },
-  { id: 'federal-unemployment', label: 'Federal Unemployment', defaultPercent: 0 },
-  { id: 'workers-compensation', label: 'Workers Compensation', defaultPercent: 0 }
+  { id: 'state-unemployment', label: 'State\nUnemployment', defaultPercent: 0 },
+  { id: 'federal-unemployment', label: 'Federal\nUnemployment', defaultPercent: 0 },
+  { id: 'workers-compensation', label: 'Workers\nCompensation', defaultPercent: 0 }
 ]
 
 // Step 2: Benefits Burden options
@@ -795,7 +795,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(180px,1.5fr)_minmax(4rem,1fr)_minmax(4.5rem,1fr)_minmax(4.5rem,1fr)] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-pre-line">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center">
@@ -923,7 +923,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(180px,1.5fr)_minmax(4rem,1fr)_minmax(4.5rem,1fr)_minmax(4.5rem,1fr)] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-pre-line">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center">

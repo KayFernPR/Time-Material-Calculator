@@ -34,3 +34,14 @@ code {
 .scroll-smooth::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Hide number input spinners in % boxes (Step 2 & 3) for a tighter layout */
+input.no-spinner[type="number"]::-webkit-inner-spin-button,
+input.no-spinner[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input.no-spinner[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

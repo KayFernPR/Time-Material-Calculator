@@ -839,7 +839,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomPayrollTaxFields(updated)
                             }}
-                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border"
+                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border no-spinner"
                           />
                           <span className="text-gray-500 text-xs">%</span>
                           <button
@@ -876,7 +876,7 @@ function LaborRateCalculator() {
                       value={newCustomPayrollTax.percent || ''}
                       onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, percent: e.target.value }))}
                       placeholder="%"
-                      className="w-16 px-1.5 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                      className="w-16 px-1.5 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
                     />
                     <button
                       onClick={handleAddCustomPayrollTax}
@@ -935,7 +935,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border"
+                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>
@@ -1004,7 +1004,7 @@ function LaborRateCalculator() {
                       value={newCustomWorkerBurden.percent || ''}
                       onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, percent: e.target.value }))}
                       placeholder="%"
-                      className="w-16 px-1.5 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                      className="w-16 px-1.5 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
                     />
                     <button
                       onClick={handleAddCustomWorkerBurden}
@@ -1092,7 +1092,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1161,7 +1161,7 @@ function LaborRateCalculator() {
                       value={newCustomBenefitsBurden.percent || ''}
                       onChange={(e) => setNewCustomBenefitsBurden(prev => ({ ...prev, percent: e.target.value }))}
                       placeholder="%"
-                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
                     />
                     <button
                       onClick={handleAddCustomBenefitsBurden}
@@ -1252,7 +1252,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomAdditionalOverheadsFields(updated)
                             }}
-                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs">%</span>
                           <button
@@ -1289,7 +1289,7 @@ function LaborRateCalculator() {
                       value={newCustomAdditionalOverheads.percent || ''}
                       onChange={(e) => setNewCustomAdditionalOverheads(prev => ({ ...prev, percent: e.target.value }))}
                       placeholder="%"
-                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
                     />
                     <button
                       onClick={handleAddCustomAdditionalOverheads}
@@ -1380,7 +1380,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomEmployeeCosts(updated)
                             }}
-                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs">%</span>
                           <button
@@ -1484,7 +1484,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={divisionOverheadPercent || ''}
                         onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
-                        className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                        className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1564,7 +1564,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={profitPercent || ''}
                         onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
-                        className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                        className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>

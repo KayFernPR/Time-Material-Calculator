@@ -491,7 +491,10 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center pl-[3px]">Hours Allocated</div>
+                  <div className="text-center pl-[3px] leading-tight">
+                    <div>Hours</div>
+                    <div>Allocated</div>
+                  </div>
                   <div className="text-center">Burden / Hour Charged (%)</div>
                 </div>
                 
@@ -567,7 +570,10 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center pl-[3px]">Hours Allocated</div>
+                  <div className="text-center pl-[3px] leading-tight">
+                    <div>Hours</div>
+                    <div>Allocated</div>
+                  </div>
                   <div className="text-center">Burden / Hour Charged (%)</div>
                 </div>
                 

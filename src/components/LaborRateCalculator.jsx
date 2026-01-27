@@ -491,7 +491,7 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center pl-[3px] leading-tight">
+                  <div className="text-center leading-tight">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
@@ -507,7 +507,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-sm font-medium">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center gap-1 pl-[3px]">
+                        <div className="flex items-center justify-center gap-1">
                           <input
                             type="number"
                             step="1"
@@ -552,7 +552,7 @@ function LaborRateCalculator() {
                 {/* Total PTO, Holidays and Sick Time */}
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total PTO, Holidays and Sick Time</div>
-                  <div className="text-center text-sm font-semibold text-gray-700 pl-[3px]">
+                  <div className="text-center text-sm font-semibold text-gray-700">
                     {safeCalculations.totalHoursNotWorked} hrs
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
@@ -570,7 +570,7 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center pl-[3px] leading-tight">
+                  <div className="text-center leading-tight">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
@@ -586,7 +586,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-sm font-medium whitespace-pre-line">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center gap-1 pl-[3px]">
+                        <div className="flex items-center justify-center gap-1">
                           <input
                             type="number"
                             step="1"
@@ -631,7 +631,7 @@ function LaborRateCalculator() {
                 {/* Total Non-Billable Hours */}
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total Non-Billable Hours</div>
-                  <div className="text-center text-sm font-semibold text-gray-700 pl-[3px]">
+                  <div className="text-center text-sm font-semibold text-gray-700">
                     {safeCalculations.totalNonBillableHours} hrs
                   </div>
                   <div className="text-center text-sm font-bold text-primary">
@@ -644,7 +644,7 @@ function LaborRateCalculator() {
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
                 <div className="grid grid-cols-3 gap-2 items-center">
                   <div className="text-gray-700 text-sm font-bold">Total Hours Available For Work</div>
-                  <div className="text-center text-sm font-bold text-gray-700 pl-[3px]">
+                  <div className="text-center text-sm font-bold text-gray-700">
                     {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                   </div>
                   <div className="text-center text-sm font-bold text-primary">

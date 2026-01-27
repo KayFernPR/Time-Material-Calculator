@@ -781,7 +781,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center leading-tight"><div>Burden</div><div>%</div></div>
                   <div className="text-center leading-tight"><div>Hrly</div><div>($)</div></div>
@@ -794,8 +794,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[option.id] || 0
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-pre-line">
+                      <div key={option.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-pre-line">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center min-w-0">
@@ -825,8 +825,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
+                      <div key={field.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-normal">
                           {field.label}
                         </label>
                         <div className="flex items-center justify-center gap-1 min-w-0">
@@ -888,7 +888,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Combined Federal Payroll Tax */}
-                <div className="mt-3 grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-sm font-semibold min-w-0">Combined Federal Payroll Tax</div>
                   <div className="text-center text-sm font-semibold text-primary whitespace-nowrap">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
@@ -909,7 +909,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center leading-tight"><div>Burden</div><div>%</div></div>
                   <div className="text-center leading-tight"><div>Hrly</div><div>($)</div></div>
@@ -922,8 +922,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[option.id] || 0
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-pre-line">
+                      <div key={option.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-pre-line">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center min-w-0">
@@ -953,8 +953,8 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
+                      <div key={field.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-normal">
                           {field.label}
                         </label>
                         <div className="flex items-center justify-center gap-1 min-w-0">
@@ -1016,7 +1016,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Worker Burden Total */}
-                <div className="mt-3 grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-sm font-semibold min-w-0">Worker Burden</div>
                   <div className="text-center text-sm font-semibold text-primary whitespace-nowrap">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
@@ -1032,7 +1032,7 @@ function LaborRateCalculator() {
 
               {/* Total Mandatory Burden */}
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0">
-                <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center min-w-0">
+                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center min-w-0">
                   <div className="text-gray-700 text-sm font-bold min-w-0">Total Mandatory Burden</div>
                   <div className="text-center text-sm font-bold text-primary whitespace-nowrap">
                     {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%

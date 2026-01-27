@@ -80,9 +80,13 @@ function LaborRateCalculator() {
   const [benefitsBurdenPercents, setBenefitsBurdenPercents] = useState(
     Object.fromEntries(BENEFITS_BURDEN_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
   )
+  const [customBenefitsBurdenFields, setCustomBenefitsBurdenFields] = useState([])
+  const [newCustomBenefitsBurden, setNewCustomBenefitsBurden] = useState({ name: '', percent: 0 })
   const [additionalOverheadsPercents, setAdditionalOverheadsPercents] = useState(
     Object.fromEntries(ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
   )
+  const [customAdditionalOverheadsFields, setCustomAdditionalOverheadsFields] = useState([])
+  const [newCustomAdditionalOverheads, setNewCustomAdditionalOverheads] = useState({ name: '', percent: 0 })
   const [employeeCostsPercents, setEmployeeCostsPercents] = useState(
     Object.fromEntries(EMPLOYEE_COSTS_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
   )
@@ -207,40 +211,58 @@ function LaborRateCalculator() {
     const totalMandatoryBurdenCharged = combinedFederalPayrollTaxCharged + workerBurdenChargedTotal
 
     // Benefits Burden calculations
-    const benefitsBurdenHourlyRates = Object.fromEntries(
-      BENEFITS_BURDEN_OPTIONS.map(opt => [
+    const benefitsBurdenHourlyRates = Object.fromEntries([
+      ...BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
         workersWage * ((benefitsBurdenPercents[opt.id] || 0) / 100)
+      ]),
+      ...customBenefitsBurdenFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWage * ((field.percent || 0) / 100)
       ])
-    )
+    ])
     
-    const benefitsBurdenCharged = Object.fromEntries(
-      BENEFITS_BURDEN_OPTIONS.map(opt => [
+    const benefitsBurdenCharged = Object.fromEntries([
+      ...BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
         workersWageCharged * ((benefitsBurdenPercents[opt.id] || 0) / 100)
+      ]),
+      ...customBenefitsBurdenFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWageCharged * ((field.percent || 0) / 100)
       ])
-    )
+    ])
     
-    const benefitsBurdenPercent = Object.values(benefitsBurdenPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
+    const benefitsBurdenPercent = Object.values(benefitsBurdenPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
+      customBenefitsBurdenFields.reduce((sum, field) => sum + (field.percent || 0), 0)
     const benefitsBurdenHourlyRate = Object.values(benefitsBurdenHourlyRates).reduce((sum, val) => sum + val, 0)
     const benefitsBurdenChargedTotal = Object.values(benefitsBurdenCharged).reduce((sum, val) => sum + val, 0)
 
     // Additional Overheads calculations
-    const additionalOverheadsHourlyRates = Object.fromEntries(
-      ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
+    const additionalOverheadsHourlyRates = Object.fromEntries([
+      ...ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
         workersWage * ((additionalOverheadsPercents[opt.id] || 0) / 100)
+      ]),
+      ...customAdditionalOverheadsFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWage * ((field.percent || 0) / 100)
       ])
-    )
+    ])
     
-    const additionalOverheadsCharged = Object.fromEntries(
-      ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
+    const additionalOverheadsCharged = Object.fromEntries([
+      ...ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
         workersWageCharged * ((additionalOverheadsPercents[opt.id] || 0) / 100)
+      ]),
+      ...customAdditionalOverheadsFields.map((field, idx) => [
+        `custom-${idx}`,
+        workersWageCharged * ((field.percent || 0) / 100)
       ])
-    )
+    ])
     
-    const additionalOverheadsPercent = Object.values(additionalOverheadsPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
+    const additionalOverheadsPercent = Object.values(additionalOverheadsPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
+      customAdditionalOverheadsFields.reduce((sum, field) => sum + (field.percent || 0), 0)
     const additionalOverheadsHourlyRate = Object.values(additionalOverheadsHourlyRates).reduce((sum, val) => sum + val, 0)
     const additionalOverheadsChargedTotal = Object.values(additionalOverheadsCharged).reduce((sum, val) => sum + val, 0)
 
@@ -345,7 +367,9 @@ function LaborRateCalculator() {
     customPayrollTaxFields,
     customWorkerBurdenFields,
     benefitsBurdenPercents,
+    customBenefitsBurdenFields,
     additionalOverheadsPercents,
+    customAdditionalOverheadsFields,
     employeeCostsPercents,
     customEmployeeCosts,
     divisionOverheadPercent,
@@ -386,6 +410,28 @@ function LaborRateCalculator() {
         percent: parseFloat(newCustomWorkerBurden.percent) || 0
       }])
       setNewCustomWorkerBurden({ name: '', percent: 0 })
+    }
+  }
+
+  const handleAddCustomBenefitsBurden = () => {
+    if (newCustomBenefitsBurden.name.trim()) {
+      setCustomBenefitsBurdenFields(prev => [...prev, {
+        id: `custom-${Date.now()}`,
+        label: newCustomBenefitsBurden.name.trim(),
+        percent: parseFloat(newCustomBenefitsBurden.percent) || 0
+      }])
+      setNewCustomBenefitsBurden({ name: '', percent: 0 })
+    }
+  }
+
+  const handleAddCustomAdditionalOverheads = () => {
+    if (newCustomAdditionalOverheads.name.trim()) {
+      setCustomAdditionalOverheadsFields(prev => [...prev, {
+        id: `custom-${Date.now()}`,
+        label: newCustomAdditionalOverheads.name.trim(),
+        percent: parseFloat(newCustomAdditionalOverheads.percent) || 0
+      }])
+      setNewCustomAdditionalOverheads({ name: '', percent: 0 })
     }
   }
 
@@ -1041,6 +1087,70 @@ function LaborRateCalculator() {
                       </div>
                     )
                   })}
+                  {customBenefitsBurdenFields.map((field, idx) => {
+                    const hourlyRate = safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0
+                    const charged = safeCalculations.benefitsBurdenCharged[`custom-${idx}`] || 0
+                    return (
+                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
+                          {field.label}
+                        </label>
+                        <div className="flex items-center justify-center gap-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={field.percent}
+                            onChange={(e) => {
+                              const updated = [...customBenefitsBurdenFields]
+                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              setCustomBenefitsBurdenFields(updated)
+                            }}
+                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                          />
+                          <span className="text-gray-500 text-xs">%</span>
+                          <button
+                            onClick={() => setCustomBenefitsBurdenFields(prev => prev.filter((_, i) => i !== idx))}
+                            className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-xs ml-0.5"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="text-center text-xs font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-xs font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Add Custom Benefits Burden */}
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="flex gap-2 flex-wrap items-center">
+                    <input
+                      type="text"
+                      value={newCustomBenefitsBurden.name}
+                      onChange={(e) => setNewCustomBenefitsBurden(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Custom Entry"
+                      className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newCustomBenefitsBurden.percent || ''}
+                      onChange={(e) => setNewCustomBenefitsBurden(prev => ({ ...prev, percent: e.target.value }))}
+                      placeholder="%"
+                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                    />
+                    <button
+                      onClick={handleAddCustomBenefitsBurden}
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
 
                 {/* Benefits Burden Total */}
@@ -1111,6 +1221,70 @@ function LaborRateCalculator() {
                       </div>
                     )
                   })}
+                  {customAdditionalOverheadsFields.map((field, idx) => {
+                    const hourlyRate = safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0
+                    const charged = safeCalculations.additionalOverheadsCharged[`custom-${idx}`] || 0
+                    return (
+                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
+                          {field.label}
+                        </label>
+                        <div className="flex items-center justify-center gap-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={field.percent}
+                            onChange={(e) => {
+                              const updated = [...customAdditionalOverheadsFields]
+                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              setCustomAdditionalOverheadsFields(updated)
+                            }}
+                            className="w-16 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs"
+                          />
+                          <span className="text-gray-500 text-xs">%</span>
+                          <button
+                            onClick={() => setCustomAdditionalOverheadsFields(prev => prev.filter((_, i) => i !== idx))}
+                            className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-xs ml-0.5"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="text-center text-xs font-semibold text-gray-700">
+                          ${hourlyRate.toFixed(2)}
+                        </div>
+                        <div className="text-center text-xs font-semibold text-primary">
+                          ${charged.toFixed(2)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Add Custom Additional Overheads */}
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="flex gap-2 flex-wrap items-center">
+                    <input
+                      type="text"
+                      value={newCustomAdditionalOverheads.name}
+                      onChange={(e) => setNewCustomAdditionalOverheads(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Custom Entry"
+                      className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newCustomAdditionalOverheads.percent || ''}
+                      onChange={(e) => setNewCustomAdditionalOverheads(prev => ({ ...prev, percent: e.target.value }))}
+                      placeholder="%"
+                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+                    />
+                    <button
+                      onClick={handleAddCustomAdditionalOverheads}
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
 
                 {/* Additional Overheads Total */}

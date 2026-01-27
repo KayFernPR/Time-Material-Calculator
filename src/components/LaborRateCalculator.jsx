@@ -563,7 +563,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: e.target.value
                             }))}
-                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            className="w-12 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                             placeholder="0"
                           />
                           <span className="text-gray-500 text-xs">hrs</span>
@@ -642,7 +642,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: e.target.value
                             }))}
-                            className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                            className="w-12 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                             placeholder="0"
                           />
                           <span className="text-gray-500 text-xs">hrs</span>

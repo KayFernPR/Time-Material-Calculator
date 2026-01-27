@@ -726,10 +726,10 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 2: Workers Wage Burden */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-w-0">
             <div 
               ref={step2Ref}
-              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
+              className="bg-white rounded-lg shadow-lg pt-6 pr-3 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth min-w-0"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
@@ -737,7 +737,7 @@ function LaborRateCalculator() {
               </h2>
 
               {/* Workers Wage Box */}
-              <div className="mb-6 p-4 border-2 border-primary rounded-lg">
+              <div className="mb-6 p-4 border-2 border-primary rounded-lg min-w-0">
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Workers Wage
                 </h3>
@@ -775,8 +775,8 @@ function LaborRateCalculator() {
               </div>
 
               {/* Mandatory Payroll Tax Burden */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+              <div className="mb-6 min-w-0">
+                <h3 className="text-base font-semibold text-neutral mb-3">
                   Mandatory Payroll Tax Burden
                 </h3>
                 
@@ -800,7 +800,7 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[option.id] || 0
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {option.label}
                         </label>
@@ -831,7 +831,7 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
+                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {field.label}
                         </label>
@@ -867,14 +867,14 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Payroll Tax Field */}
-                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                  <div className="flex gap-2">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 min-w-0">
                     <input
                       type="text"
                       value={newCustomPayrollTax.name}
                       onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="Custom Entry"
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <input
                       type="number"
@@ -894,8 +894,8 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Combined Federal Payroll Tax */}
-                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
-                  <div className="text-gray-700 text-sm font-semibold">Combined Federal Payroll Tax</div>
+                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                  <div className="text-gray-700 text-sm font-semibold break-words min-w-0">Combined Federal Payroll Tax</div>
                   <div className="text-center text-sm font-semibold text-primary">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>
@@ -909,8 +909,8 @@ function LaborRateCalculator() {
               </div>
 
               {/* Mandatory Worker Burden */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+              <div className="mb-6 min-w-0">
+                <h3 className="text-base font-semibold text-neutral mb-3">
                   Mandatory Worker Burden
                 </h3>
                 
@@ -934,7 +934,7 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[option.id] || 0
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                      <div key={option.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {option.label}
                         </label>
@@ -965,7 +965,7 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50">
+                      <div key={field.id} className="grid grid-cols-[minmax(140px,1.5fr)_1fr_1fr_1fr] gap-0.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <label className="text-gray-700 text-sm font-medium break-words min-w-0 whitespace-normal">
                           {field.label}
                         </label>
@@ -1001,14 +1001,14 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Worker Burden Field */}
-                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                  <div className="flex gap-2">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 min-w-0">
                     <input
                       type="text"
                       value={newCustomWorkerBurden.name}
                       onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="Custom Entry"
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <input
                       type="number"
@@ -1028,8 +1028,8 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Worker Burden Total */}
-                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
-                  <div className="text-gray-700 text-sm font-semibold">Worker Burden</div>
+                <div className="mt-3 grid grid-cols-4 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                  <div className="text-gray-700 text-sm font-semibold break-words min-w-0">Worker Burden</div>
                   <div className="text-center text-sm font-semibold text-primary">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
                   </div>
@@ -1043,9 +1043,9 @@ function LaborRateCalculator() {
               </div>
 
               {/* Total Mandatory Burden */}
-              <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
-                <div className="grid grid-cols-4 gap-2 items-center">
-                  <div className="text-gray-700 text-sm font-bold">Total Mandatory Burden</div>
+              <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0">
+                <div className="grid grid-cols-4 gap-2 items-center min-w-0">
+                  <div className="text-gray-700 text-sm font-bold break-words min-w-0">Total Mandatory Burden</div>
                   <div className="text-center text-sm font-bold text-primary">
                     {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                   </div>

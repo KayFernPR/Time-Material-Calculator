@@ -557,7 +557,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-sm font-medium">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center gap-1">
+                        <div className="flex w-full items-center justify-center gap-1">
                           <input
                             type="number"
                             step="1"
@@ -571,7 +571,7 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs">hrs</span>
                         </div>
-                        <div className="text-center text-sm font-semibold text-primary">
+                        <div className="w-full text-center text-sm font-semibold text-primary">
                           {percent.toFixed(2)}%
                         </div>
                       </div>
@@ -602,10 +602,10 @@ function LaborRateCalculator() {
                 {/* Total PTO, Holidays and Sick Time */}
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total PTO, Holidays and Sick Time</div>
-                  <div className="text-center text-sm font-semibold text-gray-700">
+                  <div className="w-full text-center text-sm font-semibold text-gray-700">
                     {safeCalculations.totalHoursNotWorked} hrs
                   </div>
-                  <div className="text-center text-sm font-bold text-primary">
+                  <div className="w-full text-center text-sm font-bold text-primary">
                     {safeCalculations.totalHoursNotWorkedPercent.toFixed(2)}%
                   </div>
                 </div>
@@ -639,7 +639,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-sm font-medium whitespace-pre-line">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center gap-1">
+                        <div className="flex w-full items-center justify-center gap-1">
                           <input
                             type="number"
                             step="1"
@@ -653,7 +653,7 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs">hrs</span>
                         </div>
-                        <div className="text-center text-sm font-semibold text-primary">
+                        <div className="w-full text-center text-sm font-semibold text-primary">
                           {percent.toFixed(2)}%
                         </div>
                       </div>
@@ -684,10 +684,10 @@ function LaborRateCalculator() {
                 {/* Total Non-Billable Hours */}
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total Non-Billable Hours</div>
-                  <div className="text-center text-sm font-semibold text-gray-700">
+                  <div className="w-full text-center text-sm font-semibold text-gray-700">
                     {safeCalculations.totalNonBillableHours} hrs
                   </div>
-                  <div className="text-center text-sm font-bold text-primary">
+                  <div className="w-full text-center text-sm font-bold text-primary">
                     {safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%
                   </div>
                 </div>
@@ -697,10 +697,10 @@ function LaborRateCalculator() {
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
                 <div className="grid grid-cols-3 gap-2 items-center">
                   <div className="text-gray-700 text-sm font-bold">Total Hours Available For Work</div>
-                  <div className="text-center text-sm font-bold text-gray-700">
+                  <div className="w-full text-center text-sm font-bold text-gray-700">
                     {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                   </div>
-                  <div className="text-center text-sm font-bold text-primary">
+                  <div className="w-full text-center text-sm font-bold text-primary">
                     {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                   </div>
                 </div>

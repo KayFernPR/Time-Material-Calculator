@@ -542,7 +542,10 @@ function LaborRateCalculator() {
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
-                  <div className="text-center">Burden / Hour Charged (%)</div>
+                  <div className="text-center leading-tight">
+                    <div>Burden/Hr</div>
+                    <div>Charged (%)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">
@@ -621,7 +624,10 @@ function LaborRateCalculator() {
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
-                  <div className="text-center">Burden / Hour Charged (%)</div>
+                  <div className="text-center leading-tight">
+                    <div>Burden/Hr</div>
+                    <div>Charged (%)</div>
+                  </div>
                 </div>
                 
                 <div className="space-y-1">

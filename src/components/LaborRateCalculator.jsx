@@ -807,7 +807,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border"
+                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>

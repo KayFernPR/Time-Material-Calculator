@@ -14,7 +14,7 @@ const NON_BILLABLE_HOURS_OPTIONS = [
   { id: 'drive-time', label: 'Drive time - Not billed to Job' },
   { id: 'rework', label: 'Rework' },
   { id: 'administration', label: 'Administration' },
-  { id: 'downtime-cleaning', label: 'Downtime/Cleaning' },
+  { id: 'downtime-cleaning', label: 'Downtime/\nCleaning' },
   { id: 'minimum-weekly-hours', label: 'Minimum Weekly Hours' }
 ]
 
@@ -577,7 +577,7 @@ function LaborRateCalculator() {
                     const percent = safeCalculations.nonBillableHoursPercentages[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium">
+                        <label className="text-gray-700 text-sm font-medium whitespace-pre-line">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center gap-1">

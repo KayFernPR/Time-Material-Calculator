@@ -725,7 +725,7 @@ function LaborRateCalculator() {
             </div>
           </div>
 
-          {/* Step 2: Workers Wage Burden */}
+          {/* Step 2: Wage Burden */}
           <div className="lg:col-span-1 min-w-0">
             <div 
               ref={step2Ref}
@@ -733,7 +733,7 @@ function LaborRateCalculator() {
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
-                Step 2: Workers Wage Burden
+                Step 2: Wage Burden
               </h2>
 
               {/* Workers Wage Box */}

@@ -510,7 +510,7 @@ function LaborRateCalculator() {
           <div className="lg:col-span-1">
             <div 
               ref={step1Ref}
-              className="bg-white rounded-lg shadow-lg p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"
+              className="bg-white rounded-lg shadow-lg pt-6 pr-3 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth min-w-0"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
@@ -553,11 +553,11 @@ function LaborRateCalculator() {
                     const hours = parseFloat(hoursNotWorked[option.id]) || 0
                     const percent = safeCalculations.hoursNotWorkedPercentages[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium">
+                      <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <label className="text-gray-700 text-sm font-medium break-words min-w-0">
                           {option.label}
                         </label>
-                        <div className="flex w-full items-center justify-center gap-1">
+                        <div className="flex w-full items-center justify-center gap-1 min-w-0">
                           <input
                             type="number"
                             step="1"
@@ -580,8 +580,8 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Hours Not Worked */}
-                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                  <div className="flex gap-2">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 min-w-0">
                     <input
                       type="text"
                       value={newCustomHoursNotWorked}
@@ -635,11 +635,11 @@ function LaborRateCalculator() {
                     const hours = parseFloat(nonBillableHours[option.id]) || 0
                     const percent = safeCalculations.nonBillableHoursPercentages[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-                        <label className="text-gray-700 text-sm font-medium whitespace-pre-line">
+                      <div key={option.id} className="grid grid-cols-3 gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <label className="text-gray-700 text-sm font-medium whitespace-pre-line break-words min-w-0">
                           {option.label}
                         </label>
-                        <div className="flex w-full items-center justify-center gap-1">
+                        <div className="flex w-full items-center justify-center gap-1 min-w-0">
                           <input
                             type="number"
                             step="1"
@@ -662,8 +662,8 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Non-Billable */}
-                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                  <div className="flex gap-2">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 min-w-0">
                     <input
                       type="text"
                       value={newCustomNonBillable}

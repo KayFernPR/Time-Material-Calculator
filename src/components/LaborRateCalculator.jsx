@@ -13,7 +13,7 @@ const NON_BILLABLE_HOURS_OPTIONS = [
   { id: 'meetings', label: 'Meetings' },
   { id: 'drive-time', label: 'Drive time - Not billed to Job' },
   { id: 'rework', label: 'Rework' },
-  { id: 'administration', label: 'Administration' },
+  { id: 'administration', label: 'Admin' },
   { id: 'downtime-cleaning', label: 'Downtime/\nCleaning' },
   { id: 'minimum-weekly-hours', label: 'Minimum Weekly Hours' }
 ]

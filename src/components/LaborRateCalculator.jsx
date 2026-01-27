@@ -538,7 +538,7 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center leading-tight">
+                  <div className="text-center leading-tight ml-[10px]">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
@@ -557,7 +557,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-sm font-medium break-words min-w-0">
                           {option.label}
                         </label>
-                        <div className="flex w-full items-center justify-center gap-1 min-w-0">
+                        <div className="flex w-full items-center justify-center gap-1 min-w-0 ml-[10px]">
                           <input
                             type="number"
                             step="1"
@@ -602,7 +602,7 @@ function LaborRateCalculator() {
                 {/* Total PTO, Holidays and Sick Time */}
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total PTO, Holidays and Sick Time</div>
-                  <div className="w-full text-center text-sm font-semibold text-gray-700">
+                  <div className="w-full text-center text-sm font-semibold text-gray-700 ml-[10px]">
                     {safeCalculations.totalHoursNotWorked} hrs
                   </div>
                   <div className="w-full text-center text-sm font-bold text-primary">
@@ -620,7 +620,7 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-3 gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center leading-tight">
+                  <div className="text-center leading-tight ml-[10px]">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
@@ -639,7 +639,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-sm font-medium whitespace-pre-line break-words min-w-0">
                           {option.label}
                         </label>
-                        <div className="flex w-full items-center justify-center gap-1 min-w-0">
+                        <div className="flex w-full items-center justify-center gap-1 min-w-0 ml-[10px]">
                           <input
                             type="number"
                             step="1"
@@ -684,7 +684,7 @@ function LaborRateCalculator() {
                 {/* Total Non-Billable Hours */}
                 <div className="mt-3 grid grid-cols-3 gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5">
                   <div className="text-gray-700 text-sm font-semibold">Total Non-Billable Hours</div>
-                  <div className="w-full text-center text-sm font-semibold text-gray-700">
+                  <div className="w-full text-center text-sm font-semibold text-gray-700 ml-[10px]">
                     {safeCalculations.totalNonBillableHours} hrs
                   </div>
                   <div className="w-full text-center text-sm font-bold text-primary">
@@ -697,7 +697,7 @@ function LaborRateCalculator() {
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
                 <div className="grid grid-cols-3 gap-2 items-center">
                   <div className="text-gray-700 text-sm font-bold">Total Hours Available For Work</div>
-                  <div className="w-full text-center text-sm font-bold text-gray-700">
+                  <div className="w-full text-center text-sm font-bold text-gray-700 ml-[10px]">
                     {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                   </div>
                   <div className="w-full text-center text-sm font-bold text-primary">

@@ -781,10 +781,10 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-[10px] font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center leading-tight"><div>Burden</div><div>%</div></div>
-                  <div className="text-center leading-tight"><div>Hrly</div><div>($)</div></div>
+                  <div className="text-center leading-tight pl-3"><div>Hrly</div><div>($)</div></div>
                   <div className="text-center leading-tight"><div>Charged</div><div>($)</div></div>
                 </div>
                 
@@ -807,15 +807,15 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border no-spinner"
+                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-[10px] box-border no-spinner"
                             placeholder="0.00"
                           />
-                          <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>
+                          <span className="text-gray-500 text-[10px] ml-0.5 shrink-0">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-gray-700 whitespace-nowrap pl-3">
                           ${hourlyRate.toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-primary whitespace-nowrap">
                           ${charged.toFixed(2)}
                         </div>
                       </div>
@@ -839,9 +839,9 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomPayrollTaxFields(updated)
                             }}
-                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border no-spinner"
+                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-[10px] box-border no-spinner"
                           />
-                          <span className="text-gray-500 text-xs">%</span>
+                          <span className="text-gray-500 text-[10px]">%</span>
                           <button
                             onClick={() => setCustomPayrollTaxFields(prev => prev.filter((_, i) => i !== idx))}
                             className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-xs ml-0.5"
@@ -849,10 +849,10 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-gray-700 whitespace-nowrap pl-3">
                           ${hourlyRate.toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-primary whitespace-nowrap">
                           ${charged.toFixed(2)}
                         </div>
                       </div>
@@ -889,14 +889,14 @@ function LaborRateCalculator() {
 
                 {/* Combined Federal Payroll Tax */}
                 <div className="mt-3 grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
-                  <div className="text-gray-700 text-sm font-semibold min-w-0">Combined Federal Payroll Tax</div>
-                  <div className="text-center text-sm font-semibold text-primary whitespace-nowrap">
+                  <div className="text-gray-700 text-[10px] font-semibold min-w-0">Combined Federal Payroll Tax</div>
+                  <div className="text-center text-[10px] font-semibold text-primary whitespace-nowrap">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-sm font-bold text-gray-700 whitespace-nowrap">
+                  <div className="text-center text-[10px] font-bold text-gray-700 whitespace-nowrap pl-3">
                     ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-sm font-bold text-primary whitespace-nowrap">
+                  <div className="text-center text-[10px] font-bold text-primary whitespace-nowrap">
                     ${safeCalculations.combinedFederalPayrollTaxCharged.toFixed(2)}
                   </div>
                 </div>
@@ -909,10 +909,10 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
+                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 mb-2 text-[10px] font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
                   <div className="text-center leading-tight"><div>Burden</div><div>%</div></div>
-                  <div className="text-center leading-tight"><div>Hrly</div><div>($)</div></div>
+                  <div className="text-center leading-tight pl-3"><div>Hrly</div><div>($)</div></div>
                   <div className="text-center leading-tight"><div>Charged</div><div>($)</div></div>
                 </div>
                 
@@ -935,15 +935,15 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border no-spinner"
+                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-[10px] box-border no-spinner"
                             placeholder="0.00"
                           />
-                          <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>
+                          <span className="text-gray-500 text-[10px] ml-0.5 shrink-0">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-gray-700 whitespace-nowrap pl-3">
                           ${hourlyRate.toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-primary whitespace-nowrap">
                           ${charged.toFixed(2)}
                         </div>
                       </div>
@@ -967,9 +967,9 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomWorkerBurdenFields(updated)
                             }}
-                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs box-border"
+                            className="w-12 max-w-full px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-[10px] box-border no-spinner"
                           />
-                          <span className="text-gray-500 text-xs">%</span>
+                          <span className="text-gray-500 text-[10px]">%</span>
                           <button
                             onClick={() => setCustomWorkerBurdenFields(prev => prev.filter((_, i) => i !== idx))}
                             className="px-1 py-1 text-red-600 hover:bg-red-50 rounded text-xs ml-0.5"
@@ -977,10 +977,10 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-gray-700 whitespace-nowrap pl-3">
                           ${hourlyRate.toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap">
+                        <div className="text-center text-[10px] font-semibold text-primary whitespace-nowrap">
                           ${charged.toFixed(2)}
                         </div>
                       </div>
@@ -1017,14 +1017,14 @@ function LaborRateCalculator() {
 
                 {/* Worker Burden Total */}
                 <div className="mt-3 grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
-                  <div className="text-gray-700 text-sm font-semibold min-w-0">Worker Burden</div>
-                  <div className="text-center text-sm font-semibold text-primary whitespace-nowrap">
+                  <div className="text-gray-700 text-[10px] font-semibold min-w-0">Worker Burden</div>
+                  <div className="text-center text-[10px] font-semibold text-primary whitespace-nowrap">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-sm font-bold text-gray-700 whitespace-nowrap">
+                  <div className="text-center text-[10px] font-bold text-gray-700 whitespace-nowrap pl-3">
                     ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-sm font-bold text-primary whitespace-nowrap">
+                  <div className="text-center text-[10px] font-bold text-primary whitespace-nowrap">
                     ${safeCalculations.workerBurdenChargedTotal.toFixed(2)}
                   </div>
                 </div>
@@ -1033,14 +1033,14 @@ function LaborRateCalculator() {
               {/* Total Mandatory Burden */}
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0">
                 <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center min-w-0">
-                  <div className="text-gray-700 text-sm font-bold min-w-0">Total Mandatory Burden</div>
-                  <div className="text-center text-sm font-bold text-primary whitespace-nowrap">
+                  <div className="text-gray-700 text-[10px] font-bold min-w-0">Total Mandatory Burden</div>
+                  <div className="text-center text-[10px] font-bold text-primary whitespace-nowrap">
                     {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-sm font-bold text-gray-700 whitespace-nowrap">
+                  <div className="text-center text-[10px] font-bold text-gray-700 whitespace-nowrap pl-3">
                     ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-sm font-bold text-primary whitespace-nowrap">
+                  <div className="text-center text-[10px] font-bold text-primary whitespace-nowrap">
                     ${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}
                   </div>
                 </div>

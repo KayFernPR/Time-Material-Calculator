@@ -888,15 +888,15 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Combined Federal Payroll Tax */}
-                <div className="mt-3 grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0">Combined Federal Payroll Tax</div>
-                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap">
+                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap min-w-0">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap pl-3">
+                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0">
                     ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0">
                     ${safeCalculations.combinedFederalPayrollTaxCharged.toFixed(2)}
                   </div>
                 </div>
@@ -1016,15 +1016,15 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Worker Burden Total */}
-                <div className="mt-3 grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0">Worker Burden</div>
-                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap">
+                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap min-w-0">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap pl-3">
+                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0">
                     ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0">
                     ${safeCalculations.workerBurdenChargedTotal.toFixed(2)}
                   </div>
                 </div>
@@ -1032,15 +1032,15 @@ function LaborRateCalculator() {
 
               {/* Total Mandatory Burden */}
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0">
-                <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center min-w-0">
+                <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center min-w-0">
                   <div className="text-gray-700 text-xs font-bold min-w-0">Total Mandatory Burden</div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0">
                     {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap pl-3">
+                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0">
                     ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0">
                     ${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}
                   </div>
                 </div>

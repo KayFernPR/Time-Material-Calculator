@@ -795,7 +795,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-pre-line">
+                        <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-pre-line">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center min-w-0">
@@ -826,7 +826,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-normal">
+                        <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-normal">
                           {field.label}
                         </label>
                         <div className="flex items-center justify-center gap-1 min-w-0">
@@ -923,7 +923,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-pre-line">
+                        <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-pre-line">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center min-w-0">
@@ -954,7 +954,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-1 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <label className="text-gray-700 text-sm font-medium break-normal min-w-0 whitespace-normal">
+                        <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-normal">
                           {field.label}
                         </label>
                         <div className="flex items-center justify-center gap-1 min-w-0">

@@ -711,15 +711,13 @@ function LaborRateCalculator() {
               </div>
 
               {/* Total Hours Available For Work */}
-              <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0 overflow-hidden">
-                <div className="grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 items-center min-w-0 overflow-hidden -ml-[15px]">
-                  <div className="text-gray-700 text-sm font-bold min-w-0 pr-1 overflow-hidden ml-[15px]">Total Hours Available For Work</div>
-                  <div className="w-full text-center text-sm font-bold text-gray-700 px-1 min-w-0 overflow-hidden">
-                    {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
-                  </div>
-                  <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-1.5 min-w-0 overflow-hidden -ml-[10px]">
-                    {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
-                  </div>
+              <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/10 min-w-0 overflow-hidden -ml-[15px]">
+                <div className="text-gray-700 text-sm font-bold min-w-0 pr-1 overflow-hidden ml-[15px]">Total Hours Available For Work</div>
+                <div className="w-full text-center text-sm font-bold text-gray-700 px-1 min-w-0 overflow-hidden">
+                  {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
+                </div>
+                <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-1.5 min-w-0 overflow-hidden -ml-[10px]">
+                  {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                 </div>
               </div>
             </div>

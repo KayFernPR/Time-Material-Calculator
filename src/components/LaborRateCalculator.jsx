@@ -887,9 +887,9 @@ function LaborRateCalculator() {
                   </div>
                 </div>
 
-                {/* Combined Federal Payroll Tax */}
+                {/* Payroll Tax Burden */}
                 <div className="mt-3 grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
-                  <div className="text-gray-700 text-xs font-semibold min-w-0 pr-2">Combined Federal Payroll Tax</div>
+                  <div className="text-gray-700 text-xs font-semibold min-w-0 pr-2">Payroll Tax Burden</div>
                   <div className="text-center text-xs font-semibold text-primary whitespace-nowrap min-w-0 pl-2">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>

@@ -1030,10 +1030,10 @@ function LaborRateCalculator() {
                 </div>
               </div>
 
-              {/* Total Mandatory Burden */}
+              {/* Total Wage Burden */}
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0">
                 <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center min-w-0">
-                  <div className="text-gray-700 text-xs font-bold min-w-0 pr-2">Total Mandatory Burden</div>
+                  <div className="text-gray-700 text-xs font-bold min-w-0 pr-2">Total Wage Burden</div>
                   <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 pl-2">
                     {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                   </div>

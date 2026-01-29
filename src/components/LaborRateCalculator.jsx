@@ -871,15 +871,6 @@ function LaborRateCalculator() {
                       placeholder="Custom Entry"
                       className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={newCustomPayrollTax.percent || ''}
-                      onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, percent: e.target.value }))}
-                      onKeyPress={(e) => e.key === 'Enter' && handleAddCustomPayrollTax()}
-                      placeholder="%"
-                      className="w-16 shrink-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
-                    />
                     <button
                       type="button"
                       onClick={handleAddCustomPayrollTax}
@@ -1001,15 +992,6 @@ function LaborRateCalculator() {
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomWorkerBurden()}
                       placeholder="Custom Entry"
                       className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={newCustomWorkerBurden.percent || ''}
-                      onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, percent: e.target.value }))}
-                      onKeyPress={(e) => e.key === 'Enter' && handleAddCustomWorkerBurden()}
-                      placeholder="%"
-                      className="w-16 shrink-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
                     />
                     <button
                       type="button"

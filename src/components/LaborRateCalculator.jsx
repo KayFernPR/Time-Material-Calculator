@@ -499,15 +499,15 @@ function LaborRateCalculator() {
   }
 
   return (
-    <div className="min-h-screen bg-light py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <h1 className="text-4xl font-bold text-primary mb-8 text-center">
+    <div className="min-h-screen w-full min-w-0 bg-light py-4 sm:py-6 lg:py-8 overflow-x-hidden">
+      <div className="container mx-auto w-full min-w-0 px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mb-6 lg:mb-8 text-center">
           Building Your Labor Rate Calculator
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-4 lg:gap-6 min-w-0">
           {/* Step 1: Paid Capacity */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-w-0 w-full">
             <div 
               ref={step1Ref}
               className="bg-white rounded-lg shadow-lg pt-6 pr-3 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth min-w-0"
@@ -726,7 +726,7 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 2: Wage Burden */}
-          <div className="lg:col-span-1 min-w-0">
+          <div className="lg:col-span-1 min-w-0 w-full">
             <div 
               ref={step2Ref}
               className="bg-white rounded-lg shadow-lg pt-6 pr-3 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth min-w-0"
@@ -1051,7 +1051,7 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 3: Mandatory Burden */}
-          <div className="lg:col-span-1 min-w-0">
+          <div className="lg:col-span-1 min-w-0 w-full">
             <div 
               ref={step3MandatoryRef}
               className="bg-white rounded-lg shadow-lg pt-6 pr-3 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth min-w-0"
@@ -1584,7 +1584,7 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 4: Results - Burden / Hour Charged */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-w-0 w-full">
             <div 
               ref={step3Ref}
               className="bg-white rounded-lg shadow-lg p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scroll-smooth"

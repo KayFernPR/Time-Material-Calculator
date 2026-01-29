@@ -783,9 +783,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_2rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center leading-tight pl-2 -ml-[5px]"><div>Burden</div><div>%</div></div>
-                  <div className="text-center leading-tight pl-2 -ml-[5px]"><div>Hrly</div><div>($)</div></div>
-                  <div className="text-center leading-tight -ml-[5px]"><div>Charged</div><div>($)</div></div>
+                  <div className="text-center leading-tight pl-2 -ml-[8px]"><div>Burden</div><div>%</div></div>
+                  <div className="text-center leading-tight pl-2 -ml-[8px]"><div>Hrly</div><div>($)</div></div>
+                  <div className="text-center leading-tight -ml-[8px]"><div>Charged</div><div>($)</div></div>
                   <div></div>
                 </div>
                 
@@ -799,7 +799,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-pre-line pr-1">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[5px]">
+                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[8px]">
                           <input
                             type="number"
                             step="0.01"
@@ -813,10 +813,10 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[5px]">
+                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[8px]">
                           ${hourlyRate.toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[5px]">
+                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[8px]">
                           ${charged.toFixed(2)}
                         </div>
                         <div></div>
@@ -831,7 +831,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-pre-line pr-1">
                           {field.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[5px]">
+                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[8px]">
                           <input
                             type="number"
                             step="0.01"
@@ -846,10 +846,10 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[5px] min-w-0">
+                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[8px] min-w-0">
                           ${Number(hourlyRate).toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[5px] min-w-0">
+                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[8px] min-w-0">
                           ${Number(charged).toFixed(2)}
                         </div>
                         <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
@@ -891,13 +891,13 @@ function LaborRateCalculator() {
                 {/* Payroll Tax Burden */}
                 <div className="mt-3 grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 pr-2">Payroll Tax Burden</div>
-                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap min-w-0 pl-2 -ml-[5px]">
+                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap min-w-0 pl-2 -ml-[8px]">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0 -ml-[5px]">
+                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0 -ml-[8px]">
                     ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 -ml-[5px]">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 -ml-[8px]">
                     ${safeCalculations.combinedFederalPayrollTaxCharged.toFixed(2)}
                   </div>
                 </div>
@@ -912,9 +912,9 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(7rem,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_2rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1">
                   <div></div>
-                  <div className="text-center leading-tight pl-2 -ml-[5px]"><div>Burden</div><div>%</div></div>
-                  <div className="text-center leading-tight pl-2 -ml-[5px]"><div>Hrly</div><div>($)</div></div>
-                  <div className="text-center leading-tight -ml-[5px]"><div>Charged</div><div>($)</div></div>
+                  <div className="text-center leading-tight pl-2 -ml-[8px]"><div>Burden</div><div>%</div></div>
+                  <div className="text-center leading-tight pl-2 -ml-[8px]"><div>Hrly</div><div>($)</div></div>
+                  <div className="text-center leading-tight -ml-[8px]"><div>Charged</div><div>($)</div></div>
                   <div></div>
                 </div>
                 
@@ -928,7 +928,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-pre-line pr-1">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[5px]">
+                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[8px]">
                           <input
                             type="number"
                             step="0.01"
@@ -942,10 +942,10 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[5px]">
+                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[8px]">
                           ${hourlyRate.toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[5px]">
+                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[8px]">
                           ${charged.toFixed(2)}
                         </div>
                         <div></div>
@@ -960,7 +960,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 text-xs font-medium break-normal min-w-0 whitespace-pre-line pr-1">
                           {field.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[5px]">
+                        <div className="flex items-center justify-center min-w-0 pl-1 -ml-[8px]">
                           <input
                             type="number"
                             step="0.01"
@@ -975,10 +975,10 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5 shrink-0">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[5px] min-w-0">
+                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap pl-2 -ml-[8px] min-w-0">
                           ${Number(hourlyRate).toFixed(2)}
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[5px] min-w-0">
+                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-2 -ml-[8px] min-w-0">
                           ${Number(charged).toFixed(2)}
                         </div>
                         <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
@@ -1020,13 +1020,13 @@ function LaborRateCalculator() {
                 {/* Worker Burden Total */}
                 <div className="mt-3 grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 pr-2">Worker Burden</div>
-                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap min-w-0 pl-2 -ml-[5px]">
+                  <div className="text-center text-xs font-semibold text-primary whitespace-nowrap min-w-0 pl-2 -ml-[8px]">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0 -ml-[5px]">
+                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0 -ml-[8px]">
                     ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 -ml-[5px]">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 -ml-[8px]">
                     ${safeCalculations.workerBurdenChargedTotal.toFixed(2)}
                   </div>
                 </div>
@@ -1036,13 +1036,13 @@ function LaborRateCalculator() {
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0">
                 <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(3rem,1fr)_minmax(3rem,1fr)_minmax(3rem,1fr)] gap-2 items-center min-w-0">
                   <div className="text-gray-700 text-xs font-bold min-w-0 pr-2">Total Wage Burden</div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 pl-2 -ml-[5px]">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 pl-2 -ml-[8px]">
                     {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0 -ml-[5px]">
+                  <div className="text-center text-xs font-bold text-gray-700 whitespace-nowrap min-w-0 -ml-[8px]">
                     ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
                   </div>
-                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 -ml-[5px]">
+                  <div className="text-center text-xs font-bold text-primary whitespace-nowrap min-w-0 -ml-[8px]">
                     ${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}
                   </div>
                 </div>

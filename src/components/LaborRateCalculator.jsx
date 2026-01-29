@@ -393,7 +393,7 @@ function LaborRateCalculator() {
   }
 
   const handleAddCustomPayrollTax = () => {
-    if (newCustomPayrollTax.name.trim() && newCustomPayrollTax.percent >= 0) {
+    if (newCustomPayrollTax.name.trim()) {
       setCustomPayrollTaxFields(prev => [...prev, {
         id: `custom-${Date.now()}`,
         label: newCustomPayrollTax.name.trim(),
@@ -404,7 +404,7 @@ function LaborRateCalculator() {
   }
 
   const handleAddCustomWorkerBurden = () => {
-    if (newCustomWorkerBurden.name.trim() && newCustomWorkerBurden.percent >= 0) {
+    if (newCustomWorkerBurden.name.trim()) {
       setCustomWorkerBurdenFields(prev => [...prev, {
         id: `custom-${Date.now()}`,
         label: newCustomWorkerBurden.name.trim(),
@@ -862,14 +862,14 @@ function LaborRateCalculator() {
 
                 {/* Add Custom Payroll Tax Field */}
                 <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                  <div className="flex gap-2 min-w-0">
+                  <div className="flex gap-2 min-w-0 items-center">
                     <input
                       type="text"
                       value={newCustomPayrollTax.name}
                       onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, name: e.target.value }))}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomPayrollTax()}
                       placeholder="Custom Entry"
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <input
                       type="number"
@@ -878,11 +878,12 @@ function LaborRateCalculator() {
                       onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, percent: e.target.value }))}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomPayrollTax()}
                       placeholder="%"
-                      className="w-16 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
+                      className="w-16 shrink-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
                     />
                     <button
+                      type="button"
                       onClick={handleAddCustomPayrollTax}
-                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                     >
                       Add
                     </button>
@@ -992,14 +993,14 @@ function LaborRateCalculator() {
 
                 {/* Add Custom Worker Burden Field */}
                 <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                  <div className="flex gap-2 min-w-0">
+                  <div className="flex gap-2 min-w-0 items-center">
                     <input
                       type="text"
                       value={newCustomWorkerBurden.name}
                       onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, name: e.target.value }))}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomWorkerBurden()}
                       placeholder="Custom Entry"
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <input
                       type="number"
@@ -1008,11 +1009,12 @@ function LaborRateCalculator() {
                       onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, percent: e.target.value }))}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomWorkerBurden()}
                       placeholder="%"
-                      className="w-16 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
+                      className="w-16 shrink-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
                     />
                     <button
+                      type="button"
                       onClick={handleAddCustomWorkerBurden}
-                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                     >
                       Add
                     </button>

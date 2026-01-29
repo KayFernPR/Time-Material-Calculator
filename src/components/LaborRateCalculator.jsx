@@ -510,7 +510,7 @@ function LaborRateCalculator() {
           <div className="lg:col-span-1 min-w-0 w-full">
             <div 
               ref={step1Ref}
-              className="bg-white rounded-lg shadow-lg pt-6 pr-3 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0"
+              className="bg-white rounded-lg shadow-lg pt-6 pr-4 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
@@ -536,13 +536,13 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_5rem_5rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden">
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
-                  <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
+                  <div className="text-center leading-tight pl-1 pr-1.5 min-w-0 overflow-hidden">
                     <div>Burden</div>
                     <div>Chg (%)</div>
                   </div>
@@ -553,7 +553,7 @@ function LaborRateCalculator() {
                     const hours = parseFloat(hoursNotWorked[option.id]) || 0
                     const percent = safeCalculations.hoursNotWorkedPercentages[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_5rem_5rem] gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden">
+                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden">
                         <label className="text-gray-700 text-sm font-medium break-words min-w-0 overflow-hidden">
                           {option.label}
                         </label>
@@ -571,7 +571,7 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs">hrs</span>
                         </div>
-                        <div className="w-full text-center text-sm font-semibold text-primary px-1 min-w-0 overflow-hidden">
+                        <div className="w-full text-center text-sm font-semibold text-primary pl-1 pr-1.5 min-w-0 overflow-hidden">
                           {percent.toFixed(2)}%
                         </div>
                       </div>
@@ -600,12 +600,12 @@ function LaborRateCalculator() {
                 </div>
                 
                 {/* Total PTO, Holidays and Sick Time */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_5rem] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden">
                   <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden">Total PTO, Holidays and Sick Time</div>
                   <div className="w-full text-center text-sm font-semibold text-gray-700 px-1 min-w-0 overflow-hidden">
                     {safeCalculations.totalHoursNotWorked} hrs
                   </div>
-                  <div className="w-full text-center text-sm font-bold text-primary px-1 min-w-0 overflow-hidden">
+                  <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-1.5 min-w-0 overflow-hidden">
                     {safeCalculations.totalHoursNotWorkedPercent.toFixed(2)}%
                   </div>
                 </div>
@@ -618,13 +618,13 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_5rem_5rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden">
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
-                  <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
+                  <div className="text-center leading-tight pl-1 pr-1.5 min-w-0 overflow-hidden">
                     <div>Burden</div>
                     <div>Chg (%)</div>
                   </div>
@@ -635,7 +635,7 @@ function LaborRateCalculator() {
                     const hours = parseFloat(nonBillableHours[option.id]) || 0
                     const percent = safeCalculations.nonBillableHoursPercentages[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_5rem_5rem] gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden">
+                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden">
                         <div className="flex items-center gap-2 min-w-0 overflow-hidden">
                           <label className="text-gray-700 text-sm font-medium whitespace-pre-line break-words min-w-0 overflow-hidden">
                             {option.label}
@@ -670,15 +670,15 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs">hrs</span>
                         </div>
-                        <div className="w-full text-center text-sm font-semibold text-primary px-1 min-w-0 overflow-hidden">
-                          {percent.toFixed(2)}%
+<div className="w-full text-center text-sm font-semibold text-primary pl-1 pr-1.5 min-w-0 overflow-hidden">
+                            {percent.toFixed(2)}%
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
+                      )
+                    })}
+                  </div>
 
-                {/* Add Custom Non-Billable */}
+                  {/* Add Custom Non-Billable */}
                 <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                   <div className="flex gap-2 min-w-0">
                     <input
@@ -699,12 +699,12 @@ function LaborRateCalculator() {
                 </div>
                 
                 {/* Total Non-Billable Hours */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_5rem] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden">
                   <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden">Total Non-Billable Hours</div>
                   <div className="w-full text-center text-sm font-semibold text-gray-700 px-1 min-w-0 overflow-hidden">
                     {safeCalculations.totalNonBillableHours} hrs
                   </div>
-                  <div className="w-full text-center text-sm font-bold text-primary px-1 min-w-0 overflow-hidden">
+                  <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-1.5 min-w-0 overflow-hidden">
                     {safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%
                   </div>
                 </div>
@@ -712,12 +712,12 @@ function LaborRateCalculator() {
 
               {/* Total Hours Available For Work */}
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary min-w-0 overflow-hidden">
-                <div className="grid grid-cols-[minmax(6rem,1fr)_5rem_5rem] gap-2 items-center min-w-0 overflow-hidden">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_5rem_5.5rem] gap-2 items-center min-w-0 overflow-hidden">
                   <div className="text-gray-700 text-sm font-bold min-w-0 pr-1 overflow-hidden">Total Hours Available For Work</div>
                   <div className="w-full text-center text-sm font-bold text-gray-700 px-1 min-w-0 overflow-hidden">
                     {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                   </div>
-                  <div className="w-full text-center text-sm font-bold text-primary px-1 min-w-0 overflow-hidden">
+                  <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-1.5 min-w-0 overflow-hidden">
                     {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                   </div>
                 </div>

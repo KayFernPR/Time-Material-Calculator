@@ -505,7 +505,7 @@ function LaborRateCalculator() {
           Building Your Labor Rate Calculator
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-4 lg:gap-6 min-w-0">
+        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-[5px] min-w-0">
           {/* Step 1: Paid Capacity */}
           <div className="lg:col-span-1 min-w-0 w-full">
             <div 

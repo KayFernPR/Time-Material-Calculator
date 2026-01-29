@@ -716,7 +716,7 @@ function LaborRateCalculator() {
                 <div className="w-full text-center text-sm font-bold text-gray-700 px-1 min-w-0 overflow-hidden">
                   {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                 </div>
-                <div className="w-full text-center text-sm font-bold text-primary pl-[7px] pr-1.5 min-w-0 overflow-hidden -ml-[15px]">
+                <div className="w-full text-center text-sm font-bold text-primary pl-[7px] pr-1.5 min-w-0 overflow-hidden -ml-[20px]">
                   {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                 </div>
               </div>

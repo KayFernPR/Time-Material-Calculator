@@ -543,8 +543,8 @@ function LaborRateCalculator() {
                     <div>Allocated</div>
                   </div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
-                    <div>Burden/Hr</div>
-                    <div>Charged (%)</div>
+                    <div>Burden</div>
+                    <div>Chg (%)</div>
                   </div>
                 </div>
                 
@@ -625,8 +625,8 @@ function LaborRateCalculator() {
                     <div>Allocated</div>
                   </div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
-                    <div>Burden/Hr</div>
-                    <div>Charged (%)</div>
+                    <div>Burden</div>
+                    <div>Chg (%)</div>
                   </div>
                 </div>
                 
@@ -785,7 +785,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Burden</div><div>%</div></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Hrly</div><div>($)</div></div>
-                  <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Charged</div><div>($)</div></div>
+                  <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Chgd</div><div>($)</div></div>
                   <div className="min-w-0 overflow-hidden"></div>
                 </div>
                 
@@ -914,7 +914,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Burden</div><div>%</div></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Hrly</div><div>($)</div></div>
-                  <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Charged</div><div>($)</div></div>
+                  <div className="text-center leading-tight px-1 min-w-0 overflow-hidden"><div>Chgd</div><div>($)</div></div>
                   <div className="min-w-0 overflow-hidden"></div>
                 </div>
                 
@@ -1072,7 +1072,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
-                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Charged ($)</div>
+                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Chgd ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1200,7 +1200,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
-                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Charged ($)</div>
+                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Chgd ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1328,7 +1328,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
-                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Charged ($)</div>
+                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Chgd ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1456,7 +1456,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
-                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Charged ($)</div>
+                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Chgd ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1512,7 +1512,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
-                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Charged ($)</div>
+                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Chgd ($)</div>
                 </div>
                 
                 <div className="space-y-1">
@@ -1552,7 +1552,7 @@ function LaborRateCalculator() {
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
-                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Charged ($)</div>
+                  <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Chgd ($)</div>
                 </div>
                 
                 <div className="space-y-1">

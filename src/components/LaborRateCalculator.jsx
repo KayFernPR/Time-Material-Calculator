@@ -605,7 +605,7 @@ function LaborRateCalculator() {
                   <div className="w-full text-center text-sm font-semibold text-gray-700 px-1 min-w-0 overflow-hidden">
                     {safeCalculations.totalHoursNotWorked} hrs
                   </div>
-                  <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-[9px] min-w-0 overflow-hidden -ml-[10px]">
+                  <div className="w-full text-center text-sm font-bold text-primary pl-[7px] pr-1.5 min-w-0 overflow-hidden -ml-[10px]">
                     {safeCalculations.totalHoursNotWorkedPercent.toFixed(2)}%
                   </div>
                 </div>
@@ -704,7 +704,7 @@ function LaborRateCalculator() {
                   <div className="w-full text-center text-sm font-semibold text-gray-700 px-1 min-w-0 overflow-hidden">
                     {safeCalculations.totalNonBillableHours} hrs
                   </div>
-                  <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-[9px] min-w-0 overflow-hidden -ml-[10px]">
+                  <div className="w-full text-center text-sm font-bold text-primary pl-[7px] pr-1.5 min-w-0 overflow-hidden -ml-[10px]">
                     {safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%
                   </div>
                 </div>
@@ -716,7 +716,7 @@ function LaborRateCalculator() {
                 <div className="w-full text-center text-sm font-bold text-gray-700 px-1 min-w-0 overflow-hidden">
                   {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                 </div>
-                <div className="w-full text-center text-sm font-bold text-primary pl-1 pr-[9px] min-w-0 overflow-hidden -ml-[10px]">
+                <div className="w-full text-center text-sm font-bold text-primary pl-[7px] pr-1.5 min-w-0 overflow-hidden -ml-[10px]">
                   {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                 </div>
               </div>

@@ -581,7 +581,7 @@ function LaborRateCalculator() {
 
                 {/* Add Custom Hours Not Worked */}
                 <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50 min-w-0 overflow-hidden -ml-[15px]">
-                  <div className="col-span-2 min-w-0 ml-[15px]">
+                  <div className="col-span-2 min-w-0 ml-[10px]">
                     <input
                       type="text"
                       value={newCustomHoursNotWorked}
@@ -591,7 +591,7 @@ function LaborRateCalculator() {
                       className="w-full px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
-                  <div className="flex justify-end min-w-0">
+                  <div className="flex justify-end min-w-0 -ml-[25px]">
                     <button
                       onClick={handleAddCustomHoursNotWorked}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
@@ -682,7 +682,7 @@ function LaborRateCalculator() {
 
                   {/* Add Custom Non-Billable */}
                 <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50 min-w-0 overflow-hidden -ml-[15px]">
-                  <div className="col-span-2 min-w-0 ml-[15px]">
+                  <div className="col-span-2 min-w-0 ml-[10px]">
                     <input
                       type="text"
                       value={newCustomNonBillable}
@@ -692,7 +692,7 @@ function LaborRateCalculator() {
                       className="w-full px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
-                  <div className="flex justify-end min-w-0">
+                  <div className="flex justify-end min-w-0 -ml-[25px]">
                     <button
                       onClick={handleAddCustomNonBillable}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"

@@ -591,7 +591,7 @@ function LaborRateCalculator() {
                       className="w-full px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
-                  <div className="flex justify-end min-w-0 -ml-[25px]">
+                  <div className="flex justify-end min-w-0">
                     <button
                       onClick={handleAddCustomHoursNotWorked}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
@@ -692,7 +692,7 @@ function LaborRateCalculator() {
                       className="w-full px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
-                  <div className="flex justify-end min-w-0 -ml-[25px]">
+                  <div className="flex justify-end min-w-0">
                     <button
                       onClick={handleAddCustomNonBillable}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"

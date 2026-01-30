@@ -580,16 +580,18 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Hours Not Worked */}
-                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                  <div className="flex gap-2 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50 min-w-0 overflow-hidden -ml-[15px]">
+                  <div className="col-span-2 min-w-0 ml-[15px]">
                     <input
                       type="text"
                       value={newCustomHoursNotWorked}
                       onChange={(e) => setNewCustomHoursNotWorked(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomHoursNotWorked()}
                       placeholder="Custom Entry"
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
+                  </div>
+                  <div className="flex justify-end min-w-0">
                     <button
                       onClick={handleAddCustomHoursNotWorked}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
@@ -679,16 +681,18 @@ function LaborRateCalculator() {
                   </div>
 
                   {/* Add Custom Non-Billable */}
-                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                  <div className="flex gap-2 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50 min-w-0 overflow-hidden -ml-[15px]">
+                  <div className="col-span-2 min-w-0 ml-[15px]">
                     <input
                       type="text"
                       value={newCustomNonBillable}
                       onChange={(e) => setNewCustomNonBillable(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
                       placeholder="Custom Entry"
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
+                  </div>
+                  <div className="flex justify-end min-w-0">
                     <button
                       onClick={handleAddCustomNonBillable}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"

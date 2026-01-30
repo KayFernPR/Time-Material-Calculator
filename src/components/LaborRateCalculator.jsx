@@ -580,8 +580,8 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Hours Not Worked */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-stretch p-0 border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[15px]">
-                  <div className="col-span-3 flex items-center gap-2 p-2 min-w-0 ml-[15px]">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[15px] pt-2 pr-2 pb-2 pl-[15px]">
+                  <div className="col-span-3 flex items-center gap-2 w-full min-w-0">
                     <input
                       type="text"
                       value={newCustomHoursNotWorked}
@@ -680,8 +680,8 @@ function LaborRateCalculator() {
                   </div>
 
                   {/* Add Custom Non-Billable */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-stretch p-0 border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[15px]">
-                  <div className="col-span-3 flex items-center gap-2 p-2 min-w-0 ml-[15px]">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[15px] pt-2 pr-2 pb-2 pl-[15px]">
+                  <div className="col-span-3 flex items-center gap-2 w-full min-w-0">
                     <input
                       type="text"
                       value={newCustomNonBillable}

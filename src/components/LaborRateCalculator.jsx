@@ -588,7 +588,7 @@ function LaborRateCalculator() {
                       onChange={(e) => setNewCustomHoursNotWorked(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomHoursNotWorked()}
                       placeholder="Custom Entry"
-                      className="flex-1 min-w-0 max-w-[calc(100%-6rem)] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-0 max-w-[calc(100%-7rem)] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
                       type="button"
@@ -688,7 +688,7 @@ function LaborRateCalculator() {
                       onChange={(e) => setNewCustomNonBillable(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
                       placeholder="Custom Entry"
-                      className="flex-1 min-w-0 max-w-[calc(100%-6rem)] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-0 max-w-[calc(100%-7rem)] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
                       type="button"

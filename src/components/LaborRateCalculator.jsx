@@ -580,22 +580,24 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Hours Not Worked */}
-                <div className="mt-3 flex items-center gap-2 p-2 border border-gray-200 rounded-lg bg-gray-50 w-full min-w-0 box-border">
-                  <input
-                    type="text"
-                    value={newCustomHoursNotWorked}
-                    onChange={(e) => setNewCustomHoursNotWorked(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddCustomHoursNotWorked()}
-                    placeholder="Custom Entry"
-                    className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddCustomHoursNotWorked}
-                    className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-                  >
-                    Add
-                  </button>
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-stretch p-0 border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[15px]">
+                  <div className="col-span-3 flex items-center gap-2 p-2 min-w-0 ml-[15px]">
+                    <input
+                      type="text"
+                      value={newCustomHoursNotWorked}
+                      onChange={(e) => setNewCustomHoursNotWorked(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddCustomHoursNotWorked()}
+                      placeholder="Custom Entry"
+                      className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomHoursNotWorked}
+                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Total PTO, Holidays and Sick Time */}
@@ -678,22 +680,24 @@ function LaborRateCalculator() {
                   </div>
 
                   {/* Add Custom Non-Billable */}
-                <div className="mt-3 flex items-center gap-2 p-2 border border-gray-200 rounded-lg bg-gray-50 w-full min-w-0 box-border">
-                  <input
-                    type="text"
-                    value={newCustomNonBillable}
-                    onChange={(e) => setNewCustomNonBillable(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
-                    placeholder="Custom Entry"
-                    className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddCustomNonBillable}
-                    className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-                  >
-                    Add
-                  </button>
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-stretch p-0 border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[15px]">
+                  <div className="col-span-3 flex items-center gap-2 p-2 min-w-0 ml-[15px]">
+                    <input
+                      type="text"
+                      value={newCustomNonBillable}
+                      onChange={(e) => setNewCustomNonBillable(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
+                      placeholder="Custom Entry"
+                      className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomNonBillable}
+                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Total Non-Billable Hours */}

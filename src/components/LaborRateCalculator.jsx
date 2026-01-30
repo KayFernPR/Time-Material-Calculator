@@ -581,7 +581,7 @@ function LaborRateCalculator() {
 
                 {/* Add Custom Hours Not Worked */}
                 <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50 min-w-0 overflow-hidden -ml-[15px]">
-                  <div className="col-span-2 min-w-0 ml-[10px]">
+                  <div className="col-span-2 min-w-0 ml-[7px]">
                     <input
                       type="text"
                       value={newCustomHoursNotWorked}
@@ -682,7 +682,7 @@ function LaborRateCalculator() {
 
                   {/* Add Custom Non-Billable */}
                 <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_5rem_6rem] gap-2 items-center p-2 border border-gray-200 rounded-lg bg-gray-50 min-w-0 overflow-hidden -ml-[15px]">
-                  <div className="col-span-2 min-w-0 ml-[10px]">
+                  <div className="col-span-2 min-w-0 ml-[7px]">
                     <input
                       type="text"
                       value={newCustomNonBillable}

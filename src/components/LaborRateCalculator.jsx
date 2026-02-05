@@ -781,7 +781,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_4rem_4.5rem_4.5rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[15px]">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_4rem_4.5rem_4.5rem] gap-2 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[15px]" style={{ fontSize: '0.65rem' }}>
                   <div className="min-w-0 overflow-hidden ml-[15px]"></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
                     <div>Burden</div>
@@ -917,7 +917,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_4rem_4.5rem_4.5rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[15px]">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_4rem_4.5rem_4.5rem] gap-2 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[15px]" style={{ fontSize: '0.65rem' }}>
                   <div className="min-w-0 overflow-hidden ml-[15px]"></div>
                   <div className="text-center leading-tight px-1 min-w-0 overflow-hidden">
                     <div>Burden</div>
@@ -1080,7 +1080,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_4.5rem_4.5rem_4.5rem_2rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_4.5rem_4.5rem_4.5rem_2rem] gap-2 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden" style={{ fontSize: '0.65rem' }}>
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
@@ -1215,7 +1215,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_4.5rem_4.5rem_4.5rem_2rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_4.5rem_4.5rem_4.5rem_2rem] gap-2 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden" style={{ fontSize: '0.65rem' }}>
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>
@@ -1350,7 +1350,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_4.5rem_4.5rem_4.5rem_2rem] gap-2 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_4.5rem_4.5rem_4.5rem_2rem] gap-2 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden" style={{ fontSize: '0.65rem' }}>
                   <div className="min-w-0 overflow-hidden"></div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Burden %</div>
                   <div className="text-center whitespace-nowrap min-w-0 overflow-hidden">Hrly ($)</div>

@@ -1451,8 +1451,8 @@ function LaborRateCalculator() {
                 
                 <div className="space-y-1">
                   <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                    <div className="flex items-center gap-2 min-w-0 overflow-hidden pr-2">
-                      <label className="text-gray-700 text-xs font-medium break-words min-w-0 overflow-hidden">
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
+                      <label className="text-gray-700 text-xs font-medium break-words min-w-0 line-clamp-2 leading-snug">
                         Division Overhead
                       </label>
                       <div className="relative group">

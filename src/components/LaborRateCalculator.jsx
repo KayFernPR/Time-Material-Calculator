@@ -1157,14 +1157,6 @@ function LaborRateCalculator() {
                       placeholder="Custom Entry"
                       className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={newCustomBenefitsBurden.percent || ''}
-                      onChange={(e) => setNewCustomBenefitsBurden(prev => ({ ...prev, percent: e.target.value }))}
-                      placeholder="%"
-                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
-                    />
                     <button
                       onClick={handleAddCustomBenefitsBurden}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
@@ -1292,14 +1284,6 @@ function LaborRateCalculator() {
                       placeholder="Custom Entry"
                       className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={newCustomAdditionalOverheads.percent || ''}
-                      onChange={(e) => setNewCustomAdditionalOverheads(prev => ({ ...prev, percent: e.target.value }))}
-                      placeholder="%"
-                      className="w-16 px-1.5 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right no-spinner"
-                    />
                     <button
                       onClick={handleAddCustomAdditionalOverheads}
                       className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
@@ -1426,14 +1410,6 @@ function LaborRateCalculator() {
                       onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="Custom Entry"
                       className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={newCustomEmployeeCost.percent || ''}
-                      onChange={(e) => setNewCustomEmployeeCost(prev => ({ ...prev, percent: e.target.value }))}
-                      placeholder="%"
-                      className="w-16 px-1.5 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
                     />
                     <button
                       onClick={handleAddCustomEmployeeCost}

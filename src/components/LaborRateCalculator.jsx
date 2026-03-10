@@ -795,7 +795,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
-                        <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-sm">
+                        <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
@@ -827,7 +827,7 @@ function LaborRateCalculator() {
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-sm">
+                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
                             {field.label}
                           </label>
                           <button
@@ -922,7 +922,7 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
-                        <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-sm">
+                        <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
                         <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
@@ -954,7 +954,7 @@ function LaborRateCalculator() {
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-sm">
+                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
                             {field.label}
                           </label>
                           <button

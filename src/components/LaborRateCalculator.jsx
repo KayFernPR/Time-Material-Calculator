@@ -641,7 +641,7 @@ function LaborRateCalculator() {
                 
                 {/* Total PTO, Holidays and Sick Time */}
                 <div className="mt-3 grid gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0 grid-cols-[1fr_4.5rem_4rem]">
-                  <div className="text-gray-700 text-xs font-semibold line-clamp-2 leading-tight min-w-0 px-1">Total PTO, Holidays and Sick Time</div>
+                  <div className="text-gray-700 text-xs font-semibold break-words leading-tight min-w-0 px-1">Total PTO, Holidays and Sick Time</div>
                   <div className="w-full text-center text-xs font-semibold text-gray-700 px-1 min-w-0 translate-x-[8px]">
                     {safeCalculations.totalHoursNotWorked} hrs
                   </div>
@@ -741,7 +741,7 @@ function LaborRateCalculator() {
                 
                 {/* Total Non-Billable Hours */}
                 <div className="mt-3 grid gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0 grid-cols-[1fr_4.5rem_4rem]">
-                  <div className="text-gray-700 text-xs font-semibold line-clamp-2 leading-tight min-w-0 px-1">Total Non-Billable Hours</div>
+                  <div className="text-gray-700 text-xs font-semibold break-words leading-tight min-w-0 px-1">Total Non-Billable Hours</div>
                   <div className="w-full text-center text-xs font-semibold text-gray-700 px-1 min-w-0 translate-x-[8px]">
                     {safeCalculations.totalNonBillableHours} hrs
                   </div>
@@ -753,7 +753,7 @@ function LaborRateCalculator() {
 
               {/* Total Hours Available For Work */}
               <div className="mt-3 grid gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/10 min-w-0 grid-cols-[1fr_4.5rem_4rem]">
-                <div className="text-gray-700 text-xs font-bold line-clamp-2 leading-tight min-w-0 px-1">Total Hours Available For Work</div>
+                <div className="text-gray-700 text-xs font-bold break-words leading-tight min-w-0 px-1">Total Hours Available For Work</div>
                 <div className="w-full text-center text-xs font-bold text-gray-700 px-1 min-w-0 translate-x-[8px]">
                   {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
                 </div>

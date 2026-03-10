@@ -798,7 +798,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden bg-gray-100 rounded">
                           <input
                             type="number"
                             step="0.01"
@@ -839,7 +839,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden bg-gray-100 rounded">
                           <input
                             type="number"
                             step="0.01"
@@ -888,7 +888,7 @@ function LaborRateCalculator() {
 
                 {/* Payroll Tax Burden */}
                 <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden -ml-[10px]">
-                  <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] whitespace-nowrap">Payroll Tax Burden</div>
+                  <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2">Payroll Tax Burden</div>
                   <div className="text-center text-sm font-semibold text-primary px-1 min-w-0">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>
@@ -925,7 +925,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden bg-gray-100 rounded">
                           <input
                             type="number"
                             step="0.01"
@@ -966,7 +966,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden bg-gray-100 rounded">
                           <input
                             type="number"
                             step="0.01"
@@ -1015,7 +1015,7 @@ function LaborRateCalculator() {
 
                 {/* Worker Burden Total */}
                 <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden -ml-[10px]">
-                  <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] whitespace-nowrap">Worker Burden</div>
+                  <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2">Worker Burden</div>
                   <div className="text-center text-sm font-semibold text-primary px-1 min-w-0">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
                   </div>
@@ -1030,7 +1030,7 @@ function LaborRateCalculator() {
 
               {/* Total Wage Burden */}
               <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/10 min-w-0 overflow-hidden -ml-[10px]">
-                <div className="text-gray-700 text-sm font-bold min-w-0 pr-1 overflow-hidden ml-[10px] whitespace-nowrap">Total Wage Burden</div>
+                <div className="text-gray-700 text-sm font-bold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2">Total Wage Burden</div>
                 <div className="text-center text-sm font-bold text-primary px-1 min-w-0">
                   {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                 </div>

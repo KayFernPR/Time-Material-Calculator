@@ -333,11 +333,9 @@ function LaborRateCalculator() {
     const generalCompanyOverheadHourlyRate = workersWage * (generalCompanyOverheadPercent / 100)
     const generalCompanyOverheadCharged = costBaseBeforeOverheadAndProfit * (generalCompanyOverheadPercent / 100)
 
-    // Profit: % of cumulative total BEFORE profit (cost base + division + general overhead), per Excel =$G$23*E59
-    const costBeforeProfit =
-      costBaseBeforeOverheadAndProfit + divisionOverheadCharged + generalCompanyOverheadCharged
+    // Profit Chgd ($) = Burden/hour to charge × Brdn (%)  (Burden/hour to charge = workersWageCharged)
     const profitHourlyRate = workersWage * (profitPercent / 100)
-    const profitCharged = costBeforeProfit * (profitPercent / 100)
+    const profitCharged = workersWageCharged * (profitPercent / 100)
 
     // Total Labor Rate = Workers Wage (Charged) + Total Mandatory Burden + Benefits Total +
     // Additional Overheads Total + Employee Costs Total + Division Overhead + General Company Overhead + Profit

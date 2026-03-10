@@ -866,20 +866,20 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Payroll Tax Field */}
-                <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[10px] pt-2 pr-2 pb-2 pl-[10px]">
-                  <div className="col-span-4 flex items-center gap-2 w-full min-w-0">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 flex-wrap items-center min-w-0">
                     <input
                       type="text"
                       value={newCustomPayrollTax.name}
                       onChange={(e) => setNewCustomPayrollTax(prev => ({ ...prev, name: e.target.value }))}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomPayrollTax()}
                       placeholder="Custom Entry"
-                      className="flex-1 min-w-0 max-w-[calc(100%-7rem)] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
                       type="button"
                       onClick={handleAddCustomPayrollTax}
-                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                     >
                       Add
                     </button>
@@ -993,20 +993,20 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Worker Burden Field */}
-                <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[10px] pt-2 pr-2 pb-2 pl-[10px]">
-                  <div className="col-span-4 flex items-center gap-2 w-full min-w-0">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 flex-wrap items-center min-w-0">
                     <input
                       type="text"
                       value={newCustomWorkerBurden.name}
                       onChange={(e) => setNewCustomWorkerBurden(prev => ({ ...prev, name: e.target.value }))}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomWorkerBurden()}
                       placeholder="Custom Entry"
-                      className="flex-1 min-w-0 max-w-[calc(100%-7rem)] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
                       type="button"
                       onClick={handleAddCustomWorkerBurden}
-                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                     >
                       Add
                     </button>

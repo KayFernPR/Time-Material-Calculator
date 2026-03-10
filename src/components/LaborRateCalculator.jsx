@@ -319,23 +319,36 @@ function LaborRateCalculator() {
     const employeeCostsHourlyRate = Object.values(employeeCostsHourlyRates).reduce((sum, val) => sum + val, 0)
     const employeeCostsChargedTotal = Object.values(employeeCostsCharged).reduce((sum, val) => sum + val, 0)
 
-    // Division Overhead, General Company Overhead, and Profit calculations
-    const divisionOverheadHourlyRate = workersWage * (divisionOverheadPercent / 100)
-    const divisionOverheadCharged = workersWageCharged * (divisionOverheadPercent / 100)
-    const generalCompanyOverheadHourlyRate = workersWage * (generalCompanyOverheadPercent / 100)
-    const generalCompanyOverheadCharged = workersWageCharged * (generalCompanyOverheadPercent / 100)
-    const profitHourlyRate = workersWage * (profitPercent / 100)
-    const profitCharged = workersWageCharged * (profitPercent / 100)
+    // Cost base before overhead & profit (wage + all burdens) — Excel applies overhead & profit % to this total
+    const costBaseBeforeOverheadAndProfit =
+      workersWageCharged +
+      totalMandatoryBurdenCharged +
+      benefitsBurdenChargedTotal +
+      additionalOverheadsChargedTotal +
+      employeeCostsChargedTotal
 
-    // Total Labor Rate
-    const totalLaborRate = workersWageCharged + 
-                          totalMandatoryBurdenCharged +
-                          benefitsBurdenChargedTotal +
-                          additionalOverheadsChargedTotal +
-                          employeeCostsChargedTotal +
-                          divisionOverheadCharged +
-                          generalCompanyOverheadCharged +
-                          profitCharged
+    // Division Overhead, General Company Overhead, and Profit: % of cumulative cost (wage + burdens), not just wage
+    const divisionOverheadHourlyRate = workersWage * (divisionOverheadPercent / 100)
+    const divisionOverheadCharged = costBaseBeforeOverheadAndProfit * (divisionOverheadPercent / 100)
+    const generalCompanyOverheadHourlyRate = workersWage * (generalCompanyOverheadPercent / 100)
+    const generalCompanyOverheadCharged = costBaseBeforeOverheadAndProfit * (generalCompanyOverheadPercent / 100)
+    const profitHourlyRate = workersWage * (profitPercent / 100)
+    const profitCharged = costBaseBeforeOverheadAndProfit * (profitPercent / 100)
+
+    // Total Labor Rate = Workers Wage (Charged) + Total Mandatory Burden + Benefits Total +
+    // Additional Overheads Total + Employee Costs Total + Division Overhead + General Company Overhead + Profit
+    const totalLaborRateRaw =
+      workersWageCharged +                    // Workers Wage (Charged)
+      totalMandatoryBurdenCharged +          // Total Mandatory Burden
+      benefitsBurdenChargedTotal +            // Benefits Total
+      additionalOverheadsChargedTotal +        // Additional Overheads Total
+      employeeCostsChargedTotal +             // Employee Costs Total
+      divisionOverheadCharged +               // Division Overhead
+      generalCompanyOverheadCharged +         // General Company Overhead
+      profitCharged                           // Profit
+    const totalLaborRate = Number.isFinite(totalLaborRateRaw)
+      ? Math.round(totalLaborRateRaw * 100) / 100
+      : 0
 
     return {
       hoursNotWorkedPercentages,

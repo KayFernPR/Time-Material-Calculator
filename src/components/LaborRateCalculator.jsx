@@ -619,20 +619,20 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Hours Not Worked */}
-                <div className="mt-3 grid gap-1 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 p-2 grid-cols-[1fr_4.5rem_4rem]">
-                  <div className="col-span-3 flex items-center gap-2 w-full min-w-0">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 flex-wrap items-center min-w-0">
                     <input
                       type="text"
                       value={newCustomHoursNotWorked}
                       onChange={(e) => setNewCustomHoursNotWorked(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomHoursNotWorked()}
                       placeholder="Custom Entry"
-                      className="flex-1 min-w-0 max-w-[calc(100%-7rem)] px-2 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
                       type="button"
                       onClick={handleAddCustomHoursNotWorked}
-                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-xs"
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                     >
                       Add
                     </button>
@@ -719,20 +719,20 @@ function LaborRateCalculator() {
                   </div>
 
                   {/* Add Custom Non-Billable */}
-                <div className="mt-3 grid gap-1 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 p-2 grid-cols-[1fr_4.5rem_4rem]">
-                  <div className="col-span-3 flex items-center gap-2 w-full min-w-0">
+                <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                  <div className="flex gap-2 flex-wrap items-center min-w-0">
                     <input
                       type="text"
                       value={newCustomNonBillable}
                       onChange={(e) => setNewCustomNonBillable(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddCustomNonBillable()}
                       placeholder="Custom Entry"
-                      className="flex-1 min-w-0 max-w-[calc(100%-7rem)] px-2 py-1 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 min-w-[120px] px-2 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
                       type="button"
                       onClick={handleAddCustomNonBillable}
-                      className="shrink-0 px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-xs"
+                      className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                     >
                       Add
                     </button>

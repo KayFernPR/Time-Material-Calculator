@@ -781,9 +781,9 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[10px] text-sm">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[10px] text-sm">
                   <div className="min-w-0 overflow-hidden ml-[10px]"></div>
-                  <div className="text-center whitespace-nowrap px-1 min-w-0">Burden %</div>
+                  <div className="text-center whitespace-nowrap px-1 min-w-0">Brdn %</div>
                   <div className="text-center whitespace-nowrap px-1 min-w-0">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap px-1 min-w-0">Chgd ($)</div>
                 </div>
@@ -794,11 +794,11 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[option.id] || 0
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
+                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
                         <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-0.5 pr-1 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -825,7 +825,7 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] ?? 0
                     const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] ?? 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
+                      <div key={field.id} className="grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
                           <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
                             {field.label}
@@ -839,7 +839,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-1 pr-1 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -866,7 +866,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Payroll Tax Field */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[10px] pt-2 pr-2 pb-2 pl-[10px]">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[10px] pt-2 pr-2 pb-2 pl-[10px]">
                   <div className="col-span-4 flex items-center gap-2 w-full min-w-0">
                     <input
                       type="text"
@@ -887,7 +887,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Payroll Tax Burden */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden -ml-[10px]">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden -ml-[10px]">
                   <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2">Payroll Tax Burden</div>
                   <div className="text-center text-sm font-semibold text-primary px-1 min-w-0">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
@@ -908,9 +908,9 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[10px] text-sm">
+                <div className="grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 overflow-hidden -ml-[10px] text-sm">
                   <div className="min-w-0 overflow-hidden ml-[10px]"></div>
-                  <div className="text-center whitespace-nowrap px-1 min-w-0">Burden %</div>
+                  <div className="text-center whitespace-nowrap px-1 min-w-0">Brdn %</div>
                   <div className="text-center whitespace-nowrap px-1 min-w-0">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap px-1 min-w-0">Chgd ($)</div>
                 </div>
@@ -921,11 +921,11 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[option.id] || 0
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
+                      <div key={option.id} className="grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
                         <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-0.5 pr-1 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -952,7 +952,7 @@ function LaborRateCalculator() {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] ?? 0
                     const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] ?? 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
+                      <div key={field.id} className="grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 overflow-hidden -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
                           <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
                             {field.label}
@@ -966,7 +966,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden">
+                        <div className="flex items-center justify-center min-w-0 px-1 pr-1 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -993,7 +993,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Add Custom Worker Burden Field */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[10px] pt-2 pr-2 pb-2 pl-[10px]">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-stretch border border-gray-200 rounded-lg bg-gray-50 min-w-0 -ml-[10px] pt-2 pr-2 pb-2 pl-[10px]">
                   <div className="col-span-4 flex items-center gap-2 w-full min-w-0">
                     <input
                       type="text"
@@ -1014,7 +1014,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Worker Burden Total */}
-                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden -ml-[10px]">
+                <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 overflow-hidden -ml-[10px]">
                   <div className="text-gray-700 text-sm font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2">Worker Burden</div>
                   <div className="text-center text-sm font-semibold text-primary px-1 min-w-0">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
@@ -1029,7 +1029,7 @@ function LaborRateCalculator() {
               </div>
 
               {/* Total Wage Burden */}
-              <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_3.5rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/10 min-w-0 overflow-hidden -ml-[10px]">
+              <div className="mt-3 grid grid-cols-[minmax(6rem,1fr)_4rem_3.75rem_3.75rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/10 min-w-0 overflow-hidden -ml-[10px]">
                 <div className="text-gray-700 text-sm font-bold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2">Total Wage Burden</div>
                 <div className="text-center text-sm font-bold text-primary px-1 min-w-0">
                   {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%

@@ -129,7 +129,7 @@ function LaborRateCalculator() {
   const [newCustomNonBillable, setNewCustomNonBillable] = useState('')
   
   // Step 2: Employee earned data
-  const [workersWage, setWorkersWage] = useState(40.00)
+  const [workersWage, setWorkersWage] = useState('')
   const [mandatoryPayrollTaxPercents, setMandatoryPayrollTaxPercents] = useState(
     Object.fromEntries(MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [opt.id, opt.defaultPercent]))
   )
@@ -234,17 +234,18 @@ function LaborRateCalculator() {
     const totalNonBillableHoursPercent = PAID_CAPACITY > 0 ? (totalNonBillableHours / PAID_CAPACITY) * 100 : 0
 
     // Step 2 calculations - Workers Wage Charged is the key rate (Hourly Rate)
-    const workersWageCharged = utilizationPercent > 0 ? workersWage / utilizationPercent : 0
+    const workersWageNum = parseFloat(workersWage) || 0
+    const workersWageCharged = utilizationPercent > 0 ? workersWageNum / utilizationPercent : 0
 
     // Mandatory Payroll Tax Burden calculations
     const payrollTaxHourlyRates = Object.fromEntries([
       ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
         opt.id,
-        workersWage * ((mandatoryPayrollTaxPercents[opt.id] || 0) / 100)
+        workersWageNum * ((mandatoryPayrollTaxPercents[opt.id] || 0) / 100)
       ]),
       ...customPayrollTaxFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWage * ((field.percent || 0) / 100)
+        workersWageNum * ((field.percent || 0) / 100)
       ])
     ])
     
@@ -268,11 +269,11 @@ function LaborRateCalculator() {
     const workerBurdenHourlyRates = Object.fromEntries([
       ...MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        workersWage * ((mandatoryWorkerBurdenPercents[opt.id] || 0) / 100)
+        workersWageNum * ((mandatoryWorkerBurdenPercents[opt.id] || 0) / 100)
       ]),
       ...customWorkerBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWage * ((field.percent || 0) / 100)
+        workersWageNum * ((field.percent || 0) / 100)
       ])
     ])
     
@@ -301,11 +302,11 @@ function LaborRateCalculator() {
     const benefitsBurdenHourlyRates = Object.fromEntries([
       ...BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        workersWage * ((benefitsBurdenPercents[opt.id] || 0) / 100)
+        workersWageNum * ((benefitsBurdenPercents[opt.id] || 0) / 100)
       ]),
       ...customBenefitsBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWage * ((field.percent || 0) / 100)
+        workersWageNum * ((field.percent || 0) / 100)
       ])
     ])
     
@@ -329,11 +330,11 @@ function LaborRateCalculator() {
     const additionalOverheadsHourlyRates = Object.fromEntries([
       ...ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
-        workersWage * ((additionalOverheadsPercents[opt.id] || 0) / 100)
+        workersWageNum * ((additionalOverheadsPercents[opt.id] || 0) / 100)
       ]),
       ...customAdditionalOverheadsFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWage * ((field.percent || 0) / 100)
+        workersWageNum * ((field.percent || 0) / 100)
       ])
     ])
     
@@ -357,11 +358,11 @@ function LaborRateCalculator() {
     const employeeCostsHourlyRates = Object.fromEntries([
       ...EMPLOYEE_COSTS_OPTIONS.map(opt => [
         opt.id,
-        workersWage * ((employeeCostsPercents[opt.id] || 0) / 100)
+        workersWageNum * ((employeeCostsPercents[opt.id] || 0) / 100)
       ]),
       ...customEmployeeCosts.map((cost, idx) => [
         `custom-${idx}`,
-        workersWage * ((cost.percent || 0) / 100)
+        workersWageNum * ((cost.percent || 0) / 100)
       ])
     ])
     
@@ -390,13 +391,13 @@ function LaborRateCalculator() {
       employeeCostsChargedTotal
 
     // Division Overhead & General Company Overhead: Chgd ($) = Burden/hour to charge × Brdn (%), same as Profit
-    const divisionOverheadHourlyRate = workersWage * (divisionOverheadPercent / 100)
+    const divisionOverheadHourlyRate = workersWageNum * (divisionOverheadPercent / 100)
     const divisionOverheadCharged = workersWageCharged * (divisionOverheadPercent / 100)
-    const generalCompanyOverheadHourlyRate = workersWage * (generalCompanyOverheadPercent / 100)
+    const generalCompanyOverheadHourlyRate = workersWageNum * (generalCompanyOverheadPercent / 100)
     const generalCompanyOverheadCharged = workersWageCharged * (generalCompanyOverheadPercent / 100)
 
     // Profit Chgd ($) = Burden/hour to charge × Brdn (%)  (Burden/hour to charge = workersWageCharged)
-    const profitHourlyRate = workersWage * (profitPercent / 100)
+    const profitHourlyRate = workersWageNum * (profitPercent / 100)
     const profitCharged = workersWageCharged * (profitPercent / 100)
 
     // Total Labor Rate = Workers Wage (Charged) + Total Mandatory Burden + Benefits Total +
@@ -561,7 +562,7 @@ function LaborRateCalculator() {
     totalHoursNotWorkedPercent: 0,
     totalNonBillableHoursPercent: 0,
     utilizationPercent: 1,
-    workersWageCharged: workersWage,
+    workersWageCharged: parseFloat(workersWage) || 0,
     payrollTaxHourlyRates: {},
     payrollTaxCharged: {},
     combinedFederalPayrollTaxPercent: 0,
@@ -596,7 +597,7 @@ function LaborRateCalculator() {
       generalCompanyOverheadCharged: 0,
       profitHourlyRate: 0,
       profitCharged: 0,
-      totalLaborRate: workersWage
+      totalLaborRate: parseFloat(workersWage) || 0
   }
 
   return (
@@ -853,7 +854,7 @@ function LaborRateCalculator() {
                         type="number"
                         step="0.01"
                         value={workersWage}
-                        onChange={(e) => setWorkersWage(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setWorkersWage(e.target.value)}
                         className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold"
                       />
                       <span className="text-gray-500">/hr</span>
@@ -868,7 +869,7 @@ function LaborRateCalculator() {
                         ${safeCalculations.workersWageCharged.toFixed(2)}/hr
                       </div>
                       <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
-                        = ${workersWage.toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
+                        = ${(parseFloat(workersWage) || 0).toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                       </div>
                     </div>
                   </div>
@@ -1721,13 +1722,13 @@ function LaborRateCalculator() {
                 <div className="space-y-1.5">
                   <div>
                     <div className="text-xs text-gray-600">Workers Wage (Earned)</div>
-                    <div className="text-lg font-bold text-primary">${workersWage.toFixed(2)}/hr</div>
+                    <div className="text-lg font-bold text-primary">${(parseFloat(workersWage) || 0).toFixed(2)}/hr</div>
                   </div>
                   <div className="border-t border-primary/20 pt-1.5">
                     <div className="text-xs text-gray-600">Workers Wage (Charged)</div>
                     <div className="text-lg font-bold text-primary">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
                       <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
-                        = ${workersWage.toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
+                        = ${(parseFloat(workersWage) || 0).toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                     </div>
                   </div>
                 </div>

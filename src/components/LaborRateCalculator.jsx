@@ -58,9 +58,13 @@ const EMPLOYEE_COSTS_OPTIONS = [
 const PAID_CAPACITY = 2080 // 52 weeks * 40 hours
 
 // Shows (?) tooltip only when the label is truncated (e.g. shows "..."). User can hover to read full label.
+// Tooltip is rendered via portal (like Division Overhead) so it always sits on top and is never clipped.
 function TruncatedLabelWithTooltip({ label, fullText, labelClassName, wrapperClassName = 'flex items-center gap-1.5 min-w-0 overflow-hidden' }) {
   const labelRef = useRef(null)
+  const triggerRef = useRef(null)
   const [showIcon, setShowIcon] = useState(false)
+  const [tooltipOpen, setTooltipOpen] = useState(false)
+  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 })
   useEffect(() => {
     const el = labelRef.current
     if (!el) return
@@ -70,20 +74,45 @@ function TruncatedLabelWithTooltip({ label, fullText, labelClassName, wrapperCla
     ro.observe(el)
     return () => ro.disconnect()
   }, [label])
+  const updateTooltipPos = () => {
+    const el = triggerRef.current
+    if (el) {
+      const rect = el.getBoundingClientRect()
+      setTooltipPos({ top: rect.top, left: rect.left + rect.width / 2 })
+    }
+  }
   return (
     <div className={wrapperClassName}>
       <label ref={labelRef} className={labelClassName}>
         {label}
       </label>
       {showIcon && (
-        <div className="relative group flex-shrink-0 z-[100]">
+        <div
+          ref={triggerRef}
+          className="relative flex-shrink-0"
+          onMouseEnter={() => { updateTooltipPos(); setTooltipOpen(true) }}
+          onMouseLeave={() => setTooltipOpen(false)}
+        >
           <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
           </svg>
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] pointer-events-none">
-            {fullText}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-          </div>
+      {tooltipOpen && createPortal(
+        <div
+          role="tooltip"
+          className="w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal pointer-events-none"
+          style={{
+            position: 'fixed',
+            left: tooltipPos.left,
+            top: tooltipPos.top - 8,
+            transform: 'translate(-50%, -100%)',
+            zIndex: 99999
+          }}
+        >
+          {fullText}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+        </div>,
+        document.body
+      )}
         </div>
       )}
     </div>

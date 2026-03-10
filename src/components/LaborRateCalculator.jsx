@@ -577,11 +577,11 @@ function LaborRateCalculator() {
                 {/* Table Header — label column flexible, hours & % compact; headers centered over hrs and % */}
                 <div className="grid gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-2 min-w-0 grid-cols-[1fr_4.5rem_4rem]">
                   <div className="min-w-0 px-1"></div>
-                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[3px]">
+                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[6px]">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
-                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[3px]">
+                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[6px]">
                     <div>Burden</div>
                     <div>Chg (%)</div>
                   </div>
@@ -660,11 +660,11 @@ function LaborRateCalculator() {
                 {/* Table Header — label column flexible, hours & % compact; headers centered over hrs and % */}
                 <div className="grid gap-1 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-2 min-w-0 grid-cols-[1fr_4.5rem_4rem]">
                   <div className="min-w-0 px-1"></div>
-                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[3px]">
+                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[6px]">
                     <div>Hours</div>
                     <div>Allocated</div>
                   </div>
-                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[3px]">
+                  <div className="flex flex-col items-center justify-center leading-tight px-1 min-w-0 w-full -translate-x-[6px]">
                     <div>Burden</div>
                     <div>Chg (%)</div>
                   </div>

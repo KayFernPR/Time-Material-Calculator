@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 // Step 1: Hours Not Worked options
 const HOURS_NOT_WORKED_OPTIONS = [
@@ -103,6 +104,29 @@ function LaborRateCalculator() {
   const step2Ref = useRef(null)
   const step3MandatoryRef = useRef(null)
   const step3Ref = useRef(null)
+  const divisionOverheadTooltipTriggerRef = useRef(null)
+  const [divisionOverheadTooltipOpen, setDivisionOverheadTooltipOpen] = useState(false)
+  const [divisionOverheadTooltipPos, setDivisionOverheadTooltipPos] = useState({ top: 0, left: 0 })
+
+  const updateDivisionOverheadTooltipPos = () => {
+    const el = divisionOverheadTooltipTriggerRef.current
+    if (el) {
+      const rect = el.getBoundingClientRect()
+      setDivisionOverheadTooltipPos({ top: rect.top, left: rect.left + rect.width / 2 })
+    }
+  }
+
+  useEffect(() => {
+    if (!divisionOverheadTooltipOpen) return
+    const scrollEl = step3MandatoryRef.current
+    const onScrollOrResize = () => updateDivisionOverheadTooltipPos()
+    if (scrollEl) scrollEl.addEventListener('scroll', onScrollOrResize, true)
+    window.addEventListener('resize', onScrollOrResize)
+    return () => {
+      if (scrollEl) scrollEl.removeEventListener('scroll', onScrollOrResize, true)
+      window.removeEventListener('resize', onScrollOrResize)
+    }
+  }, [divisionOverheadTooltipOpen])
 
   // Auto-scroll inputs into view when focused
   useEffect(() => {
@@ -1455,19 +1479,20 @@ function LaborRateCalculator() {
                       <label className="text-gray-700 text-xs font-medium break-words min-w-0 line-clamp-2 leading-snug">
                         Division Overhead
                       </label>
-                      <div className="relative group">
+                      <div
+                        ref={divisionOverheadTooltipTriggerRef}
+                        className="relative flex-shrink-0"
+                        onMouseEnter={() => { updateDivisionOverheadTooltipPos(); setDivisionOverheadTooltipOpen(true) }}
+                        onMouseLeave={() => setDivisionOverheadTooltipOpen(false)}
+                      >
                         <svg 
                           className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" 
                           fill="currentColor" 
                           viewBox="0 0 20 20"
+                          aria-hidden="true"
                         >
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                         </svg>
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none">
-                          <div className="font-semibold mb-1">Division Overhead includes:</div>
-                          <div>Management, Non-Billable and General Warehouse Space, Non-Billable Vehicles, General Overheads</div>
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                        </div>
                       </div>
                     </div>
                     <div className="flex items-center justify-center min-w-0 overflow-visible">
@@ -1809,6 +1834,24 @@ function LaborRateCalculator() {
           </div>
         </div>
       </div>
+      {divisionOverheadTooltipOpen && createPortal(
+        <div
+          role="tooltip"
+          className="w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg pointer-events-none"
+          style={{
+            position: 'fixed',
+            left: divisionOverheadTooltipPos.left,
+            top: divisionOverheadTooltipPos.top - 8,
+            transform: 'translate(-50%, -100%)',
+            zIndex: 99999
+          }}
+        >
+          <div className="font-semibold mb-1">Division Overhead includes:</div>
+          <div>Management, Non-Billable and General Warehouse Space, Non-Billable Vehicles, General Overheads</div>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }

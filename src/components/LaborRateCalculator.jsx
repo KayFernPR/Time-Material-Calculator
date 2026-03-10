@@ -327,11 +327,11 @@ function LaborRateCalculator() {
       additionalOverheadsChargedTotal +
       employeeCostsChargedTotal
 
-    // Division Overhead & General Company Overhead: % of cost base (wage + burdens)
+    // Division Overhead & General Company Overhead: Chgd ($) = Burden/hour to charge × Brdn (%), same as Profit
     const divisionOverheadHourlyRate = workersWage * (divisionOverheadPercent / 100)
-    const divisionOverheadCharged = costBaseBeforeOverheadAndProfit * (divisionOverheadPercent / 100)
+    const divisionOverheadCharged = workersWageCharged * (divisionOverheadPercent / 100)
     const generalCompanyOverheadHourlyRate = workersWage * (generalCompanyOverheadPercent / 100)
-    const generalCompanyOverheadCharged = costBaseBeforeOverheadAndProfit * (generalCompanyOverheadPercent / 100)
+    const generalCompanyOverheadCharged = workersWageCharged * (generalCompanyOverheadPercent / 100)
 
     // Profit Chgd ($) = Burden/hour to charge × Brdn (%)  (Burden/hour to charge = workersWageCharged)
     const profitHourlyRate = workersWage * (profitPercent / 100)

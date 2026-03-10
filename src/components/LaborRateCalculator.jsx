@@ -798,7 +798,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden bg-gray-100 rounded">
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
                           <input
                             type="number"
                             step="0.01"
@@ -807,7 +807,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-12 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
+                            className="w-12 px-1.5 py-1 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -839,7 +839,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden bg-gray-100 rounded">
+                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden">
                           <input
                             type="number"
                             step="0.01"
@@ -849,7 +849,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomPayrollTaxFields(updated)
                             }}
-                            className="w-12 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
+                            className="w-12 px-1.5 py-1 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -925,7 +925,7 @@ function LaborRateCalculator() {
                         <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden ml-[10px] leading-tight text-xs line-clamp-2">
                           {option.label}
                         </label>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden bg-gray-100 rounded">
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-hidden">
                           <input
                             type="number"
                             step="0.01"
@@ -934,7 +934,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-12 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
+                            className="w-12 px-1.5 py-1 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -966,7 +966,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden bg-gray-100 rounded">
+                        <div className="flex items-center justify-center min-w-0 px-1 overflow-hidden">
                           <input
                             type="number"
                             step="0.01"
@@ -976,7 +976,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomWorkerBurdenFields(updated)
                             }}
-                            className="w-12 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
+                            className="w-12 px-1.5 py-1 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>

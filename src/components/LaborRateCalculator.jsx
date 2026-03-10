@@ -57,6 +57,39 @@ const EMPLOYEE_COSTS_OPTIONS = [
 
 const PAID_CAPACITY = 2080 // 52 weeks * 40 hours
 
+// Shows (?) tooltip only when the label is truncated (e.g. shows "..."). User can hover to read full label.
+function TruncatedLabelWithTooltip({ label, fullText, labelClassName, wrapperClassName = 'flex items-center gap-1.5 min-w-0 overflow-hidden' }) {
+  const labelRef = useRef(null)
+  const [showIcon, setShowIcon] = useState(false)
+  useEffect(() => {
+    const el = labelRef.current
+    if (!el) return
+    const check = () => setShowIcon(el.scrollHeight > el.clientHeight)
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [label])
+  return (
+    <div className={wrapperClassName}>
+      <label ref={labelRef} className={labelClassName}>
+        {label}
+      </label>
+      {showIcon && (
+        <div className="relative group flex-shrink-0">
+          <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+          </svg>
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
+            {fullText}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function LaborRateCalculator() {
   // Step 1: Hours data
   const [hoursNotWorked, setHoursNotWorked] = useState({})
@@ -834,20 +867,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
-                            {option.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {option.label.replace(/\n/g, ' ')}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={option.label}
+                          fullText={option.label.replace(/\n/g, ' ')}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]"
+                        />
                         <div className="flex items-center justify-center min-w-0 px-0.5 pr-0.5 overflow-visible">
                           <input
                             type="number"
@@ -877,18 +902,12 @@ function LaborRateCalculator() {
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
-                            {field.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {field.label}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
+                          <TruncatedLabelWithTooltip
+                            label={field.label}
+                            fullText={field.label}
+                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
+                            wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                          />
                           <button
                             type="button"
                             onClick={() => setCustomPayrollTaxFields(prev => prev.filter((_, i) => i !== idx))}
@@ -981,20 +1000,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
-                            {option.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {option.label.replace(/\n/g, ' ')}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={option.label}
+                          fullText={option.label.replace(/\n/g, ' ')}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]"
+                        />
                         <div className="flex items-center justify-center min-w-0 px-0.5 pr-0.5 overflow-visible">
                           <input
                             type="number"
@@ -1024,18 +1035,12 @@ function LaborRateCalculator() {
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2">
-                            {field.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {field.label}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
+                          <TruncatedLabelWithTooltip
+                            label={field.label}
+                            fullText={field.label}
+                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
+                            wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                          />
                           <button
                             type="button"
                             onClick={() => setCustomWorkerBurdenFields(prev => prev.filter((_, i) => i !== idx))}
@@ -1156,20 +1161,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.benefitsBurdenCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2">
-                            {option.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {option.label.replace(/\n/g, ' ')}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={option.label}
+                          fullText={option.label.replace(/\n/g, ' ')}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                        />
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1199,20 +1196,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.benefitsBurdenCharged[`custom-${idx}`] || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2">
-                            {field.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {field.label}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={field.label}
+                          fullText={field.label}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                        />
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1305,20 +1294,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.additionalOverheadsCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2">
-                            {option.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {option.label.replace(/\n/g, ' ')}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={option.label}
+                          fullText={option.label.replace(/\n/g, ' ')}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                        />
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1348,20 +1329,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.additionalOverheadsCharged[`custom-${idx}`] || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2">
-                            {field.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {field.label}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={field.label}
+                          fullText={field.label}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                        />
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1454,20 +1427,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.employeeCostsCharged[option.id] || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2">
-                            {option.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {option.label.replace(/\n/g, ' ')}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={option.label}
+                          fullText={option.label.replace(/\n/g, ' ')}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                        />
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1497,20 +1462,12 @@ function LaborRateCalculator() {
                     const charged = safeCalculations.employeeCostsCharged[`custom-${idx}`] || 0
                     return (
                       <div key={cost.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                          <label className="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2">
-                            {cost.label}
-                          </label>
-                          <div className="relative group flex-shrink-0">
-                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                            </svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 max-w-[220px] p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                              {cost.label}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        </div>
+                        <TruncatedLabelWithTooltip
+                          label={cost.label}
+                          fullText={cost.label}
+                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
+                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
+                        />
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"

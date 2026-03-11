@@ -607,9 +607,16 @@ function LaborRateCalculator() {
   return (
     <div className="min-h-screen w-full min-w-0 bg-light py-4 sm:py-6 lg:py-8 overflow-x-hidden">
       <div className="container mx-auto w-full min-w-0 px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mb-6 lg:mb-8 text-center">
-          Building Your Labor Rate Calculator
-        </h1>
+        <div className="flex flex-col items-center mb-6 lg:mb-8">
+          <img
+            src="/logo.png"
+            alt="Time & Material Calculator"
+            className="h-12 sm:h-14 lg:h-16 w-auto object-contain"
+          />
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mt-3 text-center">
+            Building Your Labor Rate Calculator
+          </h1>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-[5px] min-w-0">
           {/* Step 1: Paid Capacity */}

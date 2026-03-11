@@ -969,7 +969,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -985,7 +985,7 @@ function LaborRateCalculator() {
                                 setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1000,7 +1000,7 @@ function LaborRateCalculator() {
                                 setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1040,7 +1040,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomPayrollTaxFields(updated)
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1058,7 +1058,7 @@ function LaborRateCalculator() {
                                 setCustomPayrollTaxFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1075,7 +1075,7 @@ function LaborRateCalculator() {
                                 setCustomPayrollTaxFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1157,7 +1157,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1173,7 +1173,7 @@ function LaborRateCalculator() {
                                 setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1188,7 +1188,7 @@ function LaborRateCalculator() {
                                 setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1228,7 +1228,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomWorkerBurdenFields(updated)
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1246,7 +1246,7 @@ function LaborRateCalculator() {
                                 setCustomWorkerBurdenFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1263,7 +1263,7 @@ function LaborRateCalculator() {
                                 setCustomWorkerBurdenFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1373,7 +1373,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1389,7 +1389,7 @@ function LaborRateCalculator() {
                                 setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1404,7 +1404,7 @@ function LaborRateCalculator() {
                                 setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1435,7 +1435,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomBenefitsBurdenFields(updated)
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
@@ -1452,7 +1452,7 @@ function LaborRateCalculator() {
                                 setCustomBenefitsBurdenFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1469,7 +1469,7 @@ function LaborRateCalculator() {
                                 setCustomBenefitsBurdenFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1561,7 +1561,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1577,7 +1577,7 @@ function LaborRateCalculator() {
                                 setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1592,7 +1592,7 @@ function LaborRateCalculator() {
                                 setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1623,7 +1623,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomAdditionalOverheadsFields(updated)
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
@@ -1640,7 +1640,7 @@ function LaborRateCalculator() {
                                 setCustomAdditionalOverheadsFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1657,7 +1657,7 @@ function LaborRateCalculator() {
                                 setCustomAdditionalOverheadsFields(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1749,7 +1749,7 @@ function LaborRateCalculator() {
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
                             }))}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1765,7 +1765,7 @@ function LaborRateCalculator() {
                                 setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1780,7 +1780,7 @@ function LaborRateCalculator() {
                                 setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1811,7 +1811,7 @@ function LaborRateCalculator() {
                               updated[idx].percent = parseFloat(e.target.value) || 0
                               setCustomEmployeeCosts(updated)
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
@@ -1828,7 +1828,7 @@ function LaborRateCalculator() {
                                 setCustomEmployeeCosts(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1845,7 +1845,7 @@ function LaborRateCalculator() {
                                 setCustomEmployeeCosts(updated)
                               }
                             }}
-                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                         </div>
@@ -1940,7 +1940,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={divisionOverheadPercent ?? ''}
                         onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -1957,7 +1957,7 @@ function LaborRateCalculator() {
                             setDivisionOverheadPercent(100 * v / (base + v))
                           }
                         }}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                     </div>
@@ -1973,7 +1973,7 @@ function LaborRateCalculator() {
                             setDivisionOverheadPercent(100 * v / (base + v))
                           }
                         }}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                     </div>
@@ -2006,7 +2006,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={generalCompanyOverheadPercent ?? ''}
                         onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -2023,7 +2023,7 @@ function LaborRateCalculator() {
                             setGeneralCompanyOverheadPercent(100 * v / (base + v))
                           }
                         }}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                     </div>
@@ -2039,7 +2039,7 @@ function LaborRateCalculator() {
                             setGeneralCompanyOverheadPercent(100 * v / (base + v))
                           }
                         }}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                     </div>
@@ -2072,7 +2072,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={profitPercent ?? ''}
                         onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
@@ -2089,7 +2089,7 @@ function LaborRateCalculator() {
                             setProfitPercent(100 * v / (base + v))
                           }
                         }}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                     </div>
@@ -2105,7 +2105,7 @@ function LaborRateCalculator() {
                             setProfitPercent(100 * v / (base + v))
                           }
                         }}
-                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                     </div>

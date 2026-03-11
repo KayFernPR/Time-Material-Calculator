@@ -67,3 +67,13 @@ input.no-spinner[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+/* Ensure burden inputs (Brdn %, Hrly, Chgd) in Step 2 & 3 look and behave as editable */
+input.burden-input {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  cursor: text;
+}
+input.burden-input::placeholder {
+  color: #9ca3af;
+}

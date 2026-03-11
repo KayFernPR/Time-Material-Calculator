@@ -626,7 +626,7 @@ function LaborRateCalculator() {
               className="bg-white rounded-lg shadow-lg pt-6 pr-4 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
-              <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
+              <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
                 Step 1: Paid Capacity
               </h2>
               
@@ -883,7 +883,7 @@ function LaborRateCalculator() {
               className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
-              <h2 className="text-2xl font-bold text-primary mb-4 border-b-2 border-primary pb-2">
+              <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
                 Step 2: Wage Burden
               </h2>
 

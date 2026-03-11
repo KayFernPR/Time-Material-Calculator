@@ -1779,10 +1779,10 @@ function LaborRateCalculator() {
                 </h3>
                 
                 <div className="space-y-3 text-sm">
-                  {/* Step 1 Summary: Billable utilization */}
+                  {/* Billable utilization summary */}
                   <div className="border-b border-gray-200 pb-2">
                     <div className="flex justify-between items-center gap-2 min-w-0">
-                      <span className="font-semibold text-gray-700 min-w-0 truncate">Billable utilization (Step 1)</span>
+                      <span className="font-semibold text-gray-700 min-w-0 truncate">Billable utilization</span>
                       <span className="font-bold text-primary shrink-0">
                         {(safeCalculations.utilizationPercent * 100).toFixed(1)}%
                       </span>

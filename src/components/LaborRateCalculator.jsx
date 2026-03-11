@@ -463,7 +463,10 @@ function LaborRateCalculator() {
       generalCompanyOverheadCharged,
       profitHourlyRate,
       profitCharged,
-      totalLaborRate
+      totalLaborRate,
+      costBaseBeforeOverheadAndProfit,
+      totalAfterDivisionOverhead,
+      totalAfterGeneralOverhead
     }
   }, [
     hoursNotWorked,
@@ -601,7 +604,10 @@ function LaborRateCalculator() {
       generalCompanyOverheadCharged: 0,
       profitHourlyRate: 0,
       profitCharged: 0,
-      totalLaborRate: parseFloat(workersWage) || 0
+      totalLaborRate: parseFloat(workersWage) || 0,
+      costBaseBeforeOverheadAndProfit: 0,
+      totalAfterDivisionOverhead: 0,
+      totalAfterGeneralOverhead: 0
   }
 
   return (
@@ -944,6 +950,8 @@ function LaborRateCalculator() {
                     const percent = mandatoryPayrollTaxPercents[option.id] || 0
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[option.id] || 0
                     const charged = safeCalculations.payrollTaxCharged[option.id] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <TruncatedLabelWithTooltip
@@ -956,7 +964,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={mandatoryPayrollTaxPercents[option.id] || ''}
+                            value={mandatoryPayrollTaxPercents[option.id] ?? ''}
                             onChange={(e) => setMandatoryPayrollTaxPercents(prev => ({
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
@@ -966,11 +974,35 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 pl-0.5 pr-2 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                       </div>
                     )
@@ -978,6 +1010,8 @@ function LaborRateCalculator() {
                   {customPayrollTaxFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] ?? 0
                     const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] ?? 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
@@ -1000,7 +1034,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent || ''}
+                            value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customPayrollTaxFields]
                               updated[idx].percent = parseFloat(e.target.value) || 0
@@ -1011,11 +1045,39 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${Number(hourlyRate).toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? Number(hourlyRate).toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customPayrollTaxFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageNum) * 100 }
+                                setCustomPayrollTaxFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${Number(charged).toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 pl-0.5 pr-2 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? Number(charged).toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customPayrollTaxFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageChargedVal) * 100 }
+                                setCustomPayrollTaxFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                       </div>
                     )
@@ -1074,9 +1136,10 @@ function LaborRateCalculator() {
                 
                 <div className="space-y-1">
                   {MANDATORY_WORKER_BURDEN_OPTIONS.map(option => {
-                    const percent = mandatoryWorkerBurdenPercents[option.id] || 0
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[option.id] || 0
                     const charged = safeCalculations.workerBurdenCharged[option.id] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <TruncatedLabelWithTooltip
@@ -1089,7 +1152,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={mandatoryWorkerBurdenPercents[option.id] || ''}
+                            value={mandatoryWorkerBurdenPercents[option.id] ?? ''}
                             onChange={(e) => setMandatoryWorkerBurdenPercents(prev => ({
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
@@ -1099,11 +1162,35 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 pl-0.5 pr-2 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                       </div>
                     )
@@ -1111,6 +1198,8 @@ function LaborRateCalculator() {
                   {customWorkerBurdenFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] ?? 0
                     const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] ?? 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
@@ -1133,7 +1222,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent || ''}
+                            value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customWorkerBurdenFields]
                               updated[idx].percent = parseFloat(e.target.value) || 0
@@ -1144,11 +1233,39 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${Number(hourlyRate).toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? Number(hourlyRate).toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customWorkerBurdenFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageNum) * 100 }
+                                setCustomWorkerBurdenFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${Number(charged).toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 pl-0.5 pr-2 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? Number(charged).toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customWorkerBurdenFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageChargedVal) * 100 }
+                                setCustomWorkerBurdenFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                       </div>
                     )
@@ -1235,9 +1352,10 @@ function LaborRateCalculator() {
                 
                 <div className="space-y-1">
                   {BENEFITS_BURDEN_OPTIONS.map(option => {
-                    const percent = benefitsBurdenPercents[option.id] || 0
                     const hourlyRate = safeCalculations.benefitsBurdenHourlyRates[option.id] || 0
                     const charged = safeCalculations.benefitsBurdenCharged[option.id] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1250,7 +1368,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={benefitsBurdenPercents[option.id] || ''}
+                            value={benefitsBurdenPercents[option.id] ?? ''}
                             onChange={(e) => setBenefitsBurdenPercents(prev => ({
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
@@ -1260,11 +1378,35 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                         <div></div>
                       </div>
@@ -1273,6 +1415,8 @@ function LaborRateCalculator() {
                   {customBenefitsBurdenFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.benefitsBurdenCharged[`custom-${idx}`] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1285,7 +1429,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent}
+                            value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customBenefitsBurdenFields]
                               updated[idx].percent = parseFloat(e.target.value) || 0
@@ -1295,11 +1439,39 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customBenefitsBurdenFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageNum) * 100 }
+                                setCustomBenefitsBurdenFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customBenefitsBurdenFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageChargedVal) * 100 }
+                                setCustomBenefitsBurdenFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                         <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
                           <button
@@ -1368,9 +1540,10 @@ function LaborRateCalculator() {
                 
                 <div className="space-y-1">
                   {ADDITIONAL_OVERHEADS_OPTIONS.map(option => {
-                    const percent = additionalOverheadsPercents[option.id] || 0
                     const hourlyRate = safeCalculations.additionalOverheadsHourlyRates[option.id] || 0
                     const charged = safeCalculations.additionalOverheadsCharged[option.id] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1383,7 +1556,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={additionalOverheadsPercents[option.id] || ''}
+                            value={additionalOverheadsPercents[option.id] ?? ''}
                             onChange={(e) => setAdditionalOverheadsPercents(prev => ({
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
@@ -1393,11 +1566,35 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                         <div></div>
                       </div>
@@ -1406,6 +1603,8 @@ function LaborRateCalculator() {
                   {customAdditionalOverheadsFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.additionalOverheadsCharged[`custom-${idx}`] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1418,7 +1617,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent}
+                            value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customAdditionalOverheadsFields]
                               updated[idx].percent = parseFloat(e.target.value) || 0
@@ -1428,11 +1627,39 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customAdditionalOverheadsFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageNum) * 100 }
+                                setCustomAdditionalOverheadsFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customAdditionalOverheadsFields]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageChargedVal) * 100 }
+                                setCustomAdditionalOverheadsFields(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                         <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
                           <button
@@ -1501,9 +1728,10 @@ function LaborRateCalculator() {
                 
                 <div className="space-y-1">
                   {EMPLOYEE_COSTS_OPTIONS.map(option => {
-                    const percent = employeeCostsPercents[option.id] || 0
                     const hourlyRate = safeCalculations.employeeCostsHourlyRates[option.id] || 0
                     const charged = safeCalculations.employeeCostsCharged[option.id] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1516,7 +1744,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={employeeCostsPercents[option.id] || ''}
+                            value={employeeCostsPercents[option.id] ?? ''}
                             onChange={(e) => setEmployeeCostsPercents(prev => ({
                               ...prev,
                               [option.id]: parseFloat(e.target.value) || 0
@@ -1526,11 +1754,35 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: (v / workersWageNum) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: (v / workersWageChargedVal) * 100 }))
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                         <div></div>
                       </div>
@@ -1539,6 +1791,8 @@ function LaborRateCalculator() {
                   {customEmployeeCosts.map((cost, idx) => {
                     const hourlyRate = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0
                     const charged = safeCalculations.employeeCostsCharged[`custom-${idx}`] || 0
+                    const workersWageNum = parseFloat(workersWage) || 0
+                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={cost.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1551,7 +1805,7 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={cost.percent}
+                            value={cost.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customEmployeeCosts]
                               updated[idx].percent = parseFloat(e.target.value) || 0
@@ -1561,11 +1815,39 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                          ${hourlyRate.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={hourlyRate > 0 ? hourlyRate.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customEmployeeCosts]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageNum) * 100 }
+                                setCustomEmployeeCosts(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
-                        <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                          ${charged.toFixed(2)}
+                        <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-1">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={charged > 0 ? charged.toFixed(2) : ''}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value)
+                              if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
+                                const updated = [...customEmployeeCosts]
+                                updated[idx] = { ...updated[idx], percent: (v / workersWageChargedVal) * 100 }
+                                setCustomEmployeeCosts(updated)
+                              }
+                            }}
+                            className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            placeholder="0.00"
+                          />
                         </div>
                         <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
                           <button
@@ -1656,18 +1938,44 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={divisionOverheadPercent || ''}
+                        value={divisionOverheadPercent ?? ''}
                         onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
                         className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
                     </div>
-                    <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                      ${safeCalculations.divisionOverheadHourlyRate.toFixed(2)}
+                    <div className="flex items-center justify-center min-w-0 overflow-visible">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={safeCalculations.divisionOverheadCharged > 0 ? safeCalculations.divisionOverheadHourlyRate.toFixed(2) : ''}
+                        onChange={(e) => {
+                          const v = parseFloat(e.target.value)
+                          const base = safeCalculations.costBaseBeforeOverheadAndProfit || 0
+                          if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
+                            setDivisionOverheadPercent(100 * v / (base + v))
+                          }
+                        }}
+                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        placeholder="0.00"
+                      />
                     </div>
-                    <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                      ${safeCalculations.divisionOverheadCharged.toFixed(2)}
+                    <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={safeCalculations.divisionOverheadCharged > 0 ? safeCalculations.divisionOverheadCharged.toFixed(2) : ''}
+                        onChange={(e) => {
+                          const v = parseFloat(e.target.value)
+                          const base = safeCalculations.costBaseBeforeOverheadAndProfit || 0
+                          if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
+                            setDivisionOverheadPercent(100 * v / (base + v))
+                          }
+                        }}
+                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        placeholder="0.00"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1696,18 +2004,44 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={generalCompanyOverheadPercent || ''}
+                        value={generalCompanyOverheadPercent ?? ''}
                         onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
                         className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
                     </div>
-                    <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                      ${safeCalculations.generalCompanyOverheadHourlyRate.toFixed(2)}
+                    <div className="flex items-center justify-center min-w-0 overflow-visible">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={safeCalculations.generalCompanyOverheadCharged > 0 ? safeCalculations.generalCompanyOverheadHourlyRate.toFixed(2) : ''}
+                        onChange={(e) => {
+                          const v = parseFloat(e.target.value)
+                          const base = safeCalculations.totalAfterDivisionOverhead || 0
+                          if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
+                            setGeneralCompanyOverheadPercent(100 * v / (base + v))
+                          }
+                        }}
+                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        placeholder="0.00"
+                      />
                     </div>
-                    <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                      ${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}
+                    <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={safeCalculations.generalCompanyOverheadCharged > 0 ? safeCalculations.generalCompanyOverheadCharged.toFixed(2) : ''}
+                        onChange={(e) => {
+                          const v = parseFloat(e.target.value)
+                          const base = safeCalculations.totalAfterDivisionOverhead || 0
+                          if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
+                            setGeneralCompanyOverheadPercent(100 * v / (base + v))
+                          }
+                        }}
+                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        placeholder="0.00"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1736,18 +2070,44 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={profitPercent || ''}
+                        value={profitPercent ?? ''}
                         onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
                         className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
                     </div>
-                    <div className="text-center text-xs font-semibold text-gray-700 whitespace-nowrap px-0.5">
-                      ${safeCalculations.profitHourlyRate.toFixed(2)}
+                    <div className="flex items-center justify-center min-w-0 overflow-visible">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={safeCalculations.profitCharged > 0 ? safeCalculations.profitHourlyRate.toFixed(2) : ''}
+                        onChange={(e) => {
+                          const v = parseFloat(e.target.value)
+                          const base = safeCalculations.totalAfterGeneralOverhead || 0
+                          if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
+                            setProfitPercent(100 * v / (base + v))
+                          }
+                        }}
+                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        placeholder="0.00"
+                      />
                     </div>
-                    <div className="text-center text-xs font-semibold text-primary whitespace-nowrap pl-0.5 pr-2">
-                      ${safeCalculations.profitCharged.toFixed(2)}
+                    <div className="flex items-center justify-center min-w-0 overflow-visible pl-0.5 pr-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={safeCalculations.profitCharged > 0 ? safeCalculations.profitCharged.toFixed(2) : ''}
+                        onChange={(e) => {
+                          const v = parseFloat(e.target.value)
+                          const base = safeCalculations.totalAfterGeneralOverhead || 0
+                          if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
+                            setProfitPercent(100 * v / (base + v))
+                          }
+                        }}
+                        className="w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                        placeholder="0.00"
+                      />
                     </div>
                   </div>
                 </div>

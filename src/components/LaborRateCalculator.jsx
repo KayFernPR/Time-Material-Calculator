@@ -241,27 +241,27 @@ function LaborRateCalculator() {
     const payrollTaxHourlyRates = Object.fromEntries([
       ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
         opt.id,
-        workersWageNum * ((mandatoryPayrollTaxPercents[opt.id] || 0) / 100)
+        workersWageNum * ((parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0) / 100)
       ]),
       ...customPayrollTaxFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageNum * ((field.percent || 0) / 100)
+        workersWageNum * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const payrollTaxCharged = Object.fromEntries([
       ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
         opt.id,
-        workersWageCharged * ((mandatoryPayrollTaxPercents[opt.id] || 0) / 100)
+        workersWageCharged * ((parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0) / 100)
       ]),
       ...customPayrollTaxFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageCharged * ((field.percent || 0) / 100)
+        workersWageCharged * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const combinedFederalPayrollTaxPercent = Object.values(mandatoryPayrollTaxPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
-                                             customPayrollTaxFields.reduce((sum, field) => sum + (field.percent || 0), 0)
+                                             customPayrollTaxFields.reduce((sum, field) => sum + (parseFloat(field.percent) || 0), 0)
     const combinedFederalPayrollTaxHourlyRate = Object.values(payrollTaxHourlyRates).reduce((sum, val) => sum + val, 0)
     const combinedFederalPayrollTaxCharged = Object.values(payrollTaxCharged).reduce((sum, val) => sum + val, 0)
 
@@ -269,27 +269,27 @@ function LaborRateCalculator() {
     const workerBurdenHourlyRates = Object.fromEntries([
       ...MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        workersWageNum * ((mandatoryWorkerBurdenPercents[opt.id] || 0) / 100)
+        workersWageNum * ((parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0) / 100)
       ]),
       ...customWorkerBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageNum * ((field.percent || 0) / 100)
+        workersWageNum * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const workerBurdenCharged = Object.fromEntries([
       ...MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        workersWageCharged * ((mandatoryWorkerBurdenPercents[opt.id] || 0) / 100)
+        workersWageCharged * ((parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0) / 100)
       ]),
       ...customWorkerBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageCharged * ((field.percent || 0) / 100)
+        workersWageCharged * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const workerBurdenPercent = Object.values(mandatoryWorkerBurdenPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
-                                customWorkerBurdenFields.reduce((sum, field) => sum + (field.percent || 0), 0)
+                                customWorkerBurdenFields.reduce((sum, field) => sum + (parseFloat(field.percent) || 0), 0)
     const workerBurdenHourlyRate = Object.values(workerBurdenHourlyRates).reduce((sum, val) => sum + val, 0)
     const workerBurdenChargedTotal = Object.values(workerBurdenCharged).reduce((sum, val) => sum + val, 0)
 
@@ -302,27 +302,27 @@ function LaborRateCalculator() {
     const benefitsBurdenHourlyRates = Object.fromEntries([
       ...BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        workersWageNum * ((benefitsBurdenPercents[opt.id] || 0) / 100)
+        workersWageNum * ((parseFloat(benefitsBurdenPercents[opt.id]) || 0) / 100)
       ]),
       ...customBenefitsBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageNum * ((field.percent || 0) / 100)
+        workersWageNum * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const benefitsBurdenCharged = Object.fromEntries([
       ...BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        workersWageCharged * ((benefitsBurdenPercents[opt.id] || 0) / 100)
+        workersWageCharged * ((parseFloat(benefitsBurdenPercents[opt.id]) || 0) / 100)
       ]),
       ...customBenefitsBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageCharged * ((field.percent || 0) / 100)
+        workersWageCharged * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const benefitsBurdenPercent = Object.values(benefitsBurdenPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
-      customBenefitsBurdenFields.reduce((sum, field) => sum + (field.percent || 0), 0)
+      customBenefitsBurdenFields.reduce((sum, field) => sum + (parseFloat(field.percent) || 0), 0)
     const benefitsBurdenHourlyRate = Object.values(benefitsBurdenHourlyRates).reduce((sum, val) => sum + val, 0)
     const benefitsBurdenChargedTotal = Object.values(benefitsBurdenCharged).reduce((sum, val) => sum + val, 0)
 
@@ -330,27 +330,27 @@ function LaborRateCalculator() {
     const additionalOverheadsHourlyRates = Object.fromEntries([
       ...ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
-        workersWageNum * ((additionalOverheadsPercents[opt.id] || 0) / 100)
+        workersWageNum * ((parseFloat(additionalOverheadsPercents[opt.id]) || 0) / 100)
       ]),
       ...customAdditionalOverheadsFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageNum * ((field.percent || 0) / 100)
+        workersWageNum * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const additionalOverheadsCharged = Object.fromEntries([
       ...ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
-        workersWageCharged * ((additionalOverheadsPercents[opt.id] || 0) / 100)
+        workersWageCharged * ((parseFloat(additionalOverheadsPercents[opt.id]) || 0) / 100)
       ]),
       ...customAdditionalOverheadsFields.map((field, idx) => [
         `custom-${idx}`,
-        workersWageCharged * ((field.percent || 0) / 100)
+        workersWageCharged * ((parseFloat(field.percent) || 0) / 100)
       ])
     ])
     
     const additionalOverheadsPercent = Object.values(additionalOverheadsPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
-      customAdditionalOverheadsFields.reduce((sum, field) => sum + (field.percent || 0), 0)
+      customAdditionalOverheadsFields.reduce((sum, field) => sum + (parseFloat(field.percent) || 0), 0)
     const additionalOverheadsHourlyRate = Object.values(additionalOverheadsHourlyRates).reduce((sum, val) => sum + val, 0)
     const additionalOverheadsChargedTotal = Object.values(additionalOverheadsCharged).reduce((sum, val) => sum + val, 0)
 
@@ -358,27 +358,27 @@ function LaborRateCalculator() {
     const employeeCostsHourlyRates = Object.fromEntries([
       ...EMPLOYEE_COSTS_OPTIONS.map(opt => [
         opt.id,
-        workersWageNum * ((employeeCostsPercents[opt.id] || 0) / 100)
+        workersWageNum * ((parseFloat(employeeCostsPercents[opt.id]) || 0) / 100)
       ]),
       ...customEmployeeCosts.map((cost, idx) => [
         `custom-${idx}`,
-        workersWageNum * ((cost.percent || 0) / 100)
+        workersWageNum * ((parseFloat(cost.percent) || 0) / 100)
       ])
     ])
     
     const employeeCostsCharged = Object.fromEntries([
       ...EMPLOYEE_COSTS_OPTIONS.map(opt => [
         opt.id,
-        workersWageCharged * ((employeeCostsPercents[opt.id] || 0) / 100)
+        workersWageCharged * ((parseFloat(employeeCostsPercents[opt.id]) || 0) / 100)
       ]),
       ...customEmployeeCosts.map((cost, idx) => [
         `custom-${idx}`,
-        workersWageCharged * ((cost.percent || 0) / 100)
+        workersWageCharged * ((parseFloat(cost.percent) || 0) / 100)
       ])
     ])
     
     const employeeCostsPercent = Object.values(employeeCostsPercents).reduce((sum, val) => sum + (parseFloat(val) || 0), 0) +
-                                 customEmployeeCosts.reduce((sum, cost) => sum + (cost.percent || 0), 0)
+                                 customEmployeeCosts.reduce((sum, cost) => sum + (parseFloat(cost.percent) || 0), 0)
     const employeeCostsHourlyRate = Object.values(employeeCostsHourlyRates).reduce((sum, val) => sum + val, 0)
     const employeeCostsChargedTotal = Object.values(employeeCostsCharged).reduce((sum, val) => sum + val, 0)
 
@@ -400,17 +400,17 @@ function LaborRateCalculator() {
     }
 
     // Division Overhead: margin on total worker cost (cost base)
-    const divisionOverheadCharged = marginAmount(costBaseBeforeOverheadAndProfit, divisionOverheadPercent)
+    const divisionOverheadCharged = marginAmount(costBaseBeforeOverheadAndProfit, parseFloat(divisionOverheadPercent) || 0)
     const divisionOverheadHourlyRate = divisionOverheadCharged
     const totalAfterDivisionOverhead = costBaseBeforeOverheadAndProfit + divisionOverheadCharged
 
     // General Company Overhead: margin on total cost including division overhead
-    const generalCompanyOverheadCharged = marginAmount(totalAfterDivisionOverhead, generalCompanyOverheadPercent)
+    const generalCompanyOverheadCharged = marginAmount(totalAfterDivisionOverhead, parseFloat(generalCompanyOverheadPercent) || 0)
     const generalCompanyOverheadHourlyRate = generalCompanyOverheadCharged
     const totalAfterGeneralOverhead = totalAfterDivisionOverhead + generalCompanyOverheadCharged
 
     // Profit: margin on total of all costs including division and general overhead
-    const profitCharged = marginAmount(totalAfterGeneralOverhead, profitPercent)
+    const profitCharged = marginAmount(totalAfterGeneralOverhead, parseFloat(profitPercent) || 0)
     const profitHourlyRate = profitCharged
 
     // Total Labor Rate = full charge including all costs, overheads, and profit
@@ -886,7 +886,7 @@ function LaborRateCalculator() {
           <div className="lg:col-span-1 min-w-0 w-full min-w-[320px]">
             <div 
               ref={step2Ref}
-              className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0"
+              className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
@@ -967,7 +967,7 @@ function LaborRateCalculator() {
                             value={mandatoryPayrollTaxPercents[option.id] ?? ''}
                             onChange={(e) => setMandatoryPayrollTaxPercents(prev => ({
                               ...prev,
-                              [option.id]: parseFloat(e.target.value) || 0
+                              [option.id]: e.target.value
                             }))}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
@@ -1037,7 +1037,7 @@ function LaborRateCalculator() {
                             value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customPayrollTaxFields]
-                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              updated[idx].percent = e.target.value
                               setCustomPayrollTaxFields(updated)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1155,7 +1155,7 @@ function LaborRateCalculator() {
                             value={mandatoryWorkerBurdenPercents[option.id] ?? ''}
                             onChange={(e) => setMandatoryWorkerBurdenPercents(prev => ({
                               ...prev,
-                              [option.id]: parseFloat(e.target.value) || 0
+                              [option.id]: e.target.value
                             }))}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
@@ -1225,7 +1225,7 @@ function LaborRateCalculator() {
                             value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customWorkerBurdenFields]
-                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              updated[idx].percent = e.target.value
                               setCustomWorkerBurdenFields(updated)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1328,7 +1328,7 @@ function LaborRateCalculator() {
           <div className="lg:col-span-1 min-w-0 w-full min-w-[300px]">
             <div 
               ref={step3MandatoryRef}
-              className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0"
+              className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
@@ -1371,7 +1371,7 @@ function LaborRateCalculator() {
                             value={benefitsBurdenPercents[option.id] ?? ''}
                             onChange={(e) => setBenefitsBurdenPercents(prev => ({
                               ...prev,
-                              [option.id]: parseFloat(e.target.value) || 0
+                              [option.id]: e.target.value
                             }))}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
@@ -1432,7 +1432,7 @@ function LaborRateCalculator() {
                             value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customBenefitsBurdenFields]
-                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              updated[idx].percent = e.target.value
                               setCustomBenefitsBurdenFields(updated)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1559,7 +1559,7 @@ function LaborRateCalculator() {
                             value={additionalOverheadsPercents[option.id] ?? ''}
                             onChange={(e) => setAdditionalOverheadsPercents(prev => ({
                               ...prev,
-                              [option.id]: parseFloat(e.target.value) || 0
+                              [option.id]: e.target.value
                             }))}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
@@ -1620,7 +1620,7 @@ function LaborRateCalculator() {
                             value={field.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customAdditionalOverheadsFields]
-                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              updated[idx].percent = e.target.value
                               setCustomAdditionalOverheadsFields(updated)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1747,7 +1747,7 @@ function LaborRateCalculator() {
                             value={employeeCostsPercents[option.id] ?? ''}
                             onChange={(e) => setEmployeeCostsPercents(prev => ({
                               ...prev,
-                              [option.id]: parseFloat(e.target.value) || 0
+                              [option.id]: e.target.value
                             }))}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
@@ -1808,7 +1808,7 @@ function LaborRateCalculator() {
                             value={cost.percent ?? ''}
                             onChange={(e) => {
                               const updated = [...customEmployeeCosts]
-                              updated[idx].percent = parseFloat(e.target.value) || 0
+                              updated[idx].percent = e.target.value
                               setCustomEmployeeCosts(updated)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1939,7 +1939,7 @@ function LaborRateCalculator() {
                         type="number"
                         step="0.01"
                         value={divisionOverheadPercent ?? ''}
-                        onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setDivisionOverheadPercent(e.target.value)}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
@@ -2005,7 +2005,7 @@ function LaborRateCalculator() {
                         type="number"
                         step="0.01"
                         value={generalCompanyOverheadPercent ?? ''}
-                        onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setGeneralCompanyOverheadPercent(e.target.value)}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
@@ -2071,7 +2071,7 @@ function LaborRateCalculator() {
                         type="number"
                         step="0.01"
                         value={profitPercent ?? ''}
-                        onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setProfitPercent(e.target.value)}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
@@ -2285,7 +2285,7 @@ function LaborRateCalculator() {
                     <div className="flex justify-between items-center gap-2 min-w-0">
                       <div className="min-w-0">
                         <span className="font-semibold text-gray-700 text-xs">Division Overhead</span>
-                        <span className="text-xs text-gray-500 ml-1">({divisionOverheadPercent}%)</span>
+                        <span className="text-xs text-gray-500 ml-1">({parseFloat(divisionOverheadPercent) || 0}%)</span>
                       </div>
                       <span className="font-bold text-primary text-xs shrink-0">${safeCalculations.divisionOverheadCharged.toFixed(2)}/hr</span>
                     </div>
@@ -2296,7 +2296,7 @@ function LaborRateCalculator() {
                     <div className="flex justify-between items-center gap-2 min-w-0">
                       <div className="min-w-0">
                         <span className="font-semibold text-gray-700 text-xs">General Company Overhead</span>
-                        <span className="text-xs text-gray-500 ml-1">({generalCompanyOverheadPercent}%)</span>
+                        <span className="text-xs text-gray-500 ml-1">({parseFloat(generalCompanyOverheadPercent) || 0}%)</span>
                       </div>
                       <span className="font-bold text-primary text-xs shrink-0">${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}/hr</span>
                     </div>
@@ -2307,7 +2307,7 @@ function LaborRateCalculator() {
                     <div className="flex justify-between items-center gap-2 min-w-0">
                       <div className="min-w-0">
                         <span className="font-semibold text-gray-700 text-xs">Profit</span>
-                        <span className="text-xs text-gray-500 ml-1">({profitPercent}%)</span>
+                        <span className="text-xs text-gray-500 ml-1">({parseFloat(profitPercent) || 0}%)</span>
                       </div>
                       <span className="font-bold text-primary text-xs shrink-0">${safeCalculations.profitCharged.toFixed(2)}/hr</span>
                     </div>
@@ -2341,7 +2341,7 @@ function LaborRateCalculator() {
                         type="number"
                         step="0.01"
                         value={divisionOverheadPercent}
-                        onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setDivisionOverheadPercent(e.target.value)}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
@@ -2354,7 +2354,7 @@ function LaborRateCalculator() {
                         type="number"
                         step="0.01"
                         value={generalCompanyOverheadPercent}
-                        onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setGeneralCompanyOverheadPercent(e.target.value)}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
@@ -2367,7 +2367,7 @@ function LaborRateCalculator() {
                         type="number"
                         step="0.01"
                         value={profitPercent}
-                        onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => setProfitPercent(e.target.value)}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>

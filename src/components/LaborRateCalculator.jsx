@@ -1779,43 +1779,15 @@ function LaborRateCalculator() {
                 </h3>
                 
                 <div className="space-y-3 text-sm">
-                  {/* Step 1: Paid Capacity - Hours not worked & non-billable (includes custom) */}
-                  {(allHoursNotWorkedOptions.some(opt => (parseFloat(hoursNotWorked[opt.id]) || 0) > 0) || allNonBillableOptions.some(opt => (parseFloat(nonBillableHours[opt.id]) || 0) > 0)) && (
-                    <>
-                      <div>
-                        <h4 className="font-semibold text-gray-700 mb-1 text-xs">Paid Capacity (Step 1)</h4>
-                        <div className="ml-2 space-y-1">
-                          {allHoursNotWorkedOptions.map(opt => {
-                            const hrs = parseFloat(hoursNotWorked[opt.id]) || 0
-                            if (hrs <= 0) return null
-                            const pct = safeCalculations.hoursNotWorkedPercentages[opt.id] || 0
-                            return (
-                              <div key={opt.id} className="flex justify-between text-xs gap-2 min-w-0">
-                                <span className="text-gray-600 min-w-0 truncate">{opt.label.replace(/\n/g, ' ')}:</span>
-                                <span className="shrink-0">{hrs} hrs ({pct.toFixed(1)}%)</span>
-                              </div>
-                            )
-                          })}
-                          {allNonBillableOptions.map(opt => {
-                            const hrs = parseFloat(nonBillableHours[opt.id]) || 0
-                            if (hrs <= 0) return null
-                            const pct = safeCalculations.nonBillableHoursPercentages[opt.id] || 0
-                            return (
-                              <div key={opt.id} className="flex justify-between text-xs gap-2 min-w-0">
-                                <span className="text-gray-600 min-w-0 truncate">{opt.label.replace(/\n/g, ' ')}:</span>
-                                <span className="shrink-0">{hrs} hrs ({pct.toFixed(1)}%)</span>
-                              </div>
-                            )
-                          })}
-                          <div className="flex justify-between font-semibold text-gray-700 pt-1 border-t border-gray-200 mt-1 gap-2 min-w-0">
-                            <span className="text-xs min-w-0">Billable utilization:</span>
-                            <span className="text-primary text-xs shrink-0">{(safeCalculations.utilizationPercent * 100).toFixed(1)}%</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="border-b border-gray-200 pb-2" />
-                    </>
-                  )}
+                  {/* Step 1 Summary: Billable utilization */}
+                  <div className="border-b border-gray-200 pb-2">
+                    <div className="flex justify-between items-center gap-2 min-w-0">
+                      <span className="font-semibold text-gray-700 min-w-0 truncate">Billable utilization (Step 1)</span>
+                      <span className="font-bold text-primary shrink-0">
+                        {(safeCalculations.utilizationPercent * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
 
                   {/* Workers Wage */}
                   <div className="border-b border-gray-200 pb-2">

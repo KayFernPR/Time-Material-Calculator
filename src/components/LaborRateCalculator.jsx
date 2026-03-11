@@ -1971,7 +1971,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={divisionOverheadPercent}
                         onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
-                        className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        className="w-[74px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>
@@ -1984,7 +1984,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={generalCompanyOverheadPercent}
                         onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
-                        className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        className="w-[74px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>
@@ -1997,7 +1997,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={profitPercent}
                         onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
-                        className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        className="w-[74px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>

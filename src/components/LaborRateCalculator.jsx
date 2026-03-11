@@ -1964,40 +1964,40 @@ function LaborRateCalculator() {
                 </h3>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-gray-700 text-sm font-medium">Division Overhead:</label>
-                    <div className="flex items-center gap-2">
+                    <label className="text-gray-700 text-sm font-medium pr-3">Division Overhead:</label>
+                    <div className="flex items-center gap-2 shrink-0">
                       <input
                         type="number"
                         step="0.01"
                         value={divisionOverheadPercent}
                         onChange={(e) => setDivisionOverheadPercent(parseFloat(e.target.value) || 0)}
-                        className="w-[74px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <label className="text-gray-700 text-sm font-medium">General Company Overhead:</label>
-                    <div className="flex items-center gap-2">
+                    <label className="text-gray-700 text-sm font-medium pr-3">General Company Overhead:</label>
+                    <div className="flex items-center gap-2 shrink-0">
                       <input
                         type="number"
                         step="0.01"
                         value={generalCompanyOverheadPercent}
                         onChange={(e) => setGeneralCompanyOverheadPercent(parseFloat(e.target.value) || 0)}
-                        className="w-[74px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <label className="text-gray-700 text-sm font-medium">Profit:</label>
-                    <div className="flex items-center gap-2">
+                    <label className="text-gray-700 text-sm font-medium pr-3">Profit:</label>
+                    <div className="flex items-center gap-2 shrink-0">
                       <input
                         type="number"
                         step="0.01"
                         value={profitPercent}
                         onChange={(e) => setProfitPercent(parseFloat(e.target.value) || 0)}
-                        className="w-[74px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>

@@ -382,7 +382,7 @@ function LaborRateCalculator() {
     const employeeCostsHourlyRate = Object.values(employeeCostsHourlyRates).reduce((sum, val) => sum + val, 0)
     const employeeCostsChargedTotal = Object.values(employeeCostsCharged).reduce((sum, val) => sum + val, 0)
 
-    // Cost base before overhead & profit (wage + all burdens) — Excel applies overhead & profit % to this total
+    // Cost base before overhead & profit (total worker cost: wage charged + all burdens)
     const costBaseBeforeOverheadAndProfit =
       workersWageCharged +
       totalMandatoryBurdenCharged +
@@ -390,27 +390,31 @@ function LaborRateCalculator() {
       additionalOverheadsChargedTotal +
       employeeCostsChargedTotal
 
-    // Division Overhead & General Company Overhead: Chgd ($) = Burden/hour to charge × Brdn (%), same as Profit
-    const divisionOverheadHourlyRate = workersWageNum * (divisionOverheadPercent / 100)
-    const divisionOverheadCharged = workersWageCharged * (divisionOverheadPercent / 100)
-    const generalCompanyOverheadHourlyRate = workersWageNum * (generalCompanyOverheadPercent / 100)
-    const generalCompanyOverheadCharged = workersWageCharged * (generalCompanyOverheadPercent / 100)
+    // Margin formula: amount so that (base + amount) has margin% as the amount's share of the total.
+    // (base + amount) * (1 - margin/100) = base  =>  amount = base * (margin/100) / (1 - margin/100)
+    const marginAmount = (base, marginPercent) => {
+      if (marginPercent <= 0) return 0
+      const m = marginPercent / 100
+      if (m >= 1) return 0 // avoid division by zero
+      return base * m / (1 - m)
+    }
 
-    // Profit Chgd ($) = Burden/hour to charge × Brdn (%)  (Burden/hour to charge = workersWageCharged)
-    const profitHourlyRate = workersWageNum * (profitPercent / 100)
-    const profitCharged = workersWageCharged * (profitPercent / 100)
+    // Division Overhead: margin on total worker cost (cost base)
+    const divisionOverheadCharged = marginAmount(costBaseBeforeOverheadAndProfit, divisionOverheadPercent)
+    const divisionOverheadHourlyRate = divisionOverheadCharged
+    const totalAfterDivisionOverhead = costBaseBeforeOverheadAndProfit + divisionOverheadCharged
 
-    // Total Labor Rate = Workers Wage (Charged) + Total Mandatory Burden + Benefits Total +
-    // Additional Overheads Total + Employee Costs Total + Division Overhead + General Company Overhead + Profit
-    const totalLaborRateRaw =
-      workersWageCharged +                    // Workers Wage (Charged)
-      totalMandatoryBurdenCharged +          // Total Mandatory Burden
-      benefitsBurdenChargedTotal +            // Benefits Total
-      additionalOverheadsChargedTotal +        // Additional Overheads Total
-      employeeCostsChargedTotal +             // Employee Costs Total
-      divisionOverheadCharged +               // Division Overhead
-      generalCompanyOverheadCharged +         // General Company Overhead
-      profitCharged                           // Profit
+    // General Company Overhead: margin on total cost including division overhead
+    const generalCompanyOverheadCharged = marginAmount(totalAfterDivisionOverhead, generalCompanyOverheadPercent)
+    const generalCompanyOverheadHourlyRate = generalCompanyOverheadCharged
+    const totalAfterGeneralOverhead = totalAfterDivisionOverhead + generalCompanyOverheadCharged
+
+    // Profit: margin on total of all costs including division and general overhead
+    const profitCharged = marginAmount(totalAfterGeneralOverhead, profitPercent)
+    const profitHourlyRate = profitCharged
+
+    // Total Labor Rate = full charge including all costs, overheads, and profit
+    const totalLaborRateRaw = totalAfterGeneralOverhead + profitCharged
     const totalLaborRate = Number.isFinite(totalLaborRateRaw)
       ? Math.round(totalLaborRateRaw * 100) / 100
       : 0

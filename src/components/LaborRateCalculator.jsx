@@ -1741,6 +1741,44 @@ function LaborRateCalculator() {
                 </h3>
                 
                 <div className="space-y-3 text-sm">
+                  {/* Step 1: Paid Capacity - Hours not worked & non-billable (includes custom) */}
+                  {(allHoursNotWorkedOptions.some(opt => (parseFloat(hoursNotWorked[opt.id]) || 0) > 0) || allNonBillableOptions.some(opt => (parseFloat(nonBillableHours[opt.id]) || 0) > 0)) && (
+                    <>
+                      <div>
+                        <h4 className="font-semibold text-gray-700 mb-1 text-xs">Paid Capacity (Step 1)</h4>
+                        <div className="ml-2 space-y-1">
+                          {allHoursNotWorkedOptions.map(opt => {
+                            const hrs = parseFloat(hoursNotWorked[opt.id]) || 0
+                            if (hrs <= 0) return null
+                            const pct = safeCalculations.hoursNotWorkedPercentages[opt.id] || 0
+                            return (
+                              <div key={opt.id} className="flex justify-between text-xs gap-2 min-w-0">
+                                <span className="text-gray-600 min-w-0 truncate">{opt.label.replace(/\n/g, ' ')}:</span>
+                                <span className="shrink-0">{hrs} hrs ({pct.toFixed(1)}%)</span>
+                              </div>
+                            )
+                          })}
+                          {allNonBillableOptions.map(opt => {
+                            const hrs = parseFloat(nonBillableHours[opt.id]) || 0
+                            if (hrs <= 0) return null
+                            const pct = safeCalculations.nonBillableHoursPercentages[opt.id] || 0
+                            return (
+                              <div key={opt.id} className="flex justify-between text-xs gap-2 min-w-0">
+                                <span className="text-gray-600 min-w-0 truncate">{opt.label.replace(/\n/g, ' ')}:</span>
+                                <span className="shrink-0">{hrs} hrs ({pct.toFixed(1)}%)</span>
+                              </div>
+                            )
+                          })}
+                          <div className="flex justify-between font-semibold text-gray-700 pt-1 border-t border-gray-200 mt-1 gap-2 min-w-0">
+                            <span className="text-xs min-w-0">Billable utilization:</span>
+                            <span className="text-primary text-xs shrink-0">{(safeCalculations.utilizationPercent * 100).toFixed(1)}%</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border-b border-gray-200 pb-2" />
+                    </>
+                  )}
+
                   {/* Workers Wage */}
                   <div className="border-b border-gray-200 pb-2">
                     <div className="flex justify-between items-center gap-2 min-w-0">
@@ -1763,6 +1801,12 @@ function LaborRateCalculator() {
                           </div>
                         )
                       })}
+                      {customPayrollTaxFields.map((field, idx) => (
+                        <div key={field.id} className="flex justify-between text-xs gap-2 min-w-0">
+                          <span className="text-gray-600 min-w-0 truncate">{field.label}:</span>
+                          <span className="font-semibold text-primary shrink-0">${(safeCalculations.payrollTaxCharged[`custom-${idx}`] || 0).toFixed(2)}/hr</span>
+                        </div>
+                      ))}
                       {/* Mandatory Worker Burden items */}
                       {MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => {
                         const charged = safeCalculations.workerBurdenCharged[opt.id] || 0
@@ -1773,6 +1817,12 @@ function LaborRateCalculator() {
                           </div>
                         )
                       })}
+                      {customWorkerBurdenFields.map((field, idx) => (
+                        <div key={field.id} className="flex justify-between text-xs gap-2 min-w-0">
+                          <span className="text-gray-600 min-w-0 truncate">{field.label}:</span>
+                          <span className="font-semibold text-primary shrink-0">${(safeCalculations.workerBurdenCharged[`custom-${idx}`] || 0).toFixed(2)}/hr</span>
+                        </div>
+                      ))}
                       <div className="flex justify-between font-semibold text-gray-700 pt-1 border-t border-gray-200 mt-1 gap-2 min-w-0">
                         <span className="text-xs min-w-0">Total:</span>
                         <span className="text-primary text-xs shrink-0">${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}/hr</span>
@@ -1792,6 +1842,14 @@ function LaborRateCalculator() {
                           </span>
                         </div>
                       ))}
+                      {customBenefitsBurdenFields.map((field, idx) => (
+                        <div key={field.id} className="flex justify-between text-xs gap-2 min-w-0">
+                          <span className="text-gray-600 min-w-0 truncate">{field.label}:</span>
+                          <span className="font-semibold text-primary shrink-0">
+                            ${(safeCalculations.benefitsBurdenCharged[`custom-${idx}`] || 0).toFixed(2)}/hr
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
@@ -1804,6 +1862,14 @@ function LaborRateCalculator() {
                           <span className="text-gray-600 min-w-0 truncate">{opt.label}:</span>
                           <span className="font-semibold text-primary shrink-0">
                             ${(safeCalculations.additionalOverheadsCharged[opt.id] || 0).toFixed(2)}/hr
+                          </span>
+                        </div>
+                      ))}
+                      {customAdditionalOverheadsFields.map((field, idx) => (
+                        <div key={field.id} className="flex justify-between text-xs gap-2 min-w-0">
+                          <span className="text-gray-600 min-w-0 truncate">{field.label}:</span>
+                          <span className="font-semibold text-primary shrink-0">
+                            ${(safeCalculations.additionalOverheadsCharged[`custom-${idx}`] || 0).toFixed(2)}/hr
                           </span>
                         </div>
                       ))}

@@ -654,11 +654,31 @@ function LaborRateCalculator() {
                   {allHoursNotWorkedOptions.map(option => {
                     const hours = parseFloat(hoursNotWorked[option.id]) || 0
                     const percent = safeCalculations.hoursNotWorkedPercentages[option.id] || 0
+                    const isCustomHoursNotWorked = customHoursNotWorked.some(c => c.id === option.id)
                     return (
                       <div key={option.id} className="grid gap-1 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 grid-cols-[1fr_4.5rem_4rem]">
-                        <label className="text-gray-700 text-xs font-medium break-words line-clamp-2 leading-tight min-w-0 px-1">
-                          {option.label}
-                        </label>
+                        <div className="flex items-center gap-1.5 min-w-0 px-1">
+                          <label className="text-gray-700 text-xs font-medium break-words line-clamp-2 leading-tight min-w-0">
+                            {option.label}
+                          </label>
+                          {isCustomHoursNotWorked && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCustomHoursNotWorked(prev => prev.filter(c => c.id !== option.id))
+                                setHoursNotWorked(prev => {
+                                  const next = { ...prev }
+                                  delete next[option.id]
+                                  return next
+                                })
+                              }}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded text-xs shrink-0"
+                              aria-label="Remove"
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
                         <div className="flex w-full items-center justify-center gap-1 min-w-0 px-1">
                           <input
                             type="number"
@@ -737,12 +757,30 @@ function LaborRateCalculator() {
                   {allNonBillableOptions.map(option => {
                     const hours = parseFloat(nonBillableHours[option.id]) || 0
                     const percent = safeCalculations.nonBillableHoursPercentages[option.id] || 0
+                    const isCustomNonBillable = customNonBillable.some(c => c.id === option.id)
                     return (
                       <div key={option.id} className={`grid gap-1 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 grid-cols-[1fr_4.5rem_4rem] ${option.tooltip ? 'overflow-visible' : ''}`}>
                         <div className={`flex items-center gap-2 min-w-0 px-1 ${option.tooltip ? 'overflow-visible' : 'overflow-hidden'}`}>
                           <label className="text-gray-700 text-xs font-medium whitespace-pre-line break-words line-clamp-2 leading-tight min-w-0 overflow-hidden">
                             {option.label}
                           </label>
+                          {isCustomNonBillable && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCustomNonBillable(prev => prev.filter(c => c.id !== option.id))
+                                setNonBillableHours(prev => {
+                                  const next = { ...prev }
+                                  delete next[option.id]
+                                  return next
+                                })
+                              }}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded text-xs shrink-0"
+                              aria-label="Remove"
+                            >
+                              ×
+                            </button>
+                          )}
                           {option.tooltip && (
                             <div className="relative group flex-shrink-0">
                               <svg

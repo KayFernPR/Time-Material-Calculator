@@ -1398,7 +1398,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
+                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
                   <div className="min-w-0"></div>
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
@@ -1413,7 +1413,7 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
                           label={option.label}
                           fullText={option.label.replace(/\n/g, ' ')}
@@ -1480,7 +1480,7 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                      <div key={field.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
                           label={field.label}
                           fullText={field.label}
@@ -1572,7 +1572,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Benefits Burden Total */}
-                <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden">Total Benefits Burden</div>
                   <div className="text-center text-xs font-semibold text-primary px-0.5">
                     {safeCalculations.benefitsBurdenPercent.toFixed(2)}%
@@ -1594,7 +1594,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
+                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
                   <div className="min-w-0"></div>
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
@@ -1609,7 +1609,7 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
                           label={option.label}
                           fullText={option.label.replace(/\n/g, ' ')}
@@ -1676,7 +1676,7 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                      <div key={field.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
                           label={field.label}
                           fullText={field.label}
@@ -1768,7 +1768,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Additional Overheads Total */}
-                <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words line-clamp-2" title="Total Additional Overheads">Total Additional Overheads</div>
                   <div className="text-center text-xs font-semibold text-primary px-0.5">
                     {safeCalculations.additionalOverheadsPercent.toFixed(2)}%
@@ -1790,7 +1790,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
+                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
                   <div className="min-w-0"></div>
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
@@ -1805,7 +1805,7 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                      <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
                           label={option.label}
                           fullText={option.label.replace(/\n/g, ' ')}
@@ -1872,7 +1872,7 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
-                      <div key={cost.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem_2rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                      <div key={cost.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
                           label={cost.label}
                           fullText={cost.label}

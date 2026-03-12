@@ -1985,7 +1985,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
+                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
                   <div className="min-w-0"></div>
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
@@ -1993,7 +1993,7 @@ function LaborRateCalculator() {
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                  <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                     <div className="flex items-center gap-2 min-w-0 pr-2">
                       <label className="text-gray-700 text-xs font-medium break-words min-w-0 line-clamp-2 leading-snug">
                         Division Overhead
@@ -2074,7 +2074,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
+                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
                   <div className="min-w-0"></div>
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
@@ -2082,7 +2082,7 @@ function LaborRateCalculator() {
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                  <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                     <label className="text-gray-700 text-xs font-medium break-words min-w-0 overflow-hidden pr-2">
                       General Company Overhead
                     </label>
@@ -2146,7 +2146,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
+                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
                   <div className="min-w-0"></div>
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
@@ -2154,7 +2154,7 @@ function LaborRateCalculator() {
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_3.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                  <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                     <label className="text-gray-700 text-xs font-medium break-words min-w-0 overflow-hidden pr-2">
                       Profit
                     </label>

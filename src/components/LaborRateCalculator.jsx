@@ -57,6 +57,11 @@ const EMPLOYEE_COSTS_OPTIONS = [
 
 const PAID_CAPACITY = 2080 // 52 weeks * 40 hours
 
+/** Spend/yr ($): annual cost = earned burden $/hr × paid hours/year (2080). */
+function annualSpendFromEarnedHourly(earnedHrly) {
+  return earnedHrly * PAID_CAPACITY
+}
+
 // Shows (?) tooltip only when the label is truncated (e.g. shows "..."). User can hover to read full label.
 // Tooltip is rendered via portal (like Division Overhead) so it always sits on top and is never clipped.
 function TruncatedLabelWithTooltip({ label, fullText, labelClassName, wrapperClassName = 'flex items-center gap-1.5 min-w-0 overflow-hidden' }) {
@@ -1784,7 +1789,7 @@ function LaborRateCalculator() {
                     ${safeCalculations.additionalOverheadsHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${safeCalculations.additionalOverheadsChargedTotal.toFixed(2)}
+                    ${annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRate).toFixed(2)}
                   </div>
                   <div></div>
                 </div>

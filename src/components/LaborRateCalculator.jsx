@@ -645,9 +645,9 @@ function LaborRateCalculator() {
   }
 
   return (
-    <div className="min-h-screen w-full min-w-0 bg-light py-4 sm:py-6 lg:py-8 overflow-x-hidden">
-      <div className="container mx-auto w-full min-w-0 px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="flex flex-col items-center mb-6 lg:mb-8">
+    <div className="min-h-screen w-full min-w-0 bg-light py-4 sm:py-6 lg:py-8 overflow-x-hidden print:bg-white print:min-h-0 print:py-4">
+      <div className="container mx-auto w-full min-w-0 px-4 sm:px-6 lg:px-8 max-w-7xl print:max-w-none">
+        <div className="flex flex-col items-center mb-6 lg:mb-8 print:hidden">
           <img
             src="/logo.png"
             alt="Time & Material Calculator"
@@ -658,9 +658,9 @@ function LaborRateCalculator() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-[5px] min-w-0">
+        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-[5px] min-w-0 print:grid-cols-1">
           {/* Step 1: Paid Capacity */}
-          <div className="lg:col-span-1 min-w-0 w-full">
+          <div className="lg:col-span-1 min-w-0 w-full print:hidden">
             <div 
               ref={step1Ref}
               className="bg-white rounded-lg shadow-lg pt-6 pr-4 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0"
@@ -917,7 +917,7 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 2: Wage Burden */}
-          <div className="lg:col-span-1 min-w-0 w-full min-w-[320px]">
+          <div className="lg:col-span-1 min-w-0 w-full min-w-[320px] print:hidden">
             <div 
               ref={step2Ref}
               className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
@@ -1510,7 +1510,7 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 3: Mandatory Burden */}
-          <div className="lg:col-span-1 min-w-0 w-full min-w-[300px]">
+          <div className="lg:col-span-1 min-w-0 w-full min-w-[300px] print:hidden">
             <div 
               ref={step3MandatoryRef}
               className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
@@ -2566,10 +2566,10 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 4: Results - Burden / Hour Charged */}
-          <div className="lg:col-span-1 min-w-0 w-full">
+          <div className="lg:col-span-1 min-w-0 w-full print:w-full">
             <div 
               ref={step3Ref}
-              className="bg-white rounded-lg shadow-lg p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0"
+              className="bg-white rounded-lg shadow-lg p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0 print:static print:top-auto print:max-h-none print:overflow-visible print:shadow-none"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
@@ -2778,8 +2778,8 @@ function LaborRateCalculator() {
                 </div>
               </div>
 
-              {/* Step 3 Inputs */}
-              <div className="bg-gray-50 rounded-lg p-4">
+              {/* Step 3 Inputs — hidden when printing (values appear in breakdown above) */}
+              <div className="bg-gray-50 rounded-lg p-4 print:hidden">
                 <h3 className="text-sm font-semibold text-neutral mb-3">
                   Adjust Overhead & Profit
                 </h3>
@@ -2884,8 +2884,9 @@ function LaborRateCalculator() {
               </div>
 
               {/* Print Button */}
-              <div className="mt-4">
+              <div className="mt-4 print:hidden">
                 <button
+                  type="button"
                   onClick={() => window.print()}
                   className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
                 >

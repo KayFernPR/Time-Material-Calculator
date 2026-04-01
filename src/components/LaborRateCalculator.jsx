@@ -971,12 +971,14 @@ function LaborRateCalculator() {
                   Mandatory Payroll Tax Burden
                 </h3>
                 
-                {/* Table Header — aligns with input row only (labels sit above each row) */}
-                <div className="mb-2 min-w-0 -ml-[10px] border-b border-gray-300 pb-1 pl-[10px] pr-1">
-                  <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 font-semibold text-gray-600 text-xs ml-auto w-max max-w-full">
-                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                {/* Table Header — same horizontal inset as cards (p-1.5 + pl-[10px]) so columns match inputs */}
+                <div className="mb-2 min-w-0 -ml-[10px] border-b border-gray-300 pb-1 pr-1 pl-1.5">
+                  <div className="pl-[10px]">
+                    <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 font-semibold text-gray-600 text-xs ml-auto w-max max-w-full">
+                      <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                      <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                      <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    </div>
                   </div>
                 </div>
                 
@@ -1035,7 +1037,7 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1155,7 +1157,7 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1257,11 +1259,13 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="mb-2 min-w-0 -ml-[10px] border-b border-gray-300 pb-1 pl-[10px] pr-1">
-                  <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 font-semibold text-gray-600 text-xs ml-auto w-max max-w-full">
-                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                <div className="mb-2 min-w-0 -ml-[10px] border-b border-gray-300 pb-1 pr-1 pl-1.5">
+                  <div className="pl-[10px]">
+                    <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 font-semibold text-gray-600 text-xs ml-auto w-max max-w-full">
+                      <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                      <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                      <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    </div>
                   </div>
                 </div>
                 
@@ -1320,7 +1324,7 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1430,7 +1434,7 @@ function LaborRateCalculator() {
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-0.5 overflow-visible">
+                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1550,13 +1554,13 @@ function LaborRateCalculator() {
                   Benefits Burden
                 </h3>
                 
-                {/* Table Header */}
-                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1">
+                {/* Table Header — pl-1.5 matches card p-1.5 so the three-column block lines up with inputs */}
+                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1 pl-1.5">
                   <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 font-semibold text-gray-600 text-xs ml-auto w-max max-w-full">
-                  <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                  <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                  <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
-                  <div className="min-w-0" aria-hidden="true" />
+                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    <div className="min-w-0" aria-hidden="true" />
                   </div>
                 </div>
                 
@@ -1813,12 +1817,12 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1">
+                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1 pl-1.5">
                   <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 font-semibold text-gray-600 text-xs ml-auto w-max max-w-full">
-                  <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                  <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                  <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
-                  <div className="min-w-0" aria-hidden="true" />
+                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    <div className="min-w-0" aria-hidden="true" />
                   </div>
                 </div>
                 
@@ -2075,12 +2079,12 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1">
+                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1 pl-1.5">
                   <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 font-semibold text-gray-600 text-xs ml-auto w-max max-w-full">
-                  <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                  <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                  <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
-                  <div className="min-w-0" aria-hidden="true" />
+                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    <div className="min-w-0" aria-hidden="true" />
                   </div>
                 </div>
                 
@@ -2337,11 +2341,11 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1">
+                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1 pl-1.5">
                   <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 text-xs font-semibold text-gray-600 ml-auto w-max max-w-full">
-                  <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                  <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                  <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                   </div>
                 </div>
                 
@@ -2449,11 +2453,11 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1">
+                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1 pl-1.5">
                   <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 text-xs font-semibold text-gray-600 ml-auto w-max max-w-full">
-                  <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                  <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                  <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                   </div>
                 </div>
                 
@@ -2544,11 +2548,11 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1">
+                <div className="mb-2 min-w-0 border-b border-gray-300 pb-1 pr-1 pl-1.5">
                   <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 text-xs font-semibold text-gray-600 ml-auto w-max max-w-full">
-                  <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
-                  <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
-                  <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
+                    <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
+                    <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                   </div>
                 </div>
                 

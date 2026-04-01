@@ -78,6 +78,14 @@ function roundBurdenDollar(x) {
   return Math.round(x * 1e6) / 1e6
 }
 
+/** Two-decimal display for Brdn % inputs; full precision stays in state until user edits this field. */
+function formatBrdnPercentForDisplay(stored) {
+  if (stored === '' || stored === undefined || stored === null) return ''
+  const n = parseFloat(stored)
+  if (Number.isNaN(n)) return ''
+  return (Math.round(n * 100) / 100).toFixed(2)
+}
+
 // Shows (?) tooltip only when the label is truncated (e.g. shows "..."). User can hover to read full label.
 // Tooltip is rendered via portal (like Division Overhead) so it always sits on top and is never clipped.
 function TruncatedLabelWithTooltip({ label, fullText, labelClassName, wrapperClassName = 'flex items-center gap-1.5 min-w-0 overflow-hidden' }) {
@@ -184,6 +192,7 @@ function LaborRateCalculator() {
 
   // Local editing state for Hrly ($) / Spend/yr ($) so user can type decimals without value snapping on each keystroke
   const [editingDollarField, setEditingDollarField] = useState(null) // { section, rowId, field: 'hrly'|'chgd', value: string }
+  const [editingBrdnField, setEditingBrdnField] = useState(null) // { key: string, value: string }
 
   // Scroll behavior: Independent scrolling with visual indicators
   const step1Ref = useRef(null)
@@ -987,11 +996,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={mandatoryPayrollTaxPercents[option.id] ?? ''}
-                            onChange={(e) => setMandatoryPayrollTaxPercents(prev => ({
-                              ...prev,
-                              [option.id]: e.target.value
-                            }))}
+                            value={(() => {
+                              const k = `payrollTax:${option.id}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(mandatoryPayrollTaxPercents[option.id])
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `payrollTax:${option.id}`,
+                              value: formatBrdnPercentForDisplay(mandatoryPayrollTaxPercents[option.id])
+                            })}
+                            onChange={(e) => {
+                              const k = `payrollTax:${option.id}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `payrollTax:${option.id}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = mandatoryPayrollTaxPercents[option.id]
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              if (draft === '' || Number.isNaN(v)) {
+                                setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: '' }))
+                              } else {
+                                setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: Math.round(v * 100) / 100 }))
+                              }
+                              setEditingBrdnField(null)
+                            }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
@@ -1077,11 +1111,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent ?? ''}
+                            value={(() => {
+                              const k = `payrollTaxCustom:${idx}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `payrollTaxCustom:${idx}`,
+                              value: formatBrdnPercentForDisplay(field.percent)
+                            })}
                             onChange={(e) => {
-                              const updated = [...customPayrollTaxFields]
-                              updated[idx].percent = e.target.value
-                              setCustomPayrollTaxFields(updated)
+                              const k = `payrollTaxCustom:${idx}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `payrollTaxCustom:${idx}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = field.percent
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              setCustomPayrollTaxFields(prev => {
+                                const u = [...prev]
+                                if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
+                                else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
+                                return u
+                              })
+                              setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
@@ -1211,11 +1270,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={mandatoryWorkerBurdenPercents[option.id] ?? ''}
-                            onChange={(e) => setMandatoryWorkerBurdenPercents(prev => ({
-                              ...prev,
-                              [option.id]: e.target.value
-                            }))}
+                            value={(() => {
+                              const k = `workerBurden:${option.id}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(mandatoryWorkerBurdenPercents[option.id])
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `workerBurden:${option.id}`,
+                              value: formatBrdnPercentForDisplay(mandatoryWorkerBurdenPercents[option.id])
+                            })}
+                            onChange={(e) => {
+                              const k = `workerBurden:${option.id}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `workerBurden:${option.id}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = mandatoryWorkerBurdenPercents[option.id]
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              if (draft === '' || Number.isNaN(v)) {
+                                setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: '' }))
+                              } else {
+                                setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: Math.round(v * 100) / 100 }))
+                              }
+                              setEditingBrdnField(null)
+                            }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
@@ -1291,11 +1375,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent ?? ''}
+                            value={(() => {
+                              const k = `workerBurdenCustom:${idx}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `workerBurdenCustom:${idx}`,
+                              value: formatBrdnPercentForDisplay(field.percent)
+                            })}
                             onChange={(e) => {
-                              const updated = [...customWorkerBurdenFields]
-                              updated[idx].percent = e.target.value
-                              setCustomWorkerBurdenFields(updated)
+                              const k = `workerBurdenCustom:${idx}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `workerBurdenCustom:${idx}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = field.percent
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              setCustomWorkerBurdenFields(prev => {
+                                const u = [...prev]
+                                if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
+                                else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
+                                return u
+                              })
+                              setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
@@ -1443,11 +1552,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={benefitsBurdenPercents[option.id] ?? ''}
-                            onChange={(e) => setBenefitsBurdenPercents(prev => ({
-                              ...prev,
-                              [option.id]: e.target.value
-                            }))}
+                            value={(() => {
+                              const k = `benefits:${option.id}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(benefitsBurdenPercents[option.id])
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `benefits:${option.id}`,
+                              value: formatBrdnPercentForDisplay(benefitsBurdenPercents[option.id])
+                            })}
+                            onChange={(e) => {
+                              const k = `benefits:${option.id}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `benefits:${option.id}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = benefitsBurdenPercents[option.id]
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              if (draft === '' || Number.isNaN(v)) {
+                                setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: '' }))
+                              } else {
+                                setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: Math.round(v * 100) / 100 }))
+                              }
+                              setEditingBrdnField(null)
+                            }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
@@ -1512,11 +1646,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent ?? ''}
+                            value={(() => {
+                              const k = `benefitsCustom:${idx}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `benefitsCustom:${idx}`,
+                              value: formatBrdnPercentForDisplay(field.percent)
+                            })}
                             onChange={(e) => {
-                              const updated = [...customBenefitsBurdenFields]
-                              updated[idx].percent = e.target.value
-                              setCustomBenefitsBurdenFields(updated)
+                              const k = `benefitsCustom:${idx}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `benefitsCustom:${idx}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = field.percent
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              setCustomBenefitsBurdenFields(prev => {
+                                const u = [...prev]
+                                if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
+                                else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
+                                return u
+                              })
+                              setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
@@ -1643,11 +1802,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={additionalOverheadsPercents[option.id] ?? ''}
-                            onChange={(e) => setAdditionalOverheadsPercents(prev => ({
-                              ...prev,
-                              [option.id]: e.target.value
-                            }))}
+                            value={(() => {
+                              const k = `additionalOverheads:${option.id}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(additionalOverheadsPercents[option.id])
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `additionalOverheads:${option.id}`,
+                              value: formatBrdnPercentForDisplay(additionalOverheadsPercents[option.id])
+                            })}
+                            onChange={(e) => {
+                              const k = `additionalOverheads:${option.id}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `additionalOverheads:${option.id}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = additionalOverheadsPercents[option.id]
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              if (draft === '' || Number.isNaN(v)) {
+                                setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: '' }))
+                              } else {
+                                setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: Math.round(v * 100) / 100 }))
+                              }
+                              setEditingBrdnField(null)
+                            }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
@@ -1712,11 +1896,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={field.percent ?? ''}
+                            value={(() => {
+                              const k = `additionalOverheadsCustom:${idx}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `additionalOverheadsCustom:${idx}`,
+                              value: formatBrdnPercentForDisplay(field.percent)
+                            })}
                             onChange={(e) => {
-                              const updated = [...customAdditionalOverheadsFields]
-                              updated[idx].percent = e.target.value
-                              setCustomAdditionalOverheadsFields(updated)
+                              const k = `additionalOverheadsCustom:${idx}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `additionalOverheadsCustom:${idx}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = field.percent
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              setCustomAdditionalOverheadsFields(prev => {
+                                const u = [...prev]
+                                if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
+                                else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
+                                return u
+                              })
+                              setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
@@ -1843,11 +2052,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={employeeCostsPercents[option.id] ?? ''}
-                            onChange={(e) => setEmployeeCostsPercents(prev => ({
-                              ...prev,
-                              [option.id]: e.target.value
-                            }))}
+                            value={(() => {
+                              const k = `employeeCosts:${option.id}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(employeeCostsPercents[option.id])
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `employeeCosts:${option.id}`,
+                              value: formatBrdnPercentForDisplay(employeeCostsPercents[option.id])
+                            })}
+                            onChange={(e) => {
+                              const k = `employeeCosts:${option.id}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `employeeCosts:${option.id}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = employeeCostsPercents[option.id]
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              if (draft === '' || Number.isNaN(v)) {
+                                setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: '' }))
+                              } else {
+                                setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: Math.round(v * 100) / 100 }))
+                              }
+                              setEditingBrdnField(null)
+                            }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
@@ -1912,11 +2146,36 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={cost.percent ?? ''}
+                            value={(() => {
+                              const k = `employeeCostsCustom:${idx}`
+                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(cost.percent)
+                            })()}
+                            onFocus={() => setEditingBrdnField({
+                              key: `employeeCostsCustom:${idx}`,
+                              value: formatBrdnPercentForDisplay(cost.percent)
+                            })}
                             onChange={(e) => {
-                              const updated = [...customEmployeeCosts]
-                              updated[idx].percent = e.target.value
-                              setCustomEmployeeCosts(updated)
+                              const k = `employeeCostsCustom:${idx}`
+                              if (editingBrdnField?.key === k) setEditingBrdnField({ key: k, value: e.target.value })
+                            }}
+                            onBlur={() => {
+                              const k = `employeeCostsCustom:${idx}`
+                              if (editingBrdnField?.key !== k) return
+                              const stored = cost.percent
+                              const before = formatBrdnPercentForDisplay(stored)
+                              const draft = editingBrdnField.value.trim()
+                              if (draft === before || (before === '' && draft === '')) {
+                                setEditingBrdnField(null)
+                                return
+                              }
+                              const v = parseFloat(draft)
+                              setCustomEmployeeCosts(prev => {
+                                const u = [...prev]
+                                if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
+                                else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
+                                return u
+                              })
+                              setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
@@ -2050,8 +2309,27 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={divisionOverheadPercent ?? ''}
-                        onChange={(e) => setDivisionOverheadPercent(e.target.value)}
+                        value={editingBrdnField?.key === 'divisionOverhead' ? editingBrdnField.value : formatBrdnPercentForDisplay(divisionOverheadPercent)}
+                        onFocus={() => setEditingBrdnField({
+                          key: 'divisionOverhead',
+                          value: formatBrdnPercentForDisplay(divisionOverheadPercent)
+                        })}
+                        onChange={(e) => {
+                          if (editingBrdnField?.key === 'divisionOverhead') setEditingBrdnField({ key: 'divisionOverhead', value: e.target.value })
+                        }}
+                        onBlur={() => {
+                          if (editingBrdnField?.key !== 'divisionOverhead') return
+                          const before = formatBrdnPercentForDisplay(divisionOverheadPercent)
+                          const draft = editingBrdnField.value.trim()
+                          if (draft === before || (before === '' && draft === '')) {
+                            setEditingBrdnField(null)
+                            return
+                          }
+                          const v = parseFloat(draft)
+                          if (draft === '' || Number.isNaN(v)) setDivisionOverheadPercent('')
+                          else setDivisionOverheadPercent(Math.round(v * 100) / 100)
+                          setEditingBrdnField(null)
+                        }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
@@ -2123,8 +2401,27 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={generalCompanyOverheadPercent ?? ''}
-                        onChange={(e) => setGeneralCompanyOverheadPercent(e.target.value)}
+                        value={editingBrdnField?.key === 'generalOverhead' ? editingBrdnField.value : formatBrdnPercentForDisplay(generalCompanyOverheadPercent)}
+                        onFocus={() => setEditingBrdnField({
+                          key: 'generalOverhead',
+                          value: formatBrdnPercentForDisplay(generalCompanyOverheadPercent)
+                        })}
+                        onChange={(e) => {
+                          if (editingBrdnField?.key === 'generalOverhead') setEditingBrdnField({ key: 'generalOverhead', value: e.target.value })
+                        }}
+                        onBlur={() => {
+                          if (editingBrdnField?.key !== 'generalOverhead') return
+                          const before = formatBrdnPercentForDisplay(generalCompanyOverheadPercent)
+                          const draft = editingBrdnField.value.trim()
+                          if (draft === before || (before === '' && draft === '')) {
+                            setEditingBrdnField(null)
+                            return
+                          }
+                          const v = parseFloat(draft)
+                          if (draft === '' || Number.isNaN(v)) setGeneralCompanyOverheadPercent('')
+                          else setGeneralCompanyOverheadPercent(Math.round(v * 100) / 100)
+                          setEditingBrdnField(null)
+                        }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
@@ -2196,8 +2493,27 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={profitPercent ?? ''}
-                        onChange={(e) => setProfitPercent(e.target.value)}
+                        value={editingBrdnField?.key === 'profit' ? editingBrdnField.value : formatBrdnPercentForDisplay(profitPercent)}
+                        onFocus={() => setEditingBrdnField({
+                          key: 'profit',
+                          value: formatBrdnPercentForDisplay(profitPercent)
+                        })}
+                        onChange={(e) => {
+                          if (editingBrdnField?.key === 'profit') setEditingBrdnField({ key: 'profit', value: e.target.value })
+                        }}
+                        onBlur={() => {
+                          if (editingBrdnField?.key !== 'profit') return
+                          const before = formatBrdnPercentForDisplay(profitPercent)
+                          const draft = editingBrdnField.value.trim()
+                          if (draft === before || (before === '' && draft === '')) {
+                            setEditingBrdnField(null)
+                            return
+                          }
+                          const v = parseFloat(draft)
+                          if (draft === '' || Number.isNaN(v)) setProfitPercent('')
+                          else setProfitPercent(Math.round(v * 100) / 100)
+                          setEditingBrdnField(null)
+                        }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
@@ -2473,8 +2789,27 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={divisionOverheadPercent}
-                        onChange={(e) => setDivisionOverheadPercent(e.target.value)}
+                        value={editingBrdnField?.key === 'divisionOverhead' ? editingBrdnField.value : formatBrdnPercentForDisplay(divisionOverheadPercent)}
+                        onFocus={() => setEditingBrdnField({
+                          key: 'divisionOverhead',
+                          value: formatBrdnPercentForDisplay(divisionOverheadPercent)
+                        })}
+                        onChange={(e) => {
+                          if (editingBrdnField?.key === 'divisionOverhead') setEditingBrdnField({ key: 'divisionOverhead', value: e.target.value })
+                        }}
+                        onBlur={() => {
+                          if (editingBrdnField?.key !== 'divisionOverhead') return
+                          const before = formatBrdnPercentForDisplay(divisionOverheadPercent)
+                          const draft = editingBrdnField.value.trim()
+                          if (draft === before || (before === '' && draft === '')) {
+                            setEditingBrdnField(null)
+                            return
+                          }
+                          const v = parseFloat(draft)
+                          if (draft === '' || Number.isNaN(v)) setDivisionOverheadPercent('')
+                          else setDivisionOverheadPercent(Math.round(v * 100) / 100)
+                          setEditingBrdnField(null)
+                        }}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
@@ -2486,8 +2821,27 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={generalCompanyOverheadPercent}
-                        onChange={(e) => setGeneralCompanyOverheadPercent(e.target.value)}
+                        value={editingBrdnField?.key === 'generalOverhead' ? editingBrdnField.value : formatBrdnPercentForDisplay(generalCompanyOverheadPercent)}
+                        onFocus={() => setEditingBrdnField({
+                          key: 'generalOverhead',
+                          value: formatBrdnPercentForDisplay(generalCompanyOverheadPercent)
+                        })}
+                        onChange={(e) => {
+                          if (editingBrdnField?.key === 'generalOverhead') setEditingBrdnField({ key: 'generalOverhead', value: e.target.value })
+                        }}
+                        onBlur={() => {
+                          if (editingBrdnField?.key !== 'generalOverhead') return
+                          const before = formatBrdnPercentForDisplay(generalCompanyOverheadPercent)
+                          const draft = editingBrdnField.value.trim()
+                          if (draft === before || (before === '' && draft === '')) {
+                            setEditingBrdnField(null)
+                            return
+                          }
+                          const v = parseFloat(draft)
+                          if (draft === '' || Number.isNaN(v)) setGeneralCompanyOverheadPercent('')
+                          else setGeneralCompanyOverheadPercent(Math.round(v * 100) / 100)
+                          setEditingBrdnField(null)
+                        }}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
@@ -2499,8 +2853,27 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={profitPercent}
-                        onChange={(e) => setProfitPercent(e.target.value)}
+                        value={editingBrdnField?.key === 'profit' ? editingBrdnField.value : formatBrdnPercentForDisplay(profitPercent)}
+                        onFocus={() => setEditingBrdnField({
+                          key: 'profit',
+                          value: formatBrdnPercentForDisplay(profitPercent)
+                        })}
+                        onChange={(e) => {
+                          if (editingBrdnField?.key === 'profit') setEditingBrdnField({ key: 'profit', value: e.target.value })
+                        }}
+                        onBlur={() => {
+                          if (editingBrdnField?.key !== 'profit') return
+                          const before = formatBrdnPercentForDisplay(profitPercent)
+                          const draft = editingBrdnField.value.trim()
+                          if (draft === before || (before === '' && draft === '')) {
+                            setEditingBrdnField(null)
+                            return
+                          }
+                          const v = parseFloat(draft)
+                          if (draft === '' || Number.isNaN(v)) setProfitPercent('')
+                          else setProfitPercent(Math.round(v * 100) / 100)
+                          setEditingBrdnField(null)
+                        }}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>

@@ -944,7 +944,7 @@ function LaborRateCalculator() {
                         step="0.01"
                         value={workersWage}
                         onChange={(e) => setWorkersWage(e.target.value)}
-                        className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold"
+                        className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold no-spinner"
                       />
                       <span className="text-gray-500">/hr</span>
                     </div>

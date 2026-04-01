@@ -161,7 +161,7 @@ function LaborRateCalculator() {
   const [generalCompanyOverheadPercent, setGeneralCompanyOverheadPercent] = useState(0)
   const [profitPercent, setProfitPercent] = useState(0)
 
-  // Local editing state for Hrly/Chgd so user can type decimals (e.g. "2.85") without value snapping on each keystroke
+  // Local editing state for Hrly ($) / Spend/yr ($) so user can type decimals without value snapping on each keystroke
   const [editingDollarField, setEditingDollarField] = useState(null) // { section, rowId, field: 'hrly'|'chgd', value: string }
 
   // Scroll behavior: Independent scrolling with visual indicators
@@ -241,7 +241,7 @@ function LaborRateCalculator() {
     const workersWageCharged = utilizationPercent > 0 ? workersWageNum / utilizationPercent : 0
 
     // Mandatory Payroll Tax Burden calculations
-    // Hrly = wage × (Brdn%/100), Chgd = workersWageCharged × (Brdn%/100); round to 2 decimals
+    // Hrly = wage × (Brdn%/100); Spend/yr = Hrly × 2080; charged $/hr (Step 4) = workersWageCharged × (Brdn%/100)
     const payrollTaxHourlyRates = Object.fromEntries([
       ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
         opt.id,
@@ -951,11 +951,9 @@ function LaborRateCalculator() {
                 
                 <div className="space-y-1">
                   {MANDATORY_PAYROLL_TAX_OPTIONS.map(option => {
-                    const percent = mandatoryPayrollTaxPercents[option.id] || 0
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[option.id] || 0
-                    const charged = safeCalculations.payrollTaxCharged[option.id] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <TruncatedLabelWithTooltip
@@ -1007,8 +1005,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'payrollTax', rowId: option.id, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'payrollTax', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => {
                               if (editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 setEditingDollarField(prev => ({ ...prev, value: e.target.value }))
@@ -1017,8 +1015,9 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
-                                  const pct = Math.round((v / workersWageChargedVal) * 1000) / 10
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  const pct = Math.round((earnedHrly / workersWageNum) * 1000) / 10
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                 }
                                 setEditingDollarField(null)
@@ -1033,9 +1032,8 @@ function LaborRateCalculator() {
                   })}
                   {customPayrollTaxFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] ?? 0
-                    const charged = safeCalculations.payrollTaxCharged[`custom-${idx}`] ?? 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
@@ -1098,8 +1096,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? Number(charged).toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'payrollTaxCustom', rowId: `custom-${idx}`, customIdx: idx, field: 'chgd', value: charged > 0 ? Number(charged).toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'payrollTaxCustom', rowId: `custom-${idx}`, customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => {
                               if (editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 setEditingDollarField(prev => ({ ...prev, value: e.target.value }))
@@ -1108,8 +1106,9 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
-                                  const pct = Math.round((v / workersWageChargedVal) * 1000) / 10
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  const pct = Math.round((earnedHrly / workersWageNum) * 1000) / 10
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                 }
                                 setEditingDollarField(null)
@@ -1155,7 +1154,7 @@ function LaborRateCalculator() {
                     ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${safeCalculations.combinedFederalPayrollTaxCharged.toFixed(2)}
+                    ${annualSpendFromEarnedHourly(safeCalculations.combinedFederalPayrollTaxHourlyRate).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -1177,9 +1176,8 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {MANDATORY_WORKER_BURDEN_OPTIONS.map(option => {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[option.id] || 0
-                    const charged = safeCalculations.workerBurdenCharged[option.id] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <TruncatedLabelWithTooltip
@@ -1226,14 +1224,15 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'workerBurden', rowId: option.id, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'workerBurden', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
-                                  setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageChargedVal) * 1000) / 10 }))
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1247,9 +1246,8 @@ function LaborRateCalculator() {
                   })}
                   {customWorkerBurdenFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] ?? 0
-                    const charged = safeCalculations.workerBurdenCharged[`custom-${idx}`] ?? 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
@@ -1307,14 +1305,15 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? Number(charged).toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'workerBurdenCustom', customIdx: idx, field: 'chgd', value: charged > 0 ? Number(charged).toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'workerBurdenCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) {
-                                  setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageChargedVal) * 1000) / 10 }; return u })
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1359,7 +1358,7 @@ function LaborRateCalculator() {
                     ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${safeCalculations.workerBurdenChargedTotal.toFixed(2)}
+                    ${annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRate).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -1374,7 +1373,7 @@ function LaborRateCalculator() {
                   ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
                 </div>
                 <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                  ${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}
+                  ${annualSpendFromEarnedHourly(safeCalculations.totalMandatoryBurdenHourlyRate).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -1409,9 +1408,8 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {BENEFITS_BURDEN_OPTIONS.map(option => {
                     const hourlyRate = safeCalculations.benefitsBurdenHourlyRates[option.id] || 0
-                    const charged = safeCalculations.benefitsBurdenCharged[option.id] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1456,13 +1454,16 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'benefits', rowId: option.id, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'benefits', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageChargedVal) * 1000) / 10 }))
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
+                                }
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1476,9 +1477,8 @@ function LaborRateCalculator() {
                   })}
                   {customBenefitsBurdenFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0
-                    const charged = safeCalculations.benefitsBurdenCharged[`custom-${idx}`] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1523,13 +1523,16 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'benefitsCustom', customIdx: idx, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'benefitsCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageChargedVal) * 1000) / 10 }; return u })
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
+                                }
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1581,7 +1584,7 @@ function LaborRateCalculator() {
                     ${safeCalculations.benefitsBurdenHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${safeCalculations.benefitsBurdenChargedTotal.toFixed(2)}
+                    ${annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRate).toFixed(2)}
                   </div>
                   <div></div>
                 </div>
@@ -1605,9 +1608,8 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {ADDITIONAL_OVERHEADS_OPTIONS.map(option => {
                     const hourlyRate = safeCalculations.additionalOverheadsHourlyRates[option.id] || 0
-                    const charged = safeCalculations.additionalOverheadsCharged[option.id] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1652,13 +1654,16 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'additionalOverheads', rowId: option.id, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'additionalOverheads', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageChargedVal) * 1000) / 10 }))
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
+                                }
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1672,9 +1677,8 @@ function LaborRateCalculator() {
                   })}
                   {customAdditionalOverheadsFields.map((field, idx) => {
                     const hourlyRate = safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0
-                    const charged = safeCalculations.additionalOverheadsCharged[`custom-${idx}`] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={field.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1719,13 +1723,16 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'additionalOverheadsCustom', customIdx: idx, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'additionalOverheadsCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageChargedVal) * 1000) / 10 }; return u })
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
+                                }
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1801,9 +1808,8 @@ function LaborRateCalculator() {
                 <div className="space-y-1">
                   {EMPLOYEE_COSTS_OPTIONS.map(option => {
                     const hourlyRate = safeCalculations.employeeCostsHourlyRates[option.id] || 0
-                    const charged = safeCalculations.employeeCostsCharged[option.id] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1848,13 +1854,16 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'employeeCosts', rowId: option.id, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'employeeCosts', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageChargedVal) * 1000) / 10 }))
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
+                                }
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1868,9 +1877,8 @@ function LaborRateCalculator() {
                   })}
                   {customEmployeeCosts.map((cost, idx) => {
                     const hourlyRate = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0
-                    const charged = safeCalculations.employeeCostsCharged[`custom-${idx}`] || 0
+                    const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
-                    const workersWageChargedVal = safeCalculations.workersWageCharged || 0
                     return (
                       <div key={cost.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
                         <TruncatedLabelWithTooltip
@@ -1915,13 +1923,16 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (charged > 0 ? charged.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'employeeCostsCustom', customIdx: idx, field: 'chgd', value: charged > 0 ? charged.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
+                            onFocus={() => setEditingDollarField({ section: 'employeeCostsCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
                             onChange={(e) => { if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageChargedVal > 0 && !Number.isNaN(v) && v >= 0) setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageChargedVal) * 1000) / 10 }; return u })
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
+                                  const earnedHrly = v / PAID_CAPACITY
+                                  setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
+                                }
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1973,7 +1984,7 @@ function LaborRateCalculator() {
                     ${safeCalculations.employeeCostsHourlyRate.toFixed(2)}
                   </div>
                   <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${safeCalculations.employeeCostsChargedTotal.toFixed(2)}
+                    ${annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRate).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -2048,14 +2059,15 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.divisionOverheadCharged > 0 ? safeCalculations.divisionOverheadCharged.toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'divisionOverhead', field: 'chgd', value: safeCalculations.divisionOverheadCharged > 0 ? safeCalculations.divisionOverheadCharged.toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.divisionOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.divisionOverheadCharged).toFixed(2) : '')}
+                        onFocus={() => setEditingDollarField({ section: 'divisionOverhead', field: 'chgd', value: safeCalculations.divisionOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.divisionOverheadCharged).toFixed(2) : '' })}
                         onChange={(e) => { if (editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd') {
                             const v = parseFloat(e.target.value)
                             const base = safeCalculations.costBaseBeforeOverheadAndProfit || 0
-                            if (!Number.isNaN(v) && v >= 0 && base + v > 0) setDivisionOverheadPercent(100 * v / (base + v))
+                            const hourly = v / PAID_CAPACITY
+                            if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) setDivisionOverheadPercent(100 * hourly / (base + hourly))
                             setEditingDollarField(null)
                           }
                         }}
@@ -2120,14 +2132,15 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.generalCompanyOverheadCharged > 0 ? safeCalculations.generalCompanyOverheadCharged.toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'generalOverhead', field: 'chgd', value: safeCalculations.generalCompanyOverheadCharged > 0 ? safeCalculations.generalCompanyOverheadCharged.toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.generalCompanyOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.generalCompanyOverheadCharged).toFixed(2) : '')}
+                        onFocus={() => setEditingDollarField({ section: 'generalOverhead', field: 'chgd', value: safeCalculations.generalCompanyOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.generalCompanyOverheadCharged).toFixed(2) : '' })}
                         onChange={(e) => { if (editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd') {
                             const v = parseFloat(e.target.value)
                             const base = safeCalculations.totalAfterDivisionOverhead || 0
-                            if (!Number.isNaN(v) && v >= 0 && base + v > 0) setGeneralCompanyOverheadPercent(100 * v / (base + v))
+                            const hourly = v / PAID_CAPACITY
+                            if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) setGeneralCompanyOverheadPercent(100 * hourly / (base + hourly))
                             setEditingDollarField(null)
                           }
                         }}
@@ -2192,14 +2205,15 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.profitCharged > 0 ? safeCalculations.profitCharged.toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'profit', field: 'chgd', value: safeCalculations.profitCharged > 0 ? safeCalculations.profitCharged.toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.profitCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.profitCharged).toFixed(2) : '')}
+                        onFocus={() => setEditingDollarField({ section: 'profit', field: 'chgd', value: safeCalculations.profitCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.profitCharged).toFixed(2) : '' })}
                         onChange={(e) => { if (editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd') {
                             const v = parseFloat(e.target.value)
                             const base = safeCalculations.totalAfterGeneralOverhead || 0
-                            if (!Number.isNaN(v) && v >= 0 && base + v > 0) setProfitPercent(100 * v / (base + v))
+                            const hourly = v / PAID_CAPACITY
+                            if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) setProfitPercent(100 * hourly / (base + hourly))
                             setEditingDollarField(null)
                           }
                         }}

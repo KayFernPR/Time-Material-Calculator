@@ -77,3 +77,19 @@ input.burden-input {
 input.burden-input::placeholder {
   color: #9ca3af;
 }
+
+/* Step 4: fit on one printed page (compact type + margins + slight zoom where supported) */
+@media print {
+  @page {
+    margin: 0.35in;
+  }
+  .step-4-print-root {
+    zoom: 0.92;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .step-4-print-root .space-y-1 > .flex.justify-between {
+    line-height: 1.2;
+    min-height: 0;
+  }
+}

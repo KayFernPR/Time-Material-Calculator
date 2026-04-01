@@ -974,7 +974,7 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 -ml-[10px] text-xs">
                   <div className="min-w-0 ml-[10px]"></div>
-                  <div className="text-center whitespace-nowrap px-0.5">Brdn %</div>
+                  <div className="text-left whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                 </div>
@@ -992,7 +992,7 @@ function LaborRateCalculator() {
                           labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
                           wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]"
                         />
-                        <div className="flex items-center justify-center min-w-0 px-0.5 pr-0.5 overflow-visible">
+                        <div className="flex items-center justify-start min-w-0 px-0.5 pr-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1107,7 +1107,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 pr-0.5 overflow-visible">
+                        <div className="flex items-center justify-start min-w-0 px-1 pr-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1227,7 +1227,7 @@ function LaborRateCalculator() {
                 {/* Payroll Tax Burden */}
                 <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2" title="Payroll Tax Burden">Payroll Tax Burden</div>
-                  <div className="text-center text-xs font-semibold text-primary px-0.5">
+                  <div className="text-left text-xs font-semibold text-primary px-0.5">
                     {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
                   </div>
                   <div className="text-center text-xs font-bold text-gray-700 px-0.5">
@@ -1248,7 +1248,7 @@ function LaborRateCalculator() {
                 {/* Table Header */}
                 <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 -ml-[10px] text-xs">
                   <div className="min-w-0 ml-[10px]"></div>
-                  <div className="text-center whitespace-nowrap px-0.5">Brdn %</div>
+                  <div className="text-left whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                 </div>
@@ -1266,7 +1266,7 @@ function LaborRateCalculator() {
                           labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
                           wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]"
                         />
-                        <div className="flex items-center justify-center min-w-0 px-0.5 pr-0.5 overflow-visible">
+                        <div className="flex items-center justify-start min-w-0 px-0.5 pr-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1371,7 +1371,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex items-center justify-center min-w-0 px-1 pr-0.5 overflow-visible">
+                        <div className="flex items-center justify-start min-w-0 px-1 pr-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1481,7 +1481,7 @@ function LaborRateCalculator() {
                 {/* Worker Burden Total */}
                 <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2" title="Worker Burden">Worker Burden</div>
-                  <div className="text-center text-xs font-semibold text-primary px-0.5">
+                  <div className="text-left text-xs font-semibold text-primary px-0.5">
                     {safeCalculations.workerBurdenPercent.toFixed(2)}%
                   </div>
                   <div className="text-center text-xs font-bold text-gray-700 px-0.5">
@@ -1496,7 +1496,7 @@ function LaborRateCalculator() {
               {/* Total Wage Burden */}
               <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/10 min-w-0 -ml-[10px]">
                 <div className="text-gray-700 text-xs font-bold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2" title="Total Wage Burden">Total Wage Burden</div>
-                <div className="text-center text-xs font-bold text-primary px-0.5">
+                <div className="text-left text-xs font-bold text-primary px-0.5">
                   {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
                 </div>
                 <div className="text-center text-xs font-bold text-gray-700 px-0.5">

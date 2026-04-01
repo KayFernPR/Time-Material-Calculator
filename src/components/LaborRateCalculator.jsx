@@ -21,16 +21,16 @@ const NON_BILLABLE_HOURS_OPTIONS = [
 
 // Step 2: Mandatory Payroll Tax Burden options
 const MANDATORY_PAYROLL_TAX_OPTIONS = [
-  { id: 'federal-taxes', label: 'Federal\nTaxes', defaultPercent: 0 },
-  { id: 'social-security', label: 'Social\nSecurity', defaultPercent: 0 },
+  { id: 'federal-taxes', label: 'Federal Taxes', defaultPercent: 0 },
+  { id: 'social-security', label: 'Social Security', defaultPercent: 0 },
   { id: 'medicare', label: 'Medicare', defaultPercent: 0 }
 ]
 
 // Step 2: Mandatory Worker Burden options
 const MANDATORY_WORKER_BURDEN_OPTIONS = [
-  { id: 'state-unemployment', label: 'State\nUnemployment', defaultPercent: 0 },
-  { id: 'federal-unemployment', label: 'Federal\nUnemployment', defaultPercent: 0 },
-  { id: 'workers-compensation', label: 'Workers\nCompensation', defaultPercent: 0 }
+  { id: 'state-unemployment', label: 'State Unemployment', defaultPercent: 0 },
+  { id: 'federal-unemployment', label: 'Federal Unemployment', defaultPercent: 0 },
+  { id: 'workers-compensation', label: 'Workers Compensation', defaultPercent: 0 }
 ]
 
 // Step 2: Benefits Burden options
@@ -985,11 +985,11 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
                       <div key={option.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <div className="min-w-0 pl-[10px] pr-1">
+                        <div className="min-w-0 pl-[10px] pr-1 overflow-x-auto">
                           <TruncatedLabelWithTooltip
                             label={option.label}
                             fullText={option.label.replace(/\n/g, ' ')}
-                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                            labelClassName="text-gray-700 font-medium min-w-0 whitespace-nowrap text-xs leading-snug"
                             wrapperClassName="flex items-start gap-1.5 min-w-0"
                           />
                         </div>
@@ -1095,11 +1095,11 @@ function LaborRateCalculator() {
                     return (
                       <div key={field.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-start justify-between gap-2 min-w-0 pl-[10px] pr-1">
-                          <div className="min-w-0 flex-1">
+                          <div className="min-w-0 flex-1 overflow-x-auto">
                             <TruncatedLabelWithTooltip
-                              label={field.label}
-                              fullText={field.label}
-                              labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                              label={field.label.replace(/\n/g, ' ')}
+                              fullText={field.label.replace(/\n/g, ' ')}
+                              labelClassName="text-gray-700 font-medium min-w-0 whitespace-nowrap text-xs leading-snug"
                               wrapperClassName="flex items-start gap-1.5 min-w-0"
                             />
                           </div>
@@ -1268,11 +1268,11 @@ function LaborRateCalculator() {
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
                       <div key={option.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <div className="min-w-0 pl-[10px] pr-1">
+                        <div className="min-w-0 pl-[10px] pr-1 overflow-x-auto">
                           <TruncatedLabelWithTooltip
                             label={option.label}
                             fullText={option.label.replace(/\n/g, ' ')}
-                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                            labelClassName="text-gray-700 font-medium min-w-0 whitespace-nowrap text-xs leading-snug"
                             wrapperClassName="flex items-start gap-1.5 min-w-0"
                           />
                         </div>
@@ -1368,11 +1368,11 @@ function LaborRateCalculator() {
                     return (
                       <div key={field.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
                         <div className="flex items-start justify-between gap-2 min-w-0 pl-[10px] pr-1">
-                          <div className="min-w-0 flex-1">
+                          <div className="min-w-0 flex-1 overflow-x-auto">
                             <TruncatedLabelWithTooltip
-                              label={field.label}
-                              fullText={field.label}
-                              labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                              label={field.label.replace(/\n/g, ' ')}
+                              fullText={field.label.replace(/\n/g, ' ')}
+                              labelClassName="text-gray-700 font-medium min-w-0 whitespace-nowrap text-xs leading-snug"
                               wrapperClassName="flex items-start gap-1.5 min-w-0"
                             />
                           </div>

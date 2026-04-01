@@ -971,9 +971,8 @@ function LaborRateCalculator() {
                   Mandatory Payroll Tax Burden
                 </h3>
                 
-                {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 -ml-[10px] text-xs">
-                  <div className="min-w-0 ml-[10px]"></div>
+                {/* Table Header — aligns with input row only (labels sit above each row) */}
+                <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 -ml-[10px] text-xs pl-[10px]">
                   <div className="text-left whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
@@ -985,13 +984,16 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <TruncatedLabelWithTooltip
-                          label={option.label}
-                          fullText={option.label.replace(/\n/g, ' ')}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]"
-                        />
+                      <div key={option.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
+                        <div className="min-w-0 pl-[10px] pr-1">
+                          <TruncatedLabelWithTooltip
+                            label={option.label}
+                            fullText={option.label.replace(/\n/g, ' ')}
+                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                            wrapperClassName="flex items-start gap-1.5 min-w-0"
+                          />
+                        </div>
+                        <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 items-center min-w-0 pl-[10px]">
                         <div className="flex items-center justify-start min-w-0 px-0.5 pr-0.5 overflow-visible">
                           <input
                             type="number"
@@ -1082,6 +1084,7 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                         </div>
+                        </div>
                       </div>
                     )
                   })}
@@ -1090,14 +1093,16 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <TruncatedLabelWithTooltip
-                            label={field.label}
-                            fullText={field.label}
-                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
-                            wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                          />
+                      <div key={field.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
+                        <div className="flex items-start justify-between gap-2 min-w-0 pl-[10px] pr-1">
+                          <div className="min-w-0 flex-1">
+                            <TruncatedLabelWithTooltip
+                              label={field.label}
+                              fullText={field.label}
+                              labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                              wrapperClassName="flex items-start gap-1.5 min-w-0"
+                            />
+                          </div>
                           <button
                             type="button"
                             onClick={() => setCustomPayrollTaxFields(prev => prev.filter((_, i) => i !== idx))}
@@ -1107,6 +1112,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
+                        <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 items-center min-w-0 pl-[10px]">
                         <div className="flex items-center justify-start min-w-0 px-1 pr-0.5 overflow-visible">
                           <input
                             type="number"
@@ -1198,6 +1204,7 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                         </div>
+                        </div>
                       </div>
                     )
                   })}
@@ -1225,16 +1232,18 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Payroll Tax Burden */}
-                <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
-                  <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2" title="Payroll Tax Burden">Payroll Tax Burden</div>
-                  <div className="text-left text-xs font-semibold text-primary px-0.5">
-                    {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
-                  </div>
-                  <div className="text-center text-xs font-bold text-gray-700 px-0.5">
-                    ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
-                  </div>
-                  <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${annualSpendFromEarnedHourly(safeCalculations.combinedFederalPayrollTaxHourlyRate).toFixed(2)}
+                <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
+                  <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words" title="Payroll Tax Burden">Payroll Tax Burden</div>
+                  <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 items-center pl-[10px]">
+                    <div className="text-left text-xs font-semibold text-primary px-0.5">
+                      {safeCalculations.combinedFederalPayrollTaxPercent.toFixed(2)}%
+                    </div>
+                    <div className="text-center text-xs font-bold text-gray-700 px-0.5">
+                      ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
+                      ${annualSpendFromEarnedHourly(safeCalculations.combinedFederalPayrollTaxHourlyRate).toFixed(2)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1246,8 +1255,7 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 -ml-[10px] text-xs">
-                  <div className="min-w-0 ml-[10px]"></div>
+                <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 -ml-[10px] text-xs pl-[10px]">
                   <div className="text-left whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
@@ -1259,13 +1267,16 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <TruncatedLabelWithTooltip
-                          label={option.label}
-                          fullText={option.label.replace(/\n/g, ' ')}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]"
-                        />
+                      <div key={option.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
+                        <div className="min-w-0 pl-[10px] pr-1">
+                          <TruncatedLabelWithTooltip
+                            label={option.label}
+                            fullText={option.label.replace(/\n/g, ' ')}
+                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                            wrapperClassName="flex items-start gap-1.5 min-w-0"
+                          />
+                        </div>
+                        <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 items-center min-w-0 pl-[10px]">
                         <div className="flex items-center justify-start min-w-0 px-0.5 pr-0.5 overflow-visible">
                           <input
                             type="number"
@@ -1346,6 +1357,7 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                         </div>
+                        </div>
                       </div>
                     )
                   })}
@@ -1354,14 +1366,16 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
-                        <div className="flex items-center gap-1.5 min-w-0 overflow-hidden ml-[10px]">
-                          <TruncatedLabelWithTooltip
-                            label={field.label}
-                            fullText={field.label}
-                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line overflow-hidden leading-tight text-xs line-clamp-2"
-                            wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                          />
+                      <div key={field.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 -ml-[10px]">
+                        <div className="flex items-start justify-between gap-2 min-w-0 pl-[10px] pr-1">
+                          <div className="min-w-0 flex-1">
+                            <TruncatedLabelWithTooltip
+                              label={field.label}
+                              fullText={field.label}
+                              labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-pre-line text-xs leading-snug"
+                              wrapperClassName="flex items-start gap-1.5 min-w-0"
+                            />
+                          </div>
                           <button
                             type="button"
                             onClick={() => setCustomWorkerBurdenFields(prev => prev.filter((_, i) => i !== idx))}
@@ -1371,6 +1385,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
+                        <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 items-center min-w-0 pl-[10px]">
                         <div className="flex items-center justify-start min-w-0 px-1 pr-0.5 overflow-visible">
                           <input
                             type="number"
@@ -1452,6 +1467,7 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                         </div>
+                        </div>
                       </div>
                     )
                   })}
@@ -1479,31 +1495,35 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Worker Burden Total */}
-                <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
-                  <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2" title="Worker Burden">Worker Burden</div>
-                  <div className="text-left text-xs font-semibold text-primary px-0.5">
-                    {safeCalculations.workerBurdenPercent.toFixed(2)}%
-                  </div>
-                  <div className="text-center text-xs font-bold text-gray-700 px-0.5">
-                    ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
-                  </div>
-                  <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRate).toFixed(2)}
+                <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
+                  <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words" title="Worker Burden">Worker Burden</div>
+                  <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 items-center pl-[10px]">
+                    <div className="text-left text-xs font-semibold text-primary px-0.5">
+                      {safeCalculations.workerBurdenPercent.toFixed(2)}%
+                    </div>
+                    <div className="text-center text-xs font-bold text-gray-700 px-0.5">
+                      ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
+                      ${annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRate).toFixed(2)}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Total Wage Burden */}
-              <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/10 min-w-0 -ml-[10px]">
-                <div className="text-gray-700 text-xs font-bold min-w-0 pr-1 overflow-hidden ml-[10px] break-words line-clamp-2" title="Total Wage Burden">Total Wage Burden</div>
-                <div className="text-left text-xs font-bold text-primary px-0.5">
-                  {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
-                </div>
-                <div className="text-center text-xs font-bold text-gray-700 px-0.5">
-                  ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
-                </div>
-                <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                  ${annualSpendFromEarnedHourly(safeCalculations.totalMandatoryBurdenHourlyRate).toFixed(2)}
+              <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/10 min-w-0 -ml-[10px]">
+                <div className="text-gray-700 text-xs font-bold min-w-0 pr-1 overflow-hidden ml-[10px] break-words" title="Total Wage Burden">Total Wage Burden</div>
+                <div className="grid grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5 items-center pl-[10px]">
+                  <div className="text-left text-xs font-bold text-primary px-0.5">
+                    {safeCalculations.totalMandatoryBurdenPercent.toFixed(2)}%
+                  </div>
+                  <div className="text-center text-xs font-bold text-gray-700 px-0.5">
+                    ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
+                  </div>
+                  <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
+                    ${annualSpendFromEarnedHourly(safeCalculations.totalMandatoryBurdenHourlyRate).toFixed(2)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1527,12 +1547,11 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
-                  <div className="min-w-0"></div>
+                <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
-                  <div className="min-w-0"></div>
+                  <div className="min-w-0" aria-hidden="true" />
                 </div>
                 
                 <div className="space-y-1">
@@ -1541,13 +1560,16 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <TruncatedLabelWithTooltip
-                          label={option.label}
-                          fullText={option.label.replace(/\n/g, ' ')}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                        />
+                      <div key={option.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <div className="min-w-0 pr-1">
+                          <TruncatedLabelWithTooltip
+                            label={option.label}
+                            fullText={option.label.replace(/\n/g, ' ')}
+                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal pr-1 text-xs leading-snug"
+                            wrapperClassName="flex items-start gap-1.5 min-w-0"
+                          />
+                        </div>
+                        <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1627,6 +1649,7 @@ function LaborRateCalculator() {
                           />
                         </div>
                         <div></div>
+                        </div>
                       </div>
                     )
                   })}
@@ -1635,13 +1658,26 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <TruncatedLabelWithTooltip
-                          label={field.label}
-                          fullText={field.label}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                        />
+                      <div key={field.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                        <div className="flex items-start justify-between gap-2 min-w-0 pr-1">
+                          <div className="min-w-0 flex-1">
+                            <TruncatedLabelWithTooltip
+                              label={field.label}
+                              fullText={field.label}
+                              labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal pr-1 text-xs leading-snug"
+                              wrapperClassName="flex items-start gap-1.5 min-w-0"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setCustomBenefitsBurdenFields(prev => prev.filter((_, i) => i !== idx))}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded text-xs shrink-0"
+                            aria-label="Remove"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1720,15 +1756,7 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                         </div>
-                        <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
-                          <button
-                            type="button"
-                            onClick={() => setCustomBenefitsBurdenFields(prev => prev.filter((_, i) => i !== idx))}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded text-xs"
-                            aria-label="Remove"
-                          >
-                            ×
-                          </button>
+                        <div className="min-w-0 w-8 shrink-0" aria-hidden="true" />
                         </div>
                       </div>
                     )
@@ -1755,18 +1783,20 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Benefits Burden Total */}
-                <div className="mt-3 grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden">Total Benefits Burden</div>
-                  <div className="text-center text-xs font-semibold text-primary px-0.5">
-                    {safeCalculations.benefitsBurdenPercent.toFixed(2)}%
+                  <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
+                    <div className="text-center text-xs font-semibold text-primary px-0.5">
+                      {safeCalculations.benefitsBurdenPercent.toFixed(2)}%
+                    </div>
+                    <div className="text-center text-xs font-bold text-gray-700 px-0.5">
+                      ${safeCalculations.benefitsBurdenHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
+                      ${annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRate).toFixed(2)}
+                    </div>
+                    <div className="min-w-0" aria-hidden="true" />
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 px-0.5">
-                    ${safeCalculations.benefitsBurdenHourlyRate.toFixed(2)}
-                  </div>
-                  <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRate).toFixed(2)}
-                  </div>
-                  <div></div>
                 </div>
               </div>
 
@@ -1777,12 +1807,11 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
-                  <div className="min-w-0"></div>
+                <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
-                  <div className="min-w-0"></div>
+                  <div className="min-w-0" aria-hidden="true" />
                 </div>
                 
                 <div className="space-y-1">
@@ -1791,13 +1820,16 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <TruncatedLabelWithTooltip
-                          label={option.label}
-                          fullText={option.label.replace(/\n/g, ' ')}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                        />
+                      <div key={option.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <div className="min-w-0 pr-1">
+                          <TruncatedLabelWithTooltip
+                            label={option.label}
+                            fullText={option.label.replace(/\n/g, ' ')}
+                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal pr-1 text-xs leading-snug"
+                            wrapperClassName="flex items-start gap-1.5 min-w-0"
+                          />
+                        </div>
+                        <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1877,6 +1909,7 @@ function LaborRateCalculator() {
                           />
                         </div>
                         <div></div>
+                        </div>
                       </div>
                     )
                   })}
@@ -1885,13 +1918,26 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={field.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <TruncatedLabelWithTooltip
-                          label={field.label}
-                          fullText={field.label}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                        />
+                      <div key={field.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                        <div className="flex items-start justify-between gap-2 min-w-0 pr-1">
+                          <div className="min-w-0 flex-1">
+                            <TruncatedLabelWithTooltip
+                              label={field.label}
+                              fullText={field.label}
+                              labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal pr-1 text-xs leading-snug"
+                              wrapperClassName="flex items-start gap-1.5 min-w-0"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setCustomAdditionalOverheadsFields(prev => prev.filter((_, i) => i !== idx))}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded text-xs shrink-0"
+                            aria-label="Remove"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1970,15 +2016,7 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                         </div>
-                        <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
-                          <button
-                            type="button"
-                            onClick={() => setCustomAdditionalOverheadsFields(prev => prev.filter((_, i) => i !== idx))}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded text-xs"
-                            aria-label="Remove"
-                          >
-                            ×
-                          </button>
+                        <div className="min-w-0 w-8 shrink-0" aria-hidden="true" />
                         </div>
                       </div>
                     )
@@ -2005,18 +2043,20 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Additional Overheads Total */}
-                <div className="mt-3 grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
-                  <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words line-clamp-2" title="Total Additional Overheads">Total Additional Overheads</div>
-                  <div className="text-center text-xs font-semibold text-primary px-0.5">
-                    {safeCalculations.additionalOverheadsPercent.toFixed(2)}%
+                <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                  <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words" title="Total Additional Overheads">Total Additional Overheads</div>
+                  <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
+                    <div className="text-center text-xs font-semibold text-primary px-0.5">
+                      {safeCalculations.additionalOverheadsPercent.toFixed(2)}%
+                    </div>
+                    <div className="text-center text-xs font-bold text-gray-700 px-0.5">
+                      ${safeCalculations.additionalOverheadsHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
+                      ${annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRate).toFixed(2)}
+                    </div>
+                    <div className="min-w-0" aria-hidden="true" />
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 px-0.5">
-                    ${safeCalculations.additionalOverheadsHourlyRate.toFixed(2)}
-                  </div>
-                  <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRate).toFixed(2)}
-                  </div>
-                  <div></div>
                 </div>
               </div>
 
@@ -2027,12 +2067,11 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
-                  <div className="min-w-0"></div>
+                <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 mb-2 font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0 text-xs">
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
-                  <div className="min-w-0"></div>
+                  <div className="min-w-0" aria-hidden="true" />
                 </div>
                 
                 <div className="space-y-1">
@@ -2041,13 +2080,16 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={option.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <TruncatedLabelWithTooltip
-                          label={option.label}
-                          fullText={option.label.replace(/\n/g, ' ')}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                        />
+                      <div key={option.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <div className="min-w-0 pr-1">
+                          <TruncatedLabelWithTooltip
+                            label={option.label}
+                            fullText={option.label.replace(/\n/g, ' ')}
+                            labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal pr-1 text-xs leading-snug"
+                            wrapperClassName="flex items-start gap-1.5 min-w-0"
+                          />
+                        </div>
+                        <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -2127,6 +2169,7 @@ function LaborRateCalculator() {
                           />
                         </div>
                         <div></div>
+                        </div>
                       </div>
                     )
                   })}
@@ -2135,13 +2178,26 @@ function LaborRateCalculator() {
                     const annualSpend = annualSpendFromEarnedHourly(hourlyRate)
                     const workersWageNum = parseFloat(workersWage) || 0
                     return (
-                      <div key={cost.id} className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
-                        <TruncatedLabelWithTooltip
-                          label={cost.label}
-                          fullText={cost.label}
-                          labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal overflow-hidden pr-1 leading-tight text-xs line-clamp-2"
-                          wrapperClassName="flex items-center gap-1.5 min-w-0 overflow-hidden"
-                        />
+                      <div key={cost.id} className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg bg-gray-50 min-w-0">
+                        <div className="flex items-start justify-between gap-2 min-w-0 pr-1">
+                          <div className="min-w-0 flex-1">
+                            <TruncatedLabelWithTooltip
+                              label={cost.label}
+                              fullText={cost.label}
+                              labelClassName="text-gray-700 font-medium break-words min-w-0 whitespace-normal pr-1 text-xs leading-snug"
+                              wrapperClassName="flex items-start gap-1.5 min-w-0"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setCustomEmployeeCosts(prev => prev.filter((_, i) => i !== idx))}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded text-xs shrink-0"
+                            aria-label="Remove"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
                         <div className="flex items-center justify-center min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -2220,15 +2276,7 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                         </div>
-                        <div className="flex items-center justify-end w-8 shrink-0" aria-hidden="true">
-                          <button
-                            type="button"
-                            onClick={() => setCustomEmployeeCosts(prev => prev.filter((_, i) => i !== idx))}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded text-xs"
-                            aria-label="Remove"
-                          >
-                            ×
-                          </button>
+                        <div className="min-w-0 w-8 shrink-0" aria-hidden="true" />
                         </div>
                       </div>
                     )
@@ -2255,18 +2303,20 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Employee Costs Total */}
-                <div className="mt-3 grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
-                  <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words line-clamp-2" title="Total Employee Costs">Total Employee Costs</div>
-                  <div className="text-center text-xs font-semibold text-primary px-0.5">
-                    {safeCalculations.employeeCostsPercent.toFixed(2)}%
+                <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                  <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words" title="Total Employee Costs">Total Employee Costs</div>
+                  <div className="grid grid-cols-[3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center min-w-0">
+                    <div className="text-center text-xs font-semibold text-primary px-0.5">
+                      {safeCalculations.employeeCostsPercent.toFixed(2)}%
+                    </div>
+                    <div className="text-center text-xs font-bold text-gray-700 px-0.5">
+                      ${safeCalculations.employeeCostsHourlyRate.toFixed(2)}
+                    </div>
+                    <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
+                      ${annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRate).toFixed(2)}
+                    </div>
+                    <div className="min-w-0" aria-hidden="true" />
                   </div>
-                  <div className="text-center text-xs font-bold text-gray-700 px-0.5">
-                    ${safeCalculations.employeeCostsHourlyRate.toFixed(2)}
-                  </div>
-                  <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
-                    ${annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRate).toFixed(2)}
-                  </div>
-                  <div></div>
                 </div>
               </div>
 
@@ -2277,17 +2327,16 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
-                  <div className="min-w-0"></div>
+                <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                    <div className="flex items-center gap-2 min-w-0 pr-2">
-                      <label className="text-gray-700 text-xs font-medium break-words min-w-0 line-clamp-2 leading-snug">
+                  <div className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                    <div className="flex items-start gap-2 min-w-0 pr-1">
+                      <label className="text-gray-700 text-xs font-medium break-words min-w-0 leading-snug">
                         Division Overhead
                       </label>
                       <div
@@ -2306,6 +2355,7 @@ function LaborRateCalculator() {
                         </svg>
                       </div>
                     </div>
+                    <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 items-center min-w-0">
                     <div className="flex items-center justify-center min-w-0 overflow-visible">
                       <input
                         type="number"
@@ -2375,6 +2425,7 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                     </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2386,18 +2437,18 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
-                  <div className="min-w-0"></div>
+                <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                    <label className="text-gray-700 text-xs font-medium break-words min-w-0 overflow-hidden pr-2">
+                  <div className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                    <label className="text-gray-700 text-xs font-medium break-words min-w-0 pr-1 leading-snug">
                       General Company Overhead
                     </label>
+                    <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 items-center min-w-0">
                     <div className="flex items-center justify-center min-w-0 overflow-visible">
                       <input
                         type="number"
@@ -2467,6 +2518,7 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                     </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2478,18 +2530,18 @@ function LaborRateCalculator() {
                 </h3>
                 
                 {/* Table Header */}
-                <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
-                  <div className="min-w-0"></div>
+                <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 mb-2 text-xs font-semibold text-gray-600 border-b border-gray-300 pb-1 min-w-0">
                   <div className="text-center whitespace-nowrap px-0.5">Brdn (%)</div>
                   <div className="text-center whitespace-nowrap px-0.5">Hrly ($)</div>
                   <div className="text-center whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem] gap-1.5 items-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                    <label className="text-gray-700 text-xs font-medium break-words min-w-0 overflow-hidden pr-2">
+                  <div className="flex flex-col gap-2 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                    <label className="text-gray-700 text-xs font-medium break-words min-w-0 pr-1 leading-snug">
                       Profit
                     </label>
+                    <div className="grid grid-cols-[3rem_3rem_3.75rem] gap-1.5 items-center min-w-0">
                     <div className="flex items-center justify-center min-w-0 overflow-visible">
                       <input
                         type="number"
@@ -2558,6 +2610,7 @@ function LaborRateCalculator() {
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
+                    </div>
                     </div>
                   </div>
                 </div>

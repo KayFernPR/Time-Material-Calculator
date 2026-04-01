@@ -62,6 +62,22 @@ function annualSpendFromEarnedHourly(earnedHrly) {
   return earnedHrly * PAID_CAPACITY
 }
 
+/**
+ * Brdn % from earned burden $/hr vs workers wage. Uses 6 decimal places so values
+ * typed in Spend/yr ($) round-trip (1 decimal was snapping e.g. $200 → 0.2% → $166.40).
+ */
+function burdenPercentFromEarnedHourly(earnedHrly, workersWage) {
+  const w = parseFloat(workersWage) || 0
+  if (w <= 0 || !Number.isFinite(earnedHrly)) return 0
+  const pct = (earnedHrly / w) * 100
+  return Math.round(pct * 1e6) / 1e6
+}
+
+/** $/hr burden amounts: 6 decimals so Spend/yr ($) = Hrly × 2080 round-trips after Brdn % precision. */
+function roundBurdenDollar(x) {
+  return Math.round(x * 1e6) / 1e6
+}
+
 // Shows (?) tooltip only when the label is truncated (e.g. shows "..."). User can hover to read full label.
 // Tooltip is rendered via portal (like Division Overhead) so it always sits on top and is never clipped.
 function TruncatedLabelWithTooltip({ label, fullText, labelClassName, wrapperClassName = 'flex items-center gap-1.5 min-w-0 overflow-hidden' }) {
@@ -250,22 +266,22 @@ function LaborRateCalculator() {
     const payrollTaxHourlyRates = Object.fromEntries([
       ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageNum * ((parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0) / 100))
       ]),
       ...customPayrollTaxFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageNum * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
     const payrollTaxCharged = Object.fromEntries([
       ...MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageCharged * ((parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0) / 100))
       ]),
       ...customPayrollTaxFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageCharged * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
@@ -278,22 +294,22 @@ function LaborRateCalculator() {
     const workerBurdenHourlyRates = Object.fromEntries([
       ...MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageNum * ((parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0) / 100))
       ]),
       ...customWorkerBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageNum * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
     const workerBurdenCharged = Object.fromEntries([
       ...MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageCharged * ((parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0) / 100))
       ]),
       ...customWorkerBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageCharged * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
@@ -311,22 +327,22 @@ function LaborRateCalculator() {
     const benefitsBurdenHourlyRates = Object.fromEntries([
       ...BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageNum * ((parseFloat(benefitsBurdenPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(benefitsBurdenPercents[opt.id]) || 0) / 100))
       ]),
       ...customBenefitsBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageNum * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
     const benefitsBurdenCharged = Object.fromEntries([
       ...BENEFITS_BURDEN_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageCharged * ((parseFloat(benefitsBurdenPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(benefitsBurdenPercents[opt.id]) || 0) / 100))
       ]),
       ...customBenefitsBurdenFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageCharged * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
@@ -339,22 +355,22 @@ function LaborRateCalculator() {
     const additionalOverheadsHourlyRates = Object.fromEntries([
       ...ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageNum * ((parseFloat(additionalOverheadsPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(additionalOverheadsPercents[opt.id]) || 0) / 100))
       ]),
       ...customAdditionalOverheadsFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageNum * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
     const additionalOverheadsCharged = Object.fromEntries([
       ...ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageCharged * ((parseFloat(additionalOverheadsPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(additionalOverheadsPercents[opt.id]) || 0) / 100))
       ]),
       ...customAdditionalOverheadsFields.map((field, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageCharged * ((parseFloat(field.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(field.percent) || 0) / 100))
       ])
     ])
     
@@ -367,22 +383,22 @@ function LaborRateCalculator() {
     const employeeCostsHourlyRates = Object.fromEntries([
       ...EMPLOYEE_COSTS_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageNum * ((parseFloat(employeeCostsPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(employeeCostsPercents[opt.id]) || 0) / 100))
       ]),
       ...customEmployeeCosts.map((cost, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageNum * ((parseFloat(cost.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageNum * ((parseFloat(cost.percent) || 0) / 100))
       ])
     ])
     
     const employeeCostsCharged = Object.fromEntries([
       ...EMPLOYEE_COSTS_OPTIONS.map(opt => [
         opt.id,
-        Math.round(workersWageCharged * ((parseFloat(employeeCostsPercents[opt.id]) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(employeeCostsPercents[opt.id]) || 0) / 100))
       ]),
       ...customEmployeeCosts.map((cost, idx) => [
         `custom-${idx}`,
-        Math.round(workersWageCharged * ((parseFloat(cost.percent) || 0) / 100) * 100) / 100
+        roundBurdenDollar(workersWageCharged * ((parseFloat(cost.percent) || 0) / 100))
       ])
     ])
     
@@ -996,7 +1012,7 @@ function LaborRateCalculator() {
                               if (editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
-                                  const pct = Math.round((v / workersWageNum) * 1000) / 10
+                                  const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                 }
                                 setEditingDollarField(null)
@@ -1022,7 +1038,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  const pct = Math.round((earnedHrly / workersWageNum) * 1000) / 10
+                                  const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                 }
                                 setEditingDollarField(null)
@@ -1087,7 +1103,7 @@ function LaborRateCalculator() {
                               if (editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
-                                  const pct = Math.round((v / workersWageNum) * 1000) / 10
+                                  const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                 }
                                 setEditingDollarField(null)
@@ -1113,7 +1129,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  const pct = Math.round((earnedHrly / workersWageNum) * 1000) / 10
+                                  const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                 }
                                 setEditingDollarField(null)
@@ -1216,7 +1232,7 @@ function LaborRateCalculator() {
                               if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
-                                  setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageNum) * 1000) / 10 }))
+                                  setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(v, workersWageNum) }))
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1237,7 +1253,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
+                                  setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }))
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1297,7 +1313,7 @@ function LaborRateCalculator() {
                               if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
-                                  setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageNum) * 1000) / 10 }; return u })
+                                  setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(v, workersWageNum) }; return u })
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1318,7 +1334,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
+                                  setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }; return u })
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1447,7 +1463,7 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageNum) * 1000) / 10 }))
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(v, workersWageNum) }))
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1467,7 +1483,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
+                                  setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }))
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1516,7 +1532,7 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageNum) * 1000) / 10 }; return u })
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(v, workersWageNum) }; return u })
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1536,7 +1552,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
+                                  setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }; return u })
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1647,7 +1663,7 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageNum) * 1000) / 10 }))
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(v, workersWageNum) }))
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1667,7 +1683,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
+                                  setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }))
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1716,7 +1732,7 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageNum) * 1000) / 10 }; return u })
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(v, workersWageNum) }; return u })
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1736,7 +1752,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
+                                  setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }; return u })
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1847,7 +1863,7 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: Math.round((v / workersWageNum) * 1000) / 10 }))
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(v, workersWageNum) }))
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1867,7 +1883,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }))
+                                  setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }))
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1916,7 +1932,7 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
-                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((v / workersWageNum) * 1000) / 10 }; return u })
+                                if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(v, workersWageNum) }; return u })
                                 setEditingDollarField(null)
                               }
                             }}
@@ -1936,7 +1952,7 @@ function LaborRateCalculator() {
                                 const v = parseFloat(e.target.value)
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
-                                  setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: Math.round((earnedHrly / workersWageNum) * 1000) / 10 }; return u })
+                                  setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: burdenPercentFromEarnedHourly(earnedHrly, workersWageNum) }; return u })
                                 }
                                 setEditingDollarField(null)
                               }

@@ -2255,7 +2255,7 @@ function LaborRateCalculator() {
                 </div>
 
                 {/* Employee Costs Total */}
-                <div className="mt-3 grid grid-cols-[minmax(5rem,1fr)_3.25rem_3.25rem_4.25rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                <div className="mt-3 grid grid-cols-[minmax(4.5rem,1fr)_3rem_3rem_3.75rem_1.5rem] gap-1.5 items-center p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words line-clamp-2" title="Total Employee Costs">Total Employee Costs</div>
                   <div className="text-center text-xs font-semibold text-primary px-0.5">
                     {safeCalculations.employeeCostsPercent.toFixed(2)}%
@@ -2266,6 +2266,7 @@ function LaborRateCalculator() {
                   <div className="text-center text-xs font-bold text-primary pl-0.5 pr-2">
                     ${annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRate).toFixed(2)}
                   </div>
+                  <div></div>
                 </div>
               </div>
 

@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 
 // Step 1: Hours Not Worked options
@@ -57,6 +57,48 @@ const EMPLOYEE_COSTS_OPTIONS = [
 
 const PAID_CAPACITY = 2080 // 52 weeks * 40 hours
 
+/** Default calculator fields for a new employee (snapshot merge target). */
+function createDefaultCalculatorSnapshot() {
+  return {
+    employeeName: '',
+    hoursNotWorked: {},
+    nonBillableHours: {},
+    customHoursNotWorked: [],
+    newCustomHoursNotWorked: '',
+    customNonBillable: [],
+    newCustomNonBillable: '',
+    workersWage: '',
+    mandatoryPayrollTaxPercents: Object.fromEntries(
+      MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => [opt.id, opt.defaultPercent])
+    ),
+    mandatoryWorkerBurdenPercents: Object.fromEntries(
+      MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => [opt.id, opt.defaultPercent])
+    ),
+    customPayrollTaxFields: [],
+    customWorkerBurdenFields: [],
+    newCustomPayrollTax: { name: '', percent: 0 },
+    newCustomWorkerBurden: { name: '', percent: 0 },
+    benefitsBurdenPercents: Object.fromEntries(
+      BENEFITS_BURDEN_OPTIONS.map(opt => [opt.id, opt.defaultPercent])
+    ),
+    customBenefitsBurdenFields: [],
+    newCustomBenefitsBurden: { name: '', percent: 0 },
+    additionalOverheadsPercents: Object.fromEntries(
+      ADDITIONAL_OVERHEADS_OPTIONS.map(opt => [opt.id, opt.defaultPercent])
+    ),
+    customAdditionalOverheadsFields: [],
+    newCustomAdditionalOverheads: { name: '', percent: 0 },
+    employeeCostsPercents: Object.fromEntries(
+      EMPLOYEE_COSTS_OPTIONS.map(opt => [opt.id, opt.defaultPercent])
+    ),
+    customEmployeeCosts: [],
+    newCustomEmployeeCost: { name: '', percent: 0 },
+    divisionOverheadPercent: 0,
+    generalCompanyOverheadPercent: 0,
+    profitPercent: 0
+  }
+}
+
 // Step 2: Brdn / Hrly / Spend — fixed width = columns + gap-1.5×2 (headers, rows, totals share one track)
 const STEP2_BURDEN_WRAP = 'w-[11.5rem] max-w-full shrink-0'
 const STEP2_BURDEN_GRID = 'grid w-full min-w-0 grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5'
@@ -70,12 +112,13 @@ function annualSpendFromEarnedHourly(earnedHrly) {
 }
 
 /**
- * Division overhead annual ($/yr) = H×R/(1−p) − H×R
- * H = total hours available for work, R = total labor rate ($/hr) before step 3 overhead/profit, p = division overhead decimal.
+ * Step 3 overhead annual ($/yr) = H×R/(1−p) − H×R
+ * H = total hours available for work, R = total labor $/hr before this overhead layer
+ * (Division: before any step 3 overhead; General: includes division overhead), p = overhead % as decimal.
  */
-function divisionOverheadAnnualFromFormula(totalHoursAvailable, laborRateBeforeOverhead, overheadPercent) {
+function overheadAnnualFromFormula(totalHoursAvailable, laborRateBeforeThisOverhead, overheadPercent) {
   const H = parseFloat(totalHoursAvailable) || 0
-  const R = parseFloat(laborRateBeforeOverhead) || 0
+  const R = parseFloat(laborRateBeforeThisOverhead) || 0
   const p = (parseFloat(overheadPercent) || 0) / 100
   if (H <= 0 || p <= 0 || p >= 1 || !Number.isFinite(R)) return 0
   return (H * R) / (1 - p) - H * R
@@ -168,6 +211,12 @@ function TruncatedLabelWithTooltip({ label, fullText, labelClassName, wrapperCla
 }
 
 function LaborRateCalculator() {
+  // Employee identity & multi-employee snapshots (separate calculator per person)
+  const [employeeName, setEmployeeName] = useState('')
+  const [employeeRoster, setEmployeeRoster] = useState([{ id: 'emp-1', name: '' }])
+  const [activeEmployeeId, setActiveEmployeeId] = useState('emp-1')
+  const employeeSnapshotsRef = useRef({})
+
   // Step 1: Hours data
   const [hoursNotWorked, setHoursNotWorked] = useState({})
   const [nonBillableHours, setNonBillableHours] = useState({})
@@ -212,6 +261,137 @@ function LaborRateCalculator() {
   // Local editing state for Hrly ($) / Spend/yr ($) so user can type decimals without value snapping on each keystroke
   const [editingDollarField, setEditingDollarField] = useState(null) // { section, rowId, field: 'hrly'|'chgd', value: string }
   const [editingBrdnField, setEditingBrdnField] = useState(null) // { key: string, value: string }
+
+  const collectCalculatorSnapshot = useCallback(() => ({
+    employeeName,
+    hoursNotWorked,
+    nonBillableHours,
+    customHoursNotWorked,
+    newCustomHoursNotWorked,
+    customNonBillable,
+    newCustomNonBillable,
+    workersWage,
+    mandatoryPayrollTaxPercents,
+    mandatoryWorkerBurdenPercents,
+    customPayrollTaxFields,
+    customWorkerBurdenFields,
+    newCustomPayrollTax,
+    newCustomWorkerBurden,
+    benefitsBurdenPercents,
+    customBenefitsBurdenFields,
+    newCustomBenefitsBurden,
+    additionalOverheadsPercents,
+    customAdditionalOverheadsFields,
+    newCustomAdditionalOverheads,
+    employeeCostsPercents,
+    customEmployeeCosts,
+    newCustomEmployeeCost,
+    divisionOverheadPercent,
+    generalCompanyOverheadPercent,
+    profitPercent
+  }), [
+    employeeName,
+    hoursNotWorked,
+    nonBillableHours,
+    customHoursNotWorked,
+    newCustomHoursNotWorked,
+    customNonBillable,
+    newCustomNonBillable,
+    workersWage,
+    mandatoryPayrollTaxPercents,
+    mandatoryWorkerBurdenPercents,
+    customPayrollTaxFields,
+    customWorkerBurdenFields,
+    newCustomPayrollTax,
+    newCustomWorkerBurden,
+    benefitsBurdenPercents,
+    customBenefitsBurdenFields,
+    newCustomBenefitsBurden,
+    additionalOverheadsPercents,
+    customAdditionalOverheadsFields,
+    newCustomAdditionalOverheads,
+    employeeCostsPercents,
+    customEmployeeCosts,
+    newCustomEmployeeCost,
+    divisionOverheadPercent,
+    generalCompanyOverheadPercent,
+    profitPercent
+  ])
+
+  const applyCalculatorSnapshot = useCallback((raw) => {
+    const m = { ...createDefaultCalculatorSnapshot(), ...raw }
+    setEmployeeName(m.employeeName)
+    setHoursNotWorked(m.hoursNotWorked)
+    setNonBillableHours(m.nonBillableHours)
+    setCustomHoursNotWorked(m.customHoursNotWorked)
+    setNewCustomHoursNotWorked(m.newCustomHoursNotWorked)
+    setCustomNonBillable(m.customNonBillable)
+    setNewCustomNonBillable(m.newCustomNonBillable)
+    setWorkersWage(m.workersWage)
+    setMandatoryPayrollTaxPercents(m.mandatoryPayrollTaxPercents)
+    setMandatoryWorkerBurdenPercents(m.mandatoryWorkerBurdenPercents)
+    setCustomPayrollTaxFields(m.customPayrollTaxFields)
+    setCustomWorkerBurdenFields(m.customWorkerBurdenFields)
+    setNewCustomPayrollTax(m.newCustomPayrollTax)
+    setNewCustomWorkerBurden(m.newCustomWorkerBurden)
+    setBenefitsBurdenPercents(m.benefitsBurdenPercents)
+    setCustomBenefitsBurdenFields(m.customBenefitsBurdenFields)
+    setNewCustomBenefitsBurden(m.newCustomBenefitsBurden)
+    setAdditionalOverheadsPercents(m.additionalOverheadsPercents)
+    setCustomAdditionalOverheadsFields(m.customAdditionalOverheadsFields)
+    setNewCustomAdditionalOverheads(m.newCustomAdditionalOverheads)
+    setEmployeeCostsPercents(m.employeeCostsPercents)
+    setCustomEmployeeCosts(m.customEmployeeCosts)
+    setNewCustomEmployeeCost(m.newCustomEmployeeCost)
+    setDivisionOverheadPercent(m.divisionOverheadPercent)
+    setGeneralCompanyOverheadPercent(m.generalCompanyOverheadPercent)
+    setProfitPercent(m.profitPercent)
+    setEditingDollarField(null)
+    setEditingBrdnField(null)
+  }, [])
+
+  const switchToEmployee = useCallback((newId) => {
+    if (newId === activeEmployeeId) return
+    employeeSnapshotsRef.current[activeEmployeeId] = collectCalculatorSnapshot()
+    setEmployeeRoster(prev =>
+      prev.map(e =>
+        e.id === activeEmployeeId
+          ? { ...e, name: (employeeName || '').trim() || e.name || 'Untitled' }
+          : e
+      )
+    )
+    const next = employeeSnapshotsRef.current[newId] ?? createDefaultCalculatorSnapshot()
+    applyCalculatorSnapshot(next)
+    setActiveEmployeeId(newId)
+  }, [activeEmployeeId, collectCalculatorSnapshot, applyCalculatorSnapshot, employeeName])
+
+  const addEmployee = useCallback(() => {
+    employeeSnapshotsRef.current[activeEmployeeId] = collectCalculatorSnapshot()
+    const newId = `emp-${Date.now()}`
+    setEmployeeRoster(prev => {
+      const updated = prev.map(e =>
+        e.id === activeEmployeeId
+          ? { ...e, name: (employeeName || '').trim() || 'Untitled' }
+          : e
+      )
+      return [...updated, { id: newId, name: '' }]
+    })
+    applyCalculatorSnapshot(createDefaultCalculatorSnapshot())
+    setActiveEmployeeId(newId)
+  }, [activeEmployeeId, collectCalculatorSnapshot, applyCalculatorSnapshot, employeeName])
+
+  const removeActiveEmployee = useCallback(() => {
+    if (employeeRoster.length <= 1) return
+    employeeSnapshotsRef.current[activeEmployeeId] = collectCalculatorSnapshot()
+    const idx = employeeRoster.findIndex(e => e.id === activeEmployeeId)
+    const others = employeeRoster.filter(e => e.id !== activeEmployeeId)
+    delete employeeSnapshotsRef.current[activeEmployeeId]
+    const nextId = idx > 0 ? others[idx - 1].id : others[0].id
+    setEmployeeRoster(others)
+    const next = employeeSnapshotsRef.current[nextId] ?? createDefaultCalculatorSnapshot()
+    applyCalculatorSnapshot(next)
+    setActiveEmployeeId(nextId)
+  }, [employeeRoster, activeEmployeeId, collectCalculatorSnapshot, applyCalculatorSnapshot])
 
   // Scroll behavior: Independent scrolling with visual indicators
   const step1Ref = useRef(null)
@@ -453,7 +633,7 @@ function LaborRateCalculator() {
     }
 
     // Division Overhead: H×R/(1−p) − H×R annually; hourly = annual / H (same as margin on R when H > 0)
-    const divisionOverheadAnnualSpend = divisionOverheadAnnualFromFormula(
+    const divisionOverheadAnnualSpend = overheadAnnualFromFormula(
       totalHoursAvailable,
       costBaseBeforeOverheadAndProfit,
       parseFloat(divisionOverheadPercent) || 0
@@ -465,8 +645,16 @@ function LaborRateCalculator() {
     const divisionOverheadHourlyRate = divisionOverheadCharged
     const totalAfterDivisionOverhead = costBaseBeforeOverheadAndProfit + divisionOverheadCharged
 
-    // General Company Overhead: margin on total cost including division overhead
-    const generalCompanyOverheadCharged = marginAmount(totalAfterDivisionOverhead, parseFloat(generalCompanyOverheadPercent) || 0)
+    // General Company Overhead: same annual formula; R = total $/hr including division overhead
+    const generalCompanyOverheadAnnualSpend = overheadAnnualFromFormula(
+      totalHoursAvailable,
+      totalAfterDivisionOverhead,
+      parseFloat(generalCompanyOverheadPercent) || 0
+    )
+    const generalCompanyOverheadCharged =
+      totalHoursAvailable > 0
+        ? roundBurdenDollar(generalCompanyOverheadAnnualSpend / totalHoursAvailable)
+        : 0
     const generalCompanyOverheadHourlyRate = generalCompanyOverheadCharged
     const totalAfterGeneralOverhead = totalAfterDivisionOverhead + generalCompanyOverheadCharged
 
@@ -523,6 +711,7 @@ function LaborRateCalculator() {
       divisionOverheadAnnualSpend,
       generalCompanyOverheadHourlyRate,
       generalCompanyOverheadCharged,
+      generalCompanyOverheadAnnualSpend,
       profitHourlyRate,
       profitCharged,
       totalLaborRate,
@@ -665,6 +854,7 @@ function LaborRateCalculator() {
       divisionOverheadAnnualSpend: 0,
       generalCompanyOverheadHourlyRate: 0,
       generalCompanyOverheadCharged: 0,
+      generalCompanyOverheadAnnualSpend: 0,
       profitHourlyRate: 0,
       profitCharged: 0,
       totalLaborRate: parseFloat(workersWage) || 0,
@@ -685,6 +875,11 @@ function LaborRateCalculator() {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mt-3 text-center">
             Building Your Labor Rate Calculator
           </h1>
+          {(employeeName || '').trim() ? (
+            <p className="text-lg sm:text-xl font-semibold text-neutral mt-2 text-center">
+              {(employeeName || '').trim()}
+            </p>
+          ) : null}
         </div>
 
         <div className="flex min-w-0 flex-col gap-3 print:flex-col print:gap-3 lg:flex-row lg:gap-3">
@@ -698,6 +893,63 @@ function LaborRateCalculator() {
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
                 Step 1: Paid Capacity
               </h2>
+
+              <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
+                <div className="space-y-1.5">
+                  <label htmlFor="employee-name" className="block text-sm font-semibold text-neutral">
+                    Employee name
+                  </label>
+                  <input
+                    id="employee-name"
+                    type="text"
+                    autoComplete="name"
+                    value={employeeName}
+                    onChange={(e) => setEmployeeName(e.target.value)}
+                    placeholder="e.g. Jane Smith"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-3">
+                  <label htmlFor="employee-switcher" className="text-xs font-medium text-gray-600 shrink-0">
+                    Working on
+                  </label>
+                  <div className="flex flex-wrap items-center gap-2 min-w-0">
+                    <select
+                      id="employee-switcher"
+                      value={activeEmployeeId}
+                      onChange={(e) => switchToEmployee(e.target.value)}
+                      className="min-w-0 flex-1 sm:flex-initial max-w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm bg-white"
+                    >
+                      {employeeRoster.map((e) => (
+                        <option key={e.id} value={e.id}>
+                          {e.id === activeEmployeeId
+                            ? (employeeName || '').trim() || 'Untitled'
+                            : e.name || 'Untitled'}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={addEmployee}
+                      className="px-3 py-1.5 text-sm font-medium bg-primary text-white rounded-lg hover:bg-green-700 transition-colors shrink-0"
+                    >
+                      Add employee
+                    </button>
+                    {employeeRoster.length > 1 ? (
+                      <button
+                        type="button"
+                        onClick={removeActiveEmployee}
+                        className="px-3 py-1.5 text-sm font-medium border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors shrink-0"
+                      >
+                        Remove
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 leading-snug">
+                  Each employee has their own inputs and results. Switch employees here or add another to run the calculator for someone else.
+                </p>
+              </div>
               
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <div className="flex justify-between items-center">
@@ -2618,15 +2870,16 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.generalCompanyOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.generalCompanyOverheadCharged).toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'generalOverhead', field: 'chgd', value: safeCalculations.generalCompanyOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.generalCompanyOverheadCharged).toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.generalCompanyOverheadAnnualSpend > 0 ? safeCalculations.generalCompanyOverheadAnnualSpend.toFixed(2) : '')}
+                        onFocus={() => setEditingDollarField({ section: 'generalOverhead', field: 'chgd', value: safeCalculations.generalCompanyOverheadAnnualSpend > 0 ? safeCalculations.generalCompanyOverheadAnnualSpend.toFixed(2) : '' })}
                         onChange={(e) => { if (editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd') {
                             const v = parseFloat(e.target.value)
                             const base = safeCalculations.totalAfterDivisionOverhead || 0
-                            const hourly = v / PAID_CAPACITY
-                            if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) setGeneralCompanyOverheadPercent(100 * hourly / (base + hourly))
+                            const H = safeCalculations.totalHoursAvailable || 0
+                            const hourly = H > 0 ? v / H : 0
+                            if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) setGeneralCompanyOverheadPercent(100 * hourly / (base + hourly))
                             setEditingDollarField(null)
                           }
                         }}
@@ -2754,6 +3007,11 @@ function LaborRateCalculator() {
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2 print:text-sm print:mb-2 print:pb-1 print:border-b">
                 Step 4: Results - Burden / Hour Charged
               </h2>
+              {(employeeName || '').trim() ? (
+                <p className="text-base font-semibold text-neutral mb-3 print:mb-2 print:text-sm">
+                  {(employeeName || '').trim()}
+                </p>
+              ) : null}
 
               {/* Key Calculation Display */}
               <div className="mb-3 p-3 bg-primary/10 rounded-lg border-2 border-primary print:mb-1.5 print:p-2 print:border">

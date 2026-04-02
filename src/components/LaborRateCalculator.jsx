@@ -665,7 +665,7 @@ function LaborRateCalculator() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-3 min-w-0 print:grid-cols-1 print:gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-x-3 gap-y-3 min-w-0 print:grid-cols-1 print:gap-x-3 print:gap-y-3">
           {/* Step 1: Paid Capacity */}
           <div className="lg:col-span-1 min-w-0 w-full print:hidden">
             <div 
@@ -1573,10 +1573,10 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 3: Mandatory Burden */}
-          <div className="lg:col-span-1 min-w-0 w-full min-w-[300px] print:hidden">
+          <div className="lg:col-span-1 min-w-0 w-full print:hidden">
             <div 
               ref={step3MandatoryRef}
-              className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
+              className="bg-white rounded-lg shadow-lg pt-6 pb-6 px-5 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
@@ -2725,7 +2725,7 @@ function LaborRateCalculator() {
           <div className="lg:col-span-1 min-w-0 w-full print:w-full">
             <div 
               ref={step3Ref}
-              className="step-4-print-root bg-white rounded-lg shadow-lg p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0 print:static print:top-auto print:max-h-none print:overflow-visible print:shadow-none print:p-2"
+              className="step-4-print-root bg-white rounded-lg shadow-lg py-4 px-5 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0 print:static print:top-auto print:max-h-none print:overflow-visible print:shadow-none print:p-2"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2 print:text-sm print:mb-2 print:pb-1 print:border-b">

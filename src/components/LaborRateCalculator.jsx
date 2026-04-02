@@ -99,6 +99,12 @@ function createDefaultCalculatorSnapshot() {
   }
 }
 
+/** Label for the Working on dropdown when the employee has no name yet. */
+function workingOnOptionLabel(storedOrActiveName, indexOneBased) {
+  const n = (storedOrActiveName || '').trim()
+  return n || `Employee ${indexOneBased}`
+}
+
 // Step 2: Brdn / Hrly / Spend — fixed width = columns + gap-1.5×2 (headers, rows, totals share one track)
 const STEP2_BURDEN_WRAP = 'w-[11.5rem] max-w-full shrink-0'
 const STEP2_BURDEN_GRID = 'grid w-full min-w-0 grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5'
@@ -356,7 +362,7 @@ function LaborRateCalculator() {
     setEmployeeRoster(prev =>
       prev.map(e =>
         e.id === activeEmployeeId
-          ? { ...e, name: (employeeName || '').trim() || e.name || 'Untitled' }
+          ? { ...e, name: (employeeName || '').trim() || e.name || '' }
           : e
       )
     )
@@ -371,7 +377,7 @@ function LaborRateCalculator() {
     setEmployeeRoster(prev => {
       const updated = prev.map(e =>
         e.id === activeEmployeeId
-          ? { ...e, name: (employeeName || '').trim() || 'Untitled' }
+          ? { ...e, name: (employeeName || '').trim() || e.name || '' }
           : e
       )
       return [...updated, { id: newId, name: '' }]
@@ -920,11 +926,11 @@ function LaborRateCalculator() {
                       onChange={(e) => switchToEmployee(e.target.value)}
                       className="min-w-0 flex-1 sm:flex-initial max-w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm bg-white"
                     >
-                      {employeeRoster.map((e) => (
+                      {employeeRoster.map((e, idx) => (
                         <option key={e.id} value={e.id}>
                           {e.id === activeEmployeeId
-                            ? (employeeName || '').trim() || 'Untitled'
-                            : e.name || 'Untitled'}
+                            ? workingOnOptionLabel(employeeName, idx + 1)
+                            : workingOnOptionLabel(e.name, idx + 1)}
                         </option>
                       ))}
                     </select>

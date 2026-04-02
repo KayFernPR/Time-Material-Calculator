@@ -60,10 +60,9 @@ const PAID_CAPACITY = 2080 // 52 weeks * 40 hours
 // Step 2: Brdn / Hrly / Spend — fixed width = columns + gap-1.5×2 (headers, rows, totals share one track)
 const STEP2_BURDEN_WRAP = 'w-[11.5rem] max-w-full shrink-0'
 const STEP2_BURDEN_GRID = 'grid w-full min-w-0 grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5'
-// Step 3: three-column burden grid + optional 1.5rem spacer (same tracks as Division Overhead)
+// Step 3: three-column burden grid (same as Division / General / Profit overhead rows)
 const STEP3_BURDEN3_WRAP = 'w-[10.5rem] max-w-full shrink-0'
 const STEP3_BURDEN3_GRID = 'grid w-full min-w-0 grid-cols-[3rem_3rem_3.75rem] gap-1.5'
-const STEP3_BURDEN4_ROW = 'flex max-w-full shrink-0 items-center gap-1.5 w-[12.375rem]'
 
 /** Spend/yr ($): annual cost = earned burden $/hr × paid hours/year (2080). */
 function annualSpendFromEarnedHourly(earnedHrly) {
@@ -1590,17 +1589,14 @@ function LaborRateCalculator() {
                   Benefits Burden
                 </h3>
                 
-                {/* Table Header — fixed grid width matches every row */}
+                {/* Table Header */}
                 <div className="mb-2 min-w-0 flex justify-end border-b border-gray-300 pb-1 pr-1.5 pl-1.5">
-                  <div className={STEP3_BURDEN4_ROW}>
-                    <div className={STEP3_BURDEN3_WRAP}>
-                      <div className={`${STEP3_BURDEN3_GRID} font-semibold text-gray-600 text-xs`}>
+                  <div className={STEP3_BURDEN3_WRAP}>
+                    <div className={`${STEP3_BURDEN3_GRID} text-xs font-semibold text-gray-600`}>
                         <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
                         <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
                         <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                       </div>
-                    </div>
-                    <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                   </div>
                 </div>
                 
@@ -1620,9 +1616,8 @@ function LaborRateCalculator() {
                           />
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
-                          <div className={STEP3_BURDEN4_ROW}>
-                            <div className={STEP3_BURDEN3_WRAP}>
-                              <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                          <div className={STEP3_BURDEN3_WRAP}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1703,8 +1698,6 @@ function LaborRateCalculator() {
                         </div>
                         </div>
                       </div>
-                        <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
-                        </div>
                       </div>
                       </div>
                     )
@@ -1734,9 +1727,8 @@ function LaborRateCalculator() {
                           </button>
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
-                          <div className={STEP3_BURDEN4_ROW}>
-                            <div className={STEP3_BURDEN3_WRAP}>
-                              <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                          <div className={STEP3_BURDEN3_WRAP}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1817,8 +1809,6 @@ function LaborRateCalculator() {
                         </div>
                         </div>
                       </div>
-                        <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
-                        </div>
                       </div>
                       </div>
                     )
@@ -1848,9 +1838,8 @@ function LaborRateCalculator() {
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden">Total Benefits Burden</div>
                   <div className="flex w-full justify-end -translate-x-[5px]">
-                    <div className={STEP3_BURDEN4_ROW}>
-                      <div className={STEP3_BURDEN3_WRAP}>
-                        <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                    <div className={STEP3_BURDEN3_WRAP}>
+                      <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                           <div className="text-right text-xs font-semibold text-primary px-0.5">
                             {safeCalculations.benefitsBurdenPercent.toFixed(2)}%
                           </div>
@@ -1861,8 +1850,6 @@ function LaborRateCalculator() {
                             ${annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRate).toFixed(2)}
                           </div>
                         </div>
-                      </div>
-                      <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                     </div>
                   </div>
                 </div>
@@ -1876,15 +1863,12 @@ function LaborRateCalculator() {
                 
                 {/* Table Header */}
                 <div className="mb-2 min-w-0 flex justify-end border-b border-gray-300 pb-1 pr-1.5 pl-1.5">
-                  <div className={STEP3_BURDEN4_ROW}>
-                    <div className={STEP3_BURDEN3_WRAP}>
-                      <div className={`${STEP3_BURDEN3_GRID} font-semibold text-gray-600 text-xs`}>
+                  <div className={STEP3_BURDEN3_WRAP}>
+                    <div className={`${STEP3_BURDEN3_GRID} text-xs font-semibold text-gray-600`}>
                         <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
                         <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
                         <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                       </div>
-                    </div>
-                    <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                   </div>
                 </div>
                 
@@ -1904,9 +1888,8 @@ function LaborRateCalculator() {
                           />
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
-                          <div className={STEP3_BURDEN4_ROW}>
-                            <div className={STEP3_BURDEN3_WRAP}>
-                              <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                          <div className={STEP3_BURDEN3_WRAP}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -1987,8 +1970,6 @@ function LaborRateCalculator() {
                         </div>
                         </div>
                       </div>
-                        <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
-                        </div>
                       </div>
                       </div>
                     )
@@ -2018,9 +1999,8 @@ function LaborRateCalculator() {
                           </button>
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
-                          <div className={STEP3_BURDEN4_ROW}>
-                            <div className={STEP3_BURDEN3_WRAP}>
-                              <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                          <div className={STEP3_BURDEN3_WRAP}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -2101,8 +2081,6 @@ function LaborRateCalculator() {
                         </div>
                         </div>
                       </div>
-                        <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
-                        </div>
                       </div>
                       </div>
                     )
@@ -2132,9 +2110,8 @@ function LaborRateCalculator() {
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words" title="Total Additional Overheads">Total Additional Overheads</div>
                   <div className="flex w-full justify-end -translate-x-[5px]">
-                    <div className={STEP3_BURDEN4_ROW}>
-                      <div className={STEP3_BURDEN3_WRAP}>
-                        <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                    <div className={STEP3_BURDEN3_WRAP}>
+                      <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                           <div className="text-right text-xs font-semibold text-primary px-0.5">
                             {safeCalculations.additionalOverheadsPercent.toFixed(2)}%
                           </div>
@@ -2145,8 +2122,6 @@ function LaborRateCalculator() {
                             ${annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRate).toFixed(2)}
                           </div>
                         </div>
-                      </div>
-                      <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                     </div>
                   </div>
                 </div>
@@ -2160,15 +2135,12 @@ function LaborRateCalculator() {
                 
                 {/* Table Header */}
                 <div className="mb-2 min-w-0 flex justify-end border-b border-gray-300 pb-1 pr-1.5 pl-1.5">
-                  <div className={STEP3_BURDEN4_ROW}>
-                    <div className={STEP3_BURDEN3_WRAP}>
-                      <div className={`${STEP3_BURDEN3_GRID} font-semibold text-gray-600 text-xs`}>
+                  <div className={STEP3_BURDEN3_WRAP}>
+                    <div className={`${STEP3_BURDEN3_GRID} text-xs font-semibold text-gray-600`}>
                         <div className="text-right whitespace-nowrap px-0.5">Brdn (%)</div>
                         <div className="text-right whitespace-nowrap px-0.5">Hrly ($)</div>
                         <div className="text-right whitespace-nowrap text-[10px] sm:text-xs leading-tight tracking-tight pl-0.5 pr-2">Spend/yr ($)</div>
                       </div>
-                    </div>
-                    <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                   </div>
                 </div>
                 
@@ -2188,9 +2160,8 @@ function LaborRateCalculator() {
                           />
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
-                          <div className={STEP3_BURDEN4_ROW}>
-                            <div className={STEP3_BURDEN3_WRAP}>
-                              <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                          <div className={STEP3_BURDEN3_WRAP}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -2271,8 +2242,6 @@ function LaborRateCalculator() {
                         </div>
                         </div>
                       </div>
-                        <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
-                        </div>
                       </div>
                       </div>
                     )
@@ -2302,9 +2271,8 @@ function LaborRateCalculator() {
                           </button>
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
-                          <div className={STEP3_BURDEN4_ROW}>
-                            <div className={STEP3_BURDEN3_WRAP}>
-                              <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                          <div className={STEP3_BURDEN3_WRAP}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
                           <input
                             type="number"
@@ -2385,8 +2353,6 @@ function LaborRateCalculator() {
                         </div>
                         </div>
                       </div>
-                        <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
-                        </div>
                       </div>
                       </div>
                     )
@@ -2416,9 +2382,8 @@ function LaborRateCalculator() {
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words" title="Total Employee Costs">Total Employee Costs</div>
                   <div className="flex w-full justify-end -translate-x-[5px]">
-                    <div className={STEP3_BURDEN4_ROW}>
-                      <div className={STEP3_BURDEN3_WRAP}>
-                        <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                    <div className={STEP3_BURDEN3_WRAP}>
+                      <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                           <div className="text-right text-xs font-semibold text-primary px-0.5">
                             {safeCalculations.employeeCostsPercent.toFixed(2)}%
                           </div>
@@ -2429,8 +2394,6 @@ function LaborRateCalculator() {
                             ${annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRate).toFixed(2)}
                           </div>
                         </div>
-                      </div>
-                      <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                     </div>
                   </div>
                 </div>

@@ -1006,7 +1006,7 @@ function LaborRateCalculator() {
                             wrapperClassName="flex items-start gap-1.5 min-w-0"
                           />
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
@@ -1129,7 +1129,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
@@ -1255,7 +1255,7 @@ function LaborRateCalculator() {
                 {/* Payroll Tax Burden */}
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words" title="Payroll Tax Burden">Payroll Tax Burden</div>
-                  <div className="flex w-full justify-end">
+                  <div className="flex w-full justify-end -translate-x-[5px]">
                     <div className={STEP2_BURDEN_WRAP}>
                       <div className={`${STEP2_BURDEN_GRID} items-center`}>
                         <div className="text-right text-xs font-semibold text-primary px-0.5">
@@ -1305,7 +1305,7 @@ function LaborRateCalculator() {
                             wrapperClassName="flex items-start gap-1.5 min-w-0"
                           />
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
@@ -1418,7 +1418,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
@@ -1534,7 +1534,7 @@ function LaborRateCalculator() {
                 {/* Worker Burden Total */}
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0 -ml-[10px]">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 pr-1 overflow-hidden ml-[10px] break-words" title="Worker Burden">Worker Burden</div>
-                  <div className="flex w-full justify-end">
+                  <div className="flex w-full justify-end -translate-x-[5px]">
                     <div className={STEP2_BURDEN_WRAP}>
                       <div className={`${STEP2_BURDEN_GRID} items-center`}>
                         <div className="text-right text-xs font-semibold text-primary px-0.5">
@@ -1555,7 +1555,7 @@ function LaborRateCalculator() {
               {/* Total Wage Burden */}
               <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/10 min-w-0 -ml-[10px]">
                 <div className="text-gray-700 text-xs font-bold min-w-0 pr-1 overflow-hidden ml-[10px] break-words" title="Total Wage Burden">Total Wage Burden</div>
-                <div className="flex w-full justify-end">
+                <div className="flex w-full justify-end -translate-x-[5px]">
                   <div className={STEP2_BURDEN_WRAP}>
                     <div className={`${STEP2_BURDEN_GRID} items-center`}>
                       <div className="text-right text-xs font-bold text-primary px-0.5">
@@ -1618,7 +1618,7 @@ function LaborRateCalculator() {
                             wrapperClassName="flex items-start gap-1.5 min-w-0"
                           />
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN4_WRAP}>
                             <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -1730,7 +1730,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN4_WRAP}>
                             <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -1842,7 +1842,7 @@ function LaborRateCalculator() {
                 {/* Benefits Burden Total */}
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden">Total Benefits Burden</div>
-                  <div className="flex w-full justify-end">
+                  <div className="flex w-full justify-end -translate-x-[5px]">
                     <div className={STEP3_BURDEN4_WRAP}>
                       <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="text-right text-xs font-semibold text-primary px-0.5">
@@ -1894,7 +1894,7 @@ function LaborRateCalculator() {
                             wrapperClassName="flex items-start gap-1.5 min-w-0"
                           />
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN4_WRAP}>
                             <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -2006,7 +2006,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN4_WRAP}>
                             <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -2118,7 +2118,7 @@ function LaborRateCalculator() {
                 {/* Additional Overheads Total */}
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words" title="Total Additional Overheads">Total Additional Overheads</div>
-                  <div className="flex w-full justify-end">
+                  <div className="flex w-full justify-end -translate-x-[5px]">
                     <div className={STEP3_BURDEN4_WRAP}>
                       <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="text-right text-xs font-semibold text-primary px-0.5">
@@ -2170,7 +2170,7 @@ function LaborRateCalculator() {
                             wrapperClassName="flex items-start gap-1.5 min-w-0"
                           />
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN4_WRAP}>
                             <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -2282,7 +2282,7 @@ function LaborRateCalculator() {
                             ×
                           </button>
                         </div>
-                        <div className="flex w-full min-w-0 justify-end">
+                        <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN4_WRAP}>
                             <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -2394,7 +2394,7 @@ function LaborRateCalculator() {
                 {/* Employee Costs Total */}
                 <div className="mt-3 flex flex-col gap-2 p-1.5 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
                   <div className="text-gray-700 text-xs font-semibold min-w-0 overflow-hidden break-words" title="Total Employee Costs">Total Employee Costs</div>
-                  <div className="flex w-full justify-end">
+                  <div className="flex w-full justify-end -translate-x-[5px]">
                     <div className={STEP3_BURDEN4_WRAP}>
                       <div className={`${STEP3_BURDEN4_GRID} items-center`}>
                         <div className="text-right text-xs font-semibold text-primary px-0.5">
@@ -2452,7 +2452,7 @@ function LaborRateCalculator() {
                         </svg>
                       </div>
                     </div>
-                    <div className="flex w-full min-w-0 justify-end">
+                    <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
                         <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                     <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -2553,7 +2553,7 @@ function LaborRateCalculator() {
                     <label className="text-gray-700 text-xs font-medium break-words min-w-0 pr-1 leading-snug">
                       General Company Overhead
                     </label>
-                    <div className="flex w-full min-w-0 justify-end">
+                    <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
                         <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                     <div className="flex items-center justify-end min-w-0 overflow-visible">
@@ -2654,7 +2654,7 @@ function LaborRateCalculator() {
                     <label className="text-gray-700 text-xs font-medium break-words min-w-0 pr-1 leading-snug">
                       Profit
                     </label>
-                    <div className="flex w-full min-w-0 justify-end">
+                    <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
                         <div className={`${STEP3_BURDEN3_GRID} items-center`}>
                     <div className="flex items-center justify-end min-w-0 overflow-visible">

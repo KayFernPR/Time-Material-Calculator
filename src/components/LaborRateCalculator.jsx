@@ -156,7 +156,9 @@ function formatBrdnPercentForDisplay(stored) {
   if (stored === '' || stored === undefined || stored === null) return ''
   const n = parseFloat(stored)
   if (Number.isNaN(n)) return ''
-  return (Math.round(n * 100) / 100).toFixed(2)
+  const rounded = Math.round(n * 100) / 100
+  if (rounded === 0) return ''
+  return rounded.toFixed(2)
 }
 
 // Shows (?) tooltip only when the label is truncated (e.g. shows "..."). User can hover to read full label.
@@ -3256,6 +3258,7 @@ function LaborRateCalculator() {
                           setEditingBrdnField(null)
                         }}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>
@@ -3288,6 +3291,7 @@ function LaborRateCalculator() {
                           setEditingBrdnField(null)
                         }}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>
@@ -3320,6 +3324,7 @@ function LaborRateCalculator() {
                           setEditingBrdnField(null)
                         }}
                         className="w-[68px] px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-sm"
+                        placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
                     </div>

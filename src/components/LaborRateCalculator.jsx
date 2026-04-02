@@ -70,6 +70,18 @@ function annualSpendFromEarnedHourly(earnedHrly) {
 }
 
 /**
+ * Division overhead annual ($/yr) = H×R/(1−p) − H×R
+ * H = total hours available for work, R = total labor rate ($/hr) before step 3 overhead/profit, p = division overhead decimal.
+ */
+function divisionOverheadAnnualFromFormula(totalHoursAvailable, laborRateBeforeOverhead, overheadPercent) {
+  const H = parseFloat(totalHoursAvailable) || 0
+  const R = parseFloat(laborRateBeforeOverhead) || 0
+  const p = (parseFloat(overheadPercent) || 0) / 100
+  if (H <= 0 || p <= 0 || p >= 1 || !Number.isFinite(R)) return 0
+  return (H * R) / (1 - p) - H * R
+}
+
+/**
  * Brdn % from earned burden $/hr vs workers wage. Uses 6 decimal places so values
  * typed in Spend/yr ($) round-trip (1 decimal was snapping e.g. $200 → 0.2% → $166.40).
  */
@@ -440,8 +452,16 @@ function LaborRateCalculator() {
       return base * m / (1 - m)
     }
 
-    // Division Overhead: margin on total worker cost (cost base)
-    const divisionOverheadCharged = marginAmount(costBaseBeforeOverheadAndProfit, parseFloat(divisionOverheadPercent) || 0)
+    // Division Overhead: H×R/(1−p) − H×R annually; hourly = annual / H (same as margin on R when H > 0)
+    const divisionOverheadAnnualSpend = divisionOverheadAnnualFromFormula(
+      totalHoursAvailable,
+      costBaseBeforeOverheadAndProfit,
+      parseFloat(divisionOverheadPercent) || 0
+    )
+    const divisionOverheadCharged =
+      totalHoursAvailable > 0
+        ? roundBurdenDollar(divisionOverheadAnnualSpend / totalHoursAvailable)
+        : 0
     const divisionOverheadHourlyRate = divisionOverheadCharged
     const totalAfterDivisionOverhead = costBaseBeforeOverheadAndProfit + divisionOverheadCharged
 
@@ -500,6 +520,7 @@ function LaborRateCalculator() {
       employeeCostsChargedTotal,
       divisionOverheadHourlyRate,
       divisionOverheadCharged,
+      divisionOverheadAnnualSpend,
       generalCompanyOverheadHourlyRate,
       generalCompanyOverheadCharged,
       profitHourlyRate,
@@ -641,6 +662,7 @@ function LaborRateCalculator() {
       employeeCostsChargedTotal: 0,
       divisionOverheadHourlyRate: 0,
       divisionOverheadCharged: 0,
+      divisionOverheadAnnualSpend: 0,
       generalCompanyOverheadHourlyRate: 0,
       generalCompanyOverheadCharged: 0,
       profitHourlyRate: 0,
@@ -2494,15 +2516,16 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.divisionOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.divisionOverheadCharged).toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'divisionOverhead', field: 'chgd', value: safeCalculations.divisionOverheadCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.divisionOverheadCharged).toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.divisionOverheadAnnualSpend > 0 ? safeCalculations.divisionOverheadAnnualSpend.toFixed(2) : '')}
+                        onFocus={() => setEditingDollarField({ section: 'divisionOverhead', field: 'chgd', value: safeCalculations.divisionOverheadAnnualSpend > 0 ? safeCalculations.divisionOverheadAnnualSpend.toFixed(2) : '' })}
                         onChange={(e) => { if (editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd') {
                             const v = parseFloat(e.target.value)
                             const base = safeCalculations.costBaseBeforeOverheadAndProfit || 0
-                            const hourly = v / PAID_CAPACITY
-                            if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) setDivisionOverheadPercent(100 * hourly / (base + hourly))
+                            const H = safeCalculations.totalHoursAvailable || 0
+                            const hourly = H > 0 ? v / H : 0
+                            if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) setDivisionOverheadPercent(100 * hourly / (base + hourly))
                             setEditingDollarField(null)
                           }
                         }}

@@ -665,7 +665,7 @@ function LaborRateCalculator() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-[5px] min-w-0 print:grid-cols-1">
+        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-3 min-w-0 print:grid-cols-1 print:gap-3">
           {/* Step 1: Paid Capacity */}
           <div className="lg:col-span-1 min-w-0 w-full print:hidden">
             <div 

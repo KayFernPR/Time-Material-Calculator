@@ -359,13 +359,6 @@ function LaborRateCalculator() {
   const switchToEmployee = useCallback((newId) => {
     if (newId === activeEmployeeId) return
     employeeSnapshotsRef.current[activeEmployeeId] = collectCalculatorSnapshot()
-    setEmployeeRoster(prev =>
-      prev.map(e =>
-        e.id === activeEmployeeId
-          ? { ...e, name: (employeeName || '').trim() || e.name || '' }
-          : e
-      )
-    )
     const next = employeeSnapshotsRef.current[newId] ?? createDefaultCalculatorSnapshot()
     applyCalculatorSnapshot(next)
     setActiveEmployeeId(newId)
@@ -374,17 +367,10 @@ function LaborRateCalculator() {
   const addEmployee = useCallback(() => {
     employeeSnapshotsRef.current[activeEmployeeId] = collectCalculatorSnapshot()
     const newId = `emp-${Date.now()}`
-    setEmployeeRoster(prev => {
-      const updated = prev.map(e =>
-        e.id === activeEmployeeId
-          ? { ...e, name: (employeeName || '').trim() || e.name || '' }
-          : e
-      )
-      return [...updated, { id: newId, name: '' }]
-    })
+    setEmployeeRoster(prev => [...prev, { id: newId, name: '' }])
     applyCalculatorSnapshot(createDefaultCalculatorSnapshot())
     setActiveEmployeeId(newId)
-  }, [activeEmployeeId, collectCalculatorSnapshot, applyCalculatorSnapshot, employeeName])
+  }, [activeEmployeeId, collectCalculatorSnapshot, applyCalculatorSnapshot])
 
   const removeActiveEmployee = useCallback(() => {
     if (employeeRoster.length <= 1) return
@@ -398,6 +384,13 @@ function LaborRateCalculator() {
     applyCalculatorSnapshot(next)
     setActiveEmployeeId(nextId)
   }, [employeeRoster, activeEmployeeId, collectCalculatorSnapshot, applyCalculatorSnapshot])
+
+  // Keep roster names aligned with the Employee name field so "Working on" shows the typed name immediately (not "Employee N").
+  useEffect(() => {
+    setEmployeeRoster(prev =>
+      prev.map(e => (e.id === activeEmployeeId ? { ...e, name: employeeName } : e))
+    )
+  }, [employeeName, activeEmployeeId])
 
   // Scroll behavior: Independent scrolling with visual indicators
   const step1Ref = useRef(null)
@@ -928,9 +921,7 @@ function LaborRateCalculator() {
                     >
                       {employeeRoster.map((e, idx) => (
                         <option key={e.id} value={e.id}>
-                          {e.id === activeEmployeeId
-                            ? workingOnOptionLabel(employeeName, idx + 1)
-                            : workingOnOptionLabel(e.name, idx + 1)}
+                          {workingOnOptionLabel(e.name, idx + 1)}
                         </option>
                       ))}
                     </select>

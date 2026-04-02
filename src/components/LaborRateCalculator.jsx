@@ -1706,6 +1706,7 @@ function LaborRateCalculator() {
                         <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                         </div>
                       </div>
+                      </div>
                     )
                   })}
                   {customBenefitsBurdenFields.map((field, idx) => {
@@ -1818,6 +1819,7 @@ function LaborRateCalculator() {
                       </div>
                         <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                         </div>
+                      </div>
                       </div>
                     )
                   })}
@@ -1988,6 +1990,7 @@ function LaborRateCalculator() {
                         <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                         </div>
                       </div>
+                      </div>
                     )
                   })}
                   {customAdditionalOverheadsFields.map((field, idx) => {
@@ -2100,6 +2103,7 @@ function LaborRateCalculator() {
                       </div>
                         <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                         </div>
+                      </div>
                       </div>
                     )
                   })}
@@ -2270,6 +2274,7 @@ function LaborRateCalculator() {
                         <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                         </div>
                       </div>
+                      </div>
                     )
                   })}
                   {customEmployeeCosts.map((cost, idx) => {
@@ -2382,6 +2387,7 @@ function LaborRateCalculator() {
                       </div>
                         <div className="w-[1.5rem] min-w-0 shrink-0" aria-hidden="true" />
                         </div>
+                      </div>
                       </div>
                     )
                   })}

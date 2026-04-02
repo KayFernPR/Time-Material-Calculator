@@ -99,10 +99,15 @@ function createDefaultCalculatorSnapshot() {
   }
 }
 
-/** Label for the Working on dropdown when the employee has no name yet. */
-function workingOnOptionLabel(storedOrActiveName, indexOneBased) {
-  const n = (storedOrActiveName || '').trim()
-  return n || `Employee ${indexOneBased}`
+/**
+ * Working on option text: real name; or numbered placeholders only until someone is named;
+ * once any employee has a name, unnamed rows use no placeholder text.
+ */
+function workingOnOptionLabel(storedName, indexOneBased, hasAnyNamedEmployee) {
+  const n = (storedName || '').trim()
+  if (n) return n
+  if (hasAnyNamedEmployee) return ''
+  return `New employee ${indexOneBased}`
 }
 
 // Step 2: Brdn / Hrly / Spend — fixed width = columns + gap-1.5×2 (headers, rows, totals share one track)
@@ -809,6 +814,11 @@ function LaborRateCalculator() {
   const allHoursNotWorkedOptions = [...HOURS_NOT_WORKED_OPTIONS, ...customHoursNotWorked]
   const allNonBillableOptions = [...NON_BILLABLE_HOURS_OPTIONS, ...customNonBillable]
 
+  const hasAnyNamedEmployee = useMemo(
+    () => employeeRoster.some(e => (e.name || '').trim() !== ''),
+    [employeeRoster]
+  )
+
   // Ensure calculations object is always defined
   const safeCalculations = calculations || {
     hoursNotWorkedPercentages: {},
@@ -921,7 +931,7 @@ function LaborRateCalculator() {
                     >
                       {employeeRoster.map((e, idx) => (
                         <option key={e.id} value={e.id}>
-                          {workingOnOptionLabel(e.name, idx + 1)}
+                          {workingOnOptionLabel(e.name, idx + 1, hasAnyNamedEmployee)}
                         </option>
                       ))}
                     </select>

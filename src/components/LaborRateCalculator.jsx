@@ -665,12 +665,12 @@ function LaborRateCalculator() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[repeat(4,minmax(0,1fr))] gap-x-3 gap-y-3 min-w-0 print:grid-cols-1 print:gap-x-3 print:gap-y-3">
+        <div className="flex min-w-0 flex-col gap-3 print:flex-col print:gap-3 lg:flex-row lg:gap-3">
           {/* Step 1: Paid Capacity */}
-          <div className="lg:col-span-1 min-w-0 w-full print:hidden">
+          <div className="min-w-0 w-full flex-1 basis-0 print:hidden">
             <div 
               ref={step1Ref}
-              className="bg-white rounded-lg shadow-lg pt-6 pr-4 pb-6 pl-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0"
+              className="w-full min-w-0 overflow-x-hidden overflow-y-auto scroll-smooth rounded-lg bg-white px-5 pb-6 pt-6 shadow-lg sticky top-4 max-h-[calc(100vh-2rem)]"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
@@ -924,10 +924,10 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 2: Wage Burden */}
-          <div className="lg:col-span-1 min-w-0 w-full min-w-[320px] print:hidden">
+          <div className="min-w-0 w-full flex-1 basis-0 print:hidden">
             <div 
               ref={step2Ref}
-              className="bg-white rounded-lg shadow-lg pt-6 pr-5 pb-6 pl-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
+              className="relative z-10 w-full min-w-0 overflow-x-auto overflow-y-auto scroll-smooth rounded-lg bg-white px-5 pb-6 pt-6 shadow-lg sticky top-4 max-h-[calc(100vh-2rem)]"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
@@ -1573,10 +1573,10 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 3: Mandatory Burden */}
-          <div className="lg:col-span-1 min-w-0 w-full print:hidden">
+          <div className="min-w-0 w-full flex-1 basis-0 print:hidden">
             <div 
               ref={step3MandatoryRef}
-              className="bg-white rounded-lg shadow-lg pt-6 pb-6 px-5 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-auto overflow-y-auto scroll-smooth min-w-0 relative z-10"
+              className="relative z-10 w-full min-w-0 overflow-x-auto overflow-y-auto scroll-smooth rounded-lg bg-white px-5 pb-6 pt-6 shadow-lg sticky top-4 max-h-[calc(100vh-2rem)]"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2">
@@ -2722,10 +2722,10 @@ function LaborRateCalculator() {
           </div>
 
           {/* Step 4: Results - Burden / Hour Charged */}
-          <div className="lg:col-span-1 min-w-0 w-full print:w-full">
+          <div className="min-w-0 w-full flex-1 basis-0 print:w-full">
             <div 
               ref={step3Ref}
-              className="step-4-print-root bg-white rounded-lg shadow-lg py-4 px-5 sticky top-4 max-h-[calc(100vh-2rem)] overflow-x-hidden overflow-y-auto scroll-smooth min-w-0 print:static print:top-auto print:max-h-none print:overflow-visible print:shadow-none print:p-2"
+              className="step-4-print-root w-full min-w-0 overflow-x-hidden overflow-y-auto scroll-smooth rounded-lg bg-white px-5 py-4 shadow-lg sticky top-4 max-h-[calc(100vh-2rem)] print:static print:top-auto print:max-h-none print:overflow-visible print:p-2 print:shadow-none"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
             >
               <h2 className="text-xl font-bold text-primary mb-3 border-b-2 border-primary pb-2 print:text-sm print:mb-2 print:pb-1 print:border-b">

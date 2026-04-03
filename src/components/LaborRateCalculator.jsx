@@ -162,8 +162,105 @@ function formatBrdnPercentForDisplay(stored) {
 }
 
 /**
+ * Resolves Brdn % from optional :brdn / :hrly / :annual locks (wage-based burden rows).
+ * Legacy: a lock stored at basePath without suffix is treated as :brdn.
+ */
+function resolveWageBurdenPercentFromLocks(fieldLocks, basePath, snapshotPercent, workersWage) {
+  const w = parseFloat(workersWage) || 0
+  const legacy = fieldLocks[basePath]
+  const brdn = fieldLocks[`${basePath}:brdn`] ?? (legacy?.locked ? legacy : null)
+  const hrly = fieldLocks[`${basePath}:hrly`]
+  const annual = fieldLocks[`${basePath}:annual`]
+  if (brdn?.locked) {
+    const val = brdn.value
+    if (val === '' || val === undefined) return ''
+    const n = parseFloat(val)
+    return Number.isNaN(n) ? '' : Math.round(n * 100) / 100
+  }
+  if (hrly?.locked && w > 0) {
+    const h = parseFloat(hrly.value)
+    if (!Number.isNaN(h) && h >= 0) return burdenPercentFromEarnedHourly(h, w)
+  }
+  if (annual?.locked && w > 0) {
+    const a = parseFloat(annual.value)
+    if (!Number.isNaN(a) && a >= 0) {
+      const earnedHrly = a / PAID_CAPACITY
+      return burdenPercentFromEarnedHourly(earnedHrly, w)
+    }
+  }
+  return snapshotPercent
+}
+
+function applyWageBurdenRowLocks(o, fieldLocks) {
+  const w = o.workersWage
+  for (const opt of MANDATORY_PAYROLL_TAX_OPTIONS) {
+    const id = opt.id
+    o.mandatoryPayrollTaxPercents[id] = resolveWageBurdenPercentFromLocks(
+      fieldLocks,
+      `payrollTax:${id}`,
+      o.mandatoryPayrollTaxPercents[id],
+      w
+    )
+  }
+  o.customPayrollTaxFields = o.customPayrollTaxFields.map((field, idx) => ({
+    ...field,
+    percent: resolveWageBurdenPercentFromLocks(fieldLocks, `customPayrollTax:${idx}`, field.percent, w)
+  }))
+  for (const opt of MANDATORY_WORKER_BURDEN_OPTIONS) {
+    const id = opt.id
+    o.mandatoryWorkerBurdenPercents[id] = resolveWageBurdenPercentFromLocks(
+      fieldLocks,
+      `workerBurden:${id}`,
+      o.mandatoryWorkerBurdenPercents[id],
+      w
+    )
+  }
+  o.customWorkerBurdenFields = o.customWorkerBurdenFields.map((field, idx) => ({
+    ...field,
+    percent: resolveWageBurdenPercentFromLocks(fieldLocks, `customWorkerBurden:${idx}`, field.percent, w)
+  }))
+  for (const opt of BENEFITS_BURDEN_OPTIONS) {
+    o.benefitsBurdenPercents[opt.id] = resolveWageBurdenPercentFromLocks(
+      fieldLocks,
+      `benefits:${opt.id}`,
+      o.benefitsBurdenPercents[opt.id],
+      w
+    )
+  }
+  o.customBenefitsBurdenFields = o.customBenefitsBurdenFields.map((field, idx) => ({
+    ...field,
+    percent: resolveWageBurdenPercentFromLocks(fieldLocks, `customBenefits:${idx}`, field.percent, w)
+  }))
+  for (const opt of ADDITIONAL_OVERHEADS_OPTIONS) {
+    o.additionalOverheadsPercents[opt.id] = resolveWageBurdenPercentFromLocks(
+      fieldLocks,
+      `additionalOverheads:${opt.id}`,
+      o.additionalOverheadsPercents[opt.id],
+      w
+    )
+  }
+  o.customAdditionalOverheadsFields = o.customAdditionalOverheadsFields.map((field, idx) => ({
+    ...field,
+    percent: resolveWageBurdenPercentFromLocks(fieldLocks, `customAdditionalOverheads:${idx}`, field.percent, w)
+  }))
+  for (const opt of EMPLOYEE_COSTS_OPTIONS) {
+    o.employeeCostsPercents[opt.id] = resolveWageBurdenPercentFromLocks(
+      fieldLocks,
+      `employeeCosts:${opt.id}`,
+      o.employeeCostsPercents[opt.id],
+      w
+    )
+  }
+  o.customEmployeeCosts = o.customEmployeeCosts.map((cost, idx) => ({
+    ...cost,
+    percent: resolveWageBurdenPercentFromLocks(fieldLocks, `customEmployeeCosts:${idx}`, cost.percent, w)
+  }))
+}
+
+/**
  * Applies cross-employee locked field values onto a calculator snapshot / state shape.
  * fieldLocks: { [path]: { locked: true, value } }
+ * Wage-based burden rows use suffixes :brdn, :hrly, :annual (see resolveWageBurdenPercentFromLocks).
  */
 function applyFieldLocksToMergedSnapshot(fieldLocks, m) {
   const o = {
@@ -185,37 +282,17 @@ function applyFieldLocksToMergedSnapshot(fieldLocks, m) {
     if (!meta?.locked || meta.value === undefined) continue
     const v = meta.value
     if (path === 'workersWage') o.workersWage = v
-    else if (path === 'divisionOverheadPercent') o.divisionOverheadPercent = v
-    else if (path === 'generalCompanyOverheadPercent') o.generalCompanyOverheadPercent = v
-    else if (path === 'profitPercent') o.profitPercent = v
+    else if (path === 'divisionOverheadPercent' || path === 'divisionOverheadPercent:brdn') o.divisionOverheadPercent = v
+    else if (path === 'generalCompanyOverheadPercent' || path === 'generalCompanyOverheadPercent:brdn') o.generalCompanyOverheadPercent = v
+    else if (path === 'profitPercent' || path === 'profitPercent:brdn') o.profitPercent = v
     else if (path.startsWith('hoursNotWorked:')) o.hoursNotWorked[path.slice('hoursNotWorked:'.length)] = v
     else if (path.startsWith('nonBillableHours:')) o.nonBillableHours[path.slice('nonBillableHours:'.length)] = v
-    else if (path.startsWith('payrollTax:')) o.mandatoryPayrollTaxPercents[path.slice('payrollTax:'.length)] = v
-    else if (path.startsWith('customPayrollTax:')) {
-      const i = parseInt(path.slice('customPayrollTax:'.length), 10)
-      if (o.customPayrollTaxFields[i]) o.customPayrollTaxFields[i] = { ...o.customPayrollTaxFields[i], percent: v }
-    } else if (path.startsWith('workerBurden:')) o.mandatoryWorkerBurdenPercents[path.slice('workerBurden:'.length)] = v
-    else if (path.startsWith('customWorkerBurden:')) {
-      const i = parseInt(path.slice('customWorkerBurden:'.length), 10)
-      if (o.customWorkerBurdenFields[i]) o.customWorkerBurdenFields[i] = { ...o.customWorkerBurdenFields[i], percent: v }
-    } else if (path.startsWith('benefits:')) o.benefitsBurdenPercents[path.slice('benefits:'.length)] = v
-    else if (path.startsWith('customBenefits:')) {
-      const i = parseInt(path.slice('customBenefits:'.length), 10)
-      if (o.customBenefitsBurdenFields[i]) o.customBenefitsBurdenFields[i] = { ...o.customBenefitsBurdenFields[i], percent: v }
-    } else if (path.startsWith('additionalOverheads:')) o.additionalOverheadsPercents[path.slice('additionalOverheads:'.length)] = v
-    else if (path.startsWith('customAdditionalOverheads:')) {
-      const i = parseInt(path.slice('customAdditionalOverheads:'.length), 10)
-      if (o.customAdditionalOverheadsFields[i]) o.customAdditionalOverheadsFields[i] = { ...o.customAdditionalOverheadsFields[i], percent: v }
-    } else if (path.startsWith('employeeCosts:')) o.employeeCostsPercents[path.slice('employeeCosts:'.length)] = v
-    else if (path.startsWith('customEmployeeCosts:')) {
-      const i = parseInt(path.slice('customEmployeeCosts:'.length), 10)
-      if (o.customEmployeeCosts[i]) o.customEmployeeCosts[i] = { ...o.customEmployeeCosts[i], percent: v }
-    }
   }
+  applyWageBurdenRowLocks(o, fieldLocks)
   return o
 }
 
-/** Compact lock control: same value for every employee when locked. */
+/** Lock under an input: same value for every employee when locked (closed lock). */
 function FieldLockButton({ locked, onToggle }) {
   return (
     <button
@@ -224,16 +301,28 @@ function FieldLockButton({ locked, onToggle }) {
         e.preventDefault()
         onToggle()
       }}
-      className={`shrink-0 px-1 py-0.5 rounded border text-[10px] font-semibold leading-none tabular-nums ${
+      className={`shrink-0 p-0.5 rounded border transition-colors ${
         locked
           ? 'border-primary bg-primary/15 text-primary'
-          : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50'
+          : 'border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:text-gray-600'
       }`}
-      title={locked ? 'Unlink: use a different value per employee' : 'Lock: keep this value when switching employees'}
+      title={locked ? 'Unlock: use a different value per employee' : 'Lock: keep this value when switching employees'}
       aria-pressed={locked}
-      aria-label={locked ? 'Field linked for all employees' : 'Link field for all employees'}
+      aria-label={locked ? 'Field locked for all employees' : 'Lock field for all employees'}
     >
-      {locked ? 'All' : '+'}
+      {locked ? (
+        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path
+            fillRule="evenodd"
+            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ) : (
+        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M10 2a5 5 0 00-5 5v2H4a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 7V7a3 3 0 116 0v2H7z" />
+        </svg>
+      )}
     </button>
   )
 }
@@ -767,11 +856,32 @@ function LaborRateCalculator() {
       return base * m / (1 - m)
     }
 
+    // Step 3: resolve Brdn % from locks (:brdn, or legacy key, or :hrly / :annual $ locks)
+    let divPct = parseFloat(eff.divisionOverheadPercent) || 0
+    {
+      const dB = fieldLocks['divisionOverheadPercent:brdn'] ?? fieldLocks['divisionOverheadPercent']
+      const dH = fieldLocks['divisionOverheadPercent:hrly']
+      const dA = fieldLocks['divisionOverheadPercent:annual']
+      const base = costBaseBeforeOverheadAndProfit
+      const H = totalHoursAvailable
+      if (dB?.locked && dB.value !== undefined) {
+        const val = dB.value
+        divPct = val === '' ? 0 : (parseFloat(val) || 0)
+      } else if (dH?.locked && dH.value !== undefined) {
+        const v = parseFloat(dH.value)
+        if (!Number.isNaN(v) && v >= 0 && base + v > 0) divPct = 100 * v / (base + v)
+      } else if (dA?.locked && dA.value !== undefined) {
+        const v = parseFloat(dA.value)
+        const hourly = H > 0 ? v / H : 0
+        if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) divPct = 100 * hourly / (base + hourly)
+      }
+    }
+
     // Division Overhead: H×R/(1−p) − H×R annually; hourly = annual / H (same as margin on R when H > 0)
     const divisionOverheadAnnualSpend = overheadAnnualFromFormula(
       totalHoursAvailable,
       costBaseBeforeOverheadAndProfit,
-      parseFloat(eff.divisionOverheadPercent) || 0
+      divPct
     )
     const divisionOverheadCharged =
       totalHoursAvailable > 0
@@ -780,11 +890,31 @@ function LaborRateCalculator() {
     const divisionOverheadHourlyRate = divisionOverheadCharged
     const totalAfterDivisionOverhead = costBaseBeforeOverheadAndProfit + divisionOverheadCharged
 
+    let genPct = parseFloat(eff.generalCompanyOverheadPercent) || 0
+    {
+      const gB = fieldLocks['generalCompanyOverheadPercent:brdn'] ?? fieldLocks['generalCompanyOverheadPercent']
+      const gH = fieldLocks['generalCompanyOverheadPercent:hrly']
+      const gA = fieldLocks['generalCompanyOverheadPercent:annual']
+      const base = totalAfterDivisionOverhead
+      const H = totalHoursAvailable
+      if (gB?.locked && gB.value !== undefined) {
+        const val = gB.value
+        genPct = val === '' ? 0 : (parseFloat(val) || 0)
+      } else if (gH?.locked && gH.value !== undefined) {
+        const v = parseFloat(gH.value)
+        if (!Number.isNaN(v) && v >= 0 && base + v > 0) genPct = 100 * v / (base + v)
+      } else if (gA?.locked && gA.value !== undefined) {
+        const v = parseFloat(gA.value)
+        const hourly = H > 0 ? v / H : 0
+        if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) genPct = 100 * hourly / (base + hourly)
+      }
+    }
+
     // General Company Overhead: same annual formula; R = total $/hr including division overhead
     const generalCompanyOverheadAnnualSpend = overheadAnnualFromFormula(
       totalHoursAvailable,
       totalAfterDivisionOverhead,
-      parseFloat(eff.generalCompanyOverheadPercent) || 0
+      genPct
     )
     const generalCompanyOverheadCharged =
       totalHoursAvailable > 0
@@ -793,8 +923,28 @@ function LaborRateCalculator() {
     const generalCompanyOverheadHourlyRate = generalCompanyOverheadCharged
     const totalAfterGeneralOverhead = totalAfterDivisionOverhead + generalCompanyOverheadCharged
 
+    let profitPct = parseFloat(eff.profitPercent) || 0
+    {
+      const pB = fieldLocks['profitPercent:brdn'] ?? fieldLocks['profitPercent']
+      const pH = fieldLocks['profitPercent:hrly']
+      const pA = fieldLocks['profitPercent:annual']
+      const base = totalAfterGeneralOverhead
+      const H = totalHoursAvailable
+      if (pB?.locked && pB.value !== undefined) {
+        const val = pB.value
+        profitPct = val === '' ? 0 : (parseFloat(val) || 0)
+      } else if (pH?.locked && pH.value !== undefined) {
+        const v = parseFloat(pH.value)
+        if (!Number.isNaN(v) && v >= 0 && base + v > 0) profitPct = 100 * v / (base + v)
+      } else if (pA?.locked && pA.value !== undefined) {
+        const v = parseFloat(pA.value)
+        const hourly = v / PAID_CAPACITY
+        if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) profitPct = 100 * hourly / (base + hourly)
+      }
+    }
+
     // Profit: margin on total of all costs including division and general overhead
-    const profitCharged = marginAmount(totalAfterGeneralOverhead, parseFloat(eff.profitPercent) || 0)
+    const profitCharged = marginAmount(totalAfterGeneralOverhead, profitPct)
     const profitHourlyRate = profitCharged
 
     // Total Labor Rate = full charge including all costs, overheads, and profit
@@ -1121,7 +1271,7 @@ function LaborRateCalculator() {
                   </div>
                 </div>
                 <p className="text-xs text-gray-600 mb-2 leading-snug">
-                  Use <span className="font-semibold text-neutral">+</span> / <span className="font-semibold text-primary">All</span> next to an hour field to keep that allocation when you switch employees.
+                  Use the <span className="font-semibold text-primary">lock</span> under each hour field to keep that allocation when you switch employees.
                 </p>
                 
                 <div className="space-y-1">
@@ -1153,7 +1303,8 @@ function LaborRateCalculator() {
                             </button>
                           )}
                         </div>
-                        <div className="flex w-full items-center justify-center gap-0.5 flex-wrap min-w-0 px-0.5">
+                        <div className="flex flex-col items-center justify-center gap-0.5 w-full min-w-0 px-0.5">
+                          <div className="flex items-center justify-center gap-0.5 flex-wrap">
                           <input
                             type="number"
                             step="1"
@@ -1167,6 +1318,7 @@ function LaborRateCalculator() {
                             placeholder="0"
                           />
                           <span className="text-gray-500 text-xs shrink-0">hrs</span>
+                          </div>
                           <FieldLockButton
                             locked={!!fieldLocks[`hoursNotWorked:${option.id}`]?.locked}
                             onToggle={() => toggleFieldLock(`hoursNotWorked:${option.id}`, () => hoursNotWorked[option.id])}
@@ -1276,7 +1428,8 @@ function LaborRateCalculator() {
                             </div>
                           )}
                         </div>
-                        <div className="flex w-full items-center justify-center gap-0.5 flex-wrap min-w-0 px-0.5">
+                        <div className="flex flex-col items-center justify-center gap-0.5 w-full min-w-0 px-0.5">
+                          <div className="flex items-center justify-center gap-0.5 flex-wrap">
                           <input
                             type="number"
                             step="1"
@@ -1290,6 +1443,7 @@ function LaborRateCalculator() {
                             placeholder="0"
                           />
                           <span className="text-gray-500 text-xs shrink-0">hrs</span>
+                          </div>
                           <FieldLockButton
                             locked={!!fieldLocks[`nonBillableHours:${option.id}`]?.locked}
                             onToggle={() => toggleFieldLock(`nonBillableHours:${option.id}`, () => nonBillableHours[option.id])}
@@ -1360,7 +1514,7 @@ function LaborRateCalculator() {
                 Step 2: Wage Burden
               </h2>
               <p className="text-xs text-gray-600 mb-4 leading-snug">
-                Use the <span className="font-semibold text-neutral">+</span> / <span className="font-semibold text-primary">All</span> control next to Workers Wage or any Brdn (%) field to keep that value when you switch employees. Unlock to use different values per person.
+                Use the <span className="font-semibold text-primary">lock</span> under Workers Wage or under Brdn (%), Hrly ($), or Spend/yr ($) to keep that value when you switch employees. Unlock to use different values per person.
               </p>
 
               {/* Workers Wage Box */}
@@ -1369,11 +1523,12 @@ function LaborRateCalculator() {
                   Workers Wage
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-gray-700 font-medium">
+                  <div className="flex items-start justify-between gap-3">
+                    <label className="text-gray-700 font-medium pt-1">
                       Workers Wage:
                     </label>
-                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                    <div className="flex flex-col items-end gap-0.5 shrink-0">
+                      <div className="flex items-center gap-2 flex-wrap justify-end">
                       <span className="text-gray-500">$</span>
                       <input
                         type="number"
@@ -1386,11 +1541,12 @@ function LaborRateCalculator() {
                         }}
                         className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold no-spinner"
                       />
+                      <span className="text-gray-500">/hr</span>
+                      </div>
                       <FieldLockButton
                         locked={!!fieldLocks.workersWage?.locked}
                         onToggle={() => toggleFieldLock('workersWage', () => workersWage)}
                       />
-                      <span className="text-gray-500">/hr</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-primary/20">
@@ -1444,7 +1600,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -1471,13 +1628,14 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `payrollTax:${option.id}:brdn`
                               if (draft === '' || Number.isNaN(v)) {
                                 setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: '' }))
-                                if (fieldLocks[`payrollTax:${option.id}`]?.locked) updateFieldLockValue(`payrollTax:${option.id}`, '')
+                                if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, '')
                               } else {
                                 const nv = Math.round(v * 100) / 100
                                 setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: nv }))
-                                if (fieldLocks[`payrollTax:${option.id}`]?.locked) updateFieldLockValue(`payrollTax:${option.id}`, nv)
+                                if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
                               setEditingBrdnField(null)
                             }}
@@ -1485,12 +1643,13 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`payrollTax:${option.id}`]?.locked}
-                            onToggle={() => toggleFieldLock(`payrollTax:${option.id}`, () => mandatoryPayrollTaxPercents[option.id])}
+                            locked={!!(fieldLocks[`payrollTax:${option.id}:brdn`] ?? fieldLocks[`payrollTax:${option.id}`])?.locked}
+                            onToggle={() => toggleFieldLock(`payrollTax:${option.id}:brdn`, () => mandatoryPayrollTaxPercents[option.id])}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1504,10 +1663,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `payrollTax:${option.id}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`payrollTax:${option.id}`]?.locked) updateFieldLockValue(`payrollTax:${option.id}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1515,8 +1675,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`payrollTax:${option.id}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`payrollTax:${option.id}:hrly`, () => (safeCalculations.payrollTaxHourlyRates[option.id] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 pl-0.5 pr-2 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 pl-0.5 pr-2 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1530,17 +1694,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `payrollTax:${option.id}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`payrollTax:${option.id}`]?.locked) updateFieldLockValue(`payrollTax:${option.id}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`payrollTax:${option.id}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`payrollTax:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.payrollTaxHourlyRates[option.id] || 0))}
                           />
                         </div>
                         </div>
@@ -1576,7 +1745,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -1603,15 +1773,16 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `customPayrollTax:${idx}:brdn`
                               setCustomPayrollTaxFields(prev => {
                                 const u = [...prev]
                                 if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
                                 else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
                                 return u
                               })
-                              if (fieldLocks[`customPayrollTax:${idx}`]?.locked) {
-                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(`customPayrollTax:${idx}`, '')
-                                else updateFieldLockValue(`customPayrollTax:${idx}`, Math.round(v * 100) / 100)
+                              if (fieldLocks[brdnPath]?.locked || fieldLocks[`customPayrollTax:${idx}`]?.locked) {
+                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
+                                else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
                               setEditingBrdnField(null)
                             }}
@@ -1619,12 +1790,13 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`customPayrollTax:${idx}`]?.locked}
-                            onToggle={() => toggleFieldLock(`customPayrollTax:${idx}`, () => customPayrollTaxFields[idx]?.percent)}
+                            locked={!!(fieldLocks[`customPayrollTax:${idx}:brdn`] ?? fieldLocks[`customPayrollTax:${idx}`])?.locked}
+                            onToggle={() => toggleFieldLock(`customPayrollTax:${idx}:brdn`, () => customPayrollTaxFields[idx]?.percent)}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1638,10 +1810,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `customPayrollTax:${idx}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customPayrollTax:${idx}`]?.locked) updateFieldLockValue(`customPayrollTax:${idx}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1649,8 +1822,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customPayrollTax:${idx}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`customPayrollTax:${idx}:hrly`, () => (safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] ?? 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 pl-0.5 pr-2 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 pl-0.5 pr-2 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1664,17 +1841,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `customPayrollTax:${idx}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customPayrollTax:${idx}`]?.locked) updateFieldLockValue(`customPayrollTax:${idx}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customPayrollTax:${idx}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`customPayrollTax:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] ?? 0))}
                           />
                         </div>
                         </div>
@@ -1762,7 +1944,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -1789,13 +1972,14 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `workerBurden:${option.id}:brdn`
                               if (draft === '' || Number.isNaN(v)) {
                                 setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: '' }))
-                                if (fieldLocks[`workerBurden:${option.id}`]?.locked) updateFieldLockValue(`workerBurden:${option.id}`, '')
+                                if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, '')
                               } else {
                                 const nv = Math.round(v * 100) / 100
                                 setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
-                                if (fieldLocks[`workerBurden:${option.id}`]?.locked) updateFieldLockValue(`workerBurden:${option.id}`, nv)
+                                if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
                               setEditingBrdnField(null)
                             }}
@@ -1803,12 +1987,13 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`workerBurden:${option.id}`]?.locked}
-                            onToggle={() => toggleFieldLock(`workerBurden:${option.id}`, () => mandatoryWorkerBurdenPercents[option.id])}
+                            locked={!!(fieldLocks[`workerBurden:${option.id}:brdn`] ?? fieldLocks[`workerBurden:${option.id}`])?.locked}
+                            onToggle={() => toggleFieldLock(`workerBurden:${option.id}:brdn`, () => mandatoryWorkerBurdenPercents[option.id])}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1818,10 +2003,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `workerBurden:${option.id}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`workerBurden:${option.id}`]?.locked) updateFieldLockValue(`workerBurden:${option.id}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1829,8 +2015,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`workerBurden:${option.id}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`workerBurden:${option.id}:hrly`, () => (safeCalculations.workerBurdenHourlyRates[option.id] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 pl-0.5 pr-2 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 pl-0.5 pr-2 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1840,17 +2030,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `workerBurden:${option.id}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`workerBurden:${option.id}`]?.locked) updateFieldLockValue(`workerBurden:${option.id}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`workerBurden:${option.id}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`workerBurden:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRates[option.id] || 0))}
                           />
                         </div>
                         </div>
@@ -1886,7 +2081,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
                             <div className={`${STEP2_BURDEN_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -1913,15 +2109,16 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `customWorkerBurden:${idx}:brdn`
                               setCustomWorkerBurdenFields(prev => {
                                 const u = [...prev]
                                 if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
                                 else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
                                 return u
                               })
-                              if (fieldLocks[`customWorkerBurden:${idx}`]?.locked) {
-                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(`customWorkerBurden:${idx}`, '')
-                                else updateFieldLockValue(`customWorkerBurden:${idx}`, Math.round(v * 100) / 100)
+                              if (fieldLocks[brdnPath]?.locked || fieldLocks[`customWorkerBurden:${idx}`]?.locked) {
+                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
+                                else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
                               setEditingBrdnField(null)
                             }}
@@ -1929,12 +2126,13 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`customWorkerBurden:${idx}`]?.locked}
-                            onToggle={() => toggleFieldLock(`customWorkerBurden:${idx}`, () => customWorkerBurdenFields[idx]?.percent)}
+                            locked={!!(fieldLocks[`customWorkerBurden:${idx}:brdn`] ?? fieldLocks[`customWorkerBurden:${idx}`])?.locked}
+                            onToggle={() => toggleFieldLock(`customWorkerBurden:${idx}:brdn`, () => customWorkerBurdenFields[idx]?.percent)}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 px-0.5 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1944,10 +2142,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `customWorkerBurden:${idx}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customWorkerBurden:${idx}`]?.locked) updateFieldLockValue(`customWorkerBurden:${idx}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1955,8 +2154,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customWorkerBurden:${idx}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`customWorkerBurden:${idx}:hrly`, () => (safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] ?? 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 pl-0.5 pr-2 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 pl-0.5 pr-2 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -1966,17 +2169,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `customWorkerBurden:${idx}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customWorkerBurden:${idx}`]?.locked) updateFieldLockValue(`customWorkerBurden:${idx}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customWorkerBurden:${idx}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`customWorkerBurden:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] ?? 0))}
                           />
                         </div>
                         </div>
@@ -2097,7 +2305,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
                             <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -2124,13 +2333,14 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `benefits:${option.id}:brdn`
                               if (draft === '' || Number.isNaN(v)) {
                                 setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: '' }))
-                                if (fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(`benefits:${option.id}`, '')
+                                if (fieldLocks[brdnPath]?.locked || fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(brdnPath, '')
                               } else {
                                 const nv = Math.round(v * 100) / 100
                                 setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
-                                if (fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(`benefits:${option.id}`, nv)
+                                if (fieldLocks[brdnPath]?.locked || fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
                               setEditingBrdnField(null)
                             }}
@@ -2138,12 +2348,13 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`benefits:${option.id}`]?.locked}
-                            onToggle={() => toggleFieldLock(`benefits:${option.id}`, () => benefitsBurdenPercents[option.id])}
+                            locked={!!(fieldLocks[`benefits:${option.id}:brdn`]?.locked || fieldLocks[`benefits:${option.id}`]?.locked)}
+                            onToggle={() => toggleFieldLock(`benefits:${option.id}:brdn`, () => benefitsBurdenPercents[option.id])}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -2153,10 +2364,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `benefits:${option.id}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(`benefits:${option.id}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2164,8 +2376,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`benefits:${option.id}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`benefits:${option.id}:hrly`, () => (safeCalculations.benefitsBurdenHourlyRates[option.id] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                           <input
                             type="number"
                             step="0.01"
@@ -2175,17 +2391,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `benefits:${option.id}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(`benefits:${option.id}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`benefits:${option.id}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`benefits:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRates[option.id] || 0))}
                           />
                         </div>
                         </div>
@@ -2221,7 +2442,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
                             <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -2248,28 +2470,29 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
-                              const lockPath = `customBenefits:${idx}`
+                              const brdnPath = `customBenefits:${idx}:brdn`
                               setCustomBenefitsBurdenFields(prev => {
                                 const u = [...prev]
                                 if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
                                 else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
                                 return u
                               })
-                              if (fieldLocks[`customBenefits:${idx}`]?.locked) {
-                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(lockPath, '')
-                                else updateFieldLockValue(lockPath, Math.round(v * 100) / 100)
+                              if (fieldLocks[brdnPath]?.locked || fieldLocks[`customBenefits:${idx}`]?.locked) {
+                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
+                                else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`customBenefits:${idx}`]?.locked}
-                            onToggle={() => toggleFieldLock(`customBenefits:${idx}`, () => customBenefitsBurdenFields[idx]?.percent)}
+                            locked={!!(fieldLocks[`customBenefits:${idx}:brdn`]?.locked || fieldLocks[`customBenefits:${idx}`]?.locked)}
+                            onToggle={() => toggleFieldLock(`customBenefits:${idx}:brdn`, () => customBenefitsBurdenFields[idx]?.percent)}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -2279,10 +2502,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `customBenefits:${idx}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customBenefits:${idx}`]?.locked) updateFieldLockValue(`customBenefits:${idx}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2290,8 +2514,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customBenefits:${idx}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`customBenefits:${idx}:hrly`, () => (safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                           <input
                             type="number"
                             step="0.01"
@@ -2301,17 +2529,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `customBenefits:${idx}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customBenefits:${idx}`]?.locked) updateFieldLockValue(`customBenefits:${idx}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customBenefits:${idx}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`customBenefits:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0))}
                           />
                         </div>
                         </div>
@@ -2397,7 +2630,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
                             <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -2424,13 +2658,14 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `additionalOverheads:${option.id}:brdn`
                               if (draft === '' || Number.isNaN(v)) {
                                 setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: '' }))
-                                if (fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(`additionalOverheads:${option.id}`, '')
+                                if (fieldLocks[brdnPath]?.locked || fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(brdnPath, '')
                               } else {
                                 const nv = Math.round(v * 100) / 100
                                 setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: nv }))
-                                if (fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(`additionalOverheads:${option.id}`, nv)
+                                if (fieldLocks[brdnPath]?.locked || fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
                               setEditingBrdnField(null)
                             }}
@@ -2438,12 +2673,13 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`additionalOverheads:${option.id}`]?.locked}
-                            onToggle={() => toggleFieldLock(`additionalOverheads:${option.id}`, () => additionalOverheadsPercents[option.id])}
+                            locked={!!(fieldLocks[`additionalOverheads:${option.id}:brdn`]?.locked || fieldLocks[`additionalOverheads:${option.id}`]?.locked)}
+                            onToggle={() => toggleFieldLock(`additionalOverheads:${option.id}:brdn`, () => additionalOverheadsPercents[option.id])}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -2453,10 +2689,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `additionalOverheads:${option.id}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(`additionalOverheads:${option.id}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2464,8 +2701,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`additionalOverheads:${option.id}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`additionalOverheads:${option.id}:hrly`, () => (safeCalculations.additionalOverheadsHourlyRates[option.id] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                           <input
                             type="number"
                             step="0.01"
@@ -2475,17 +2716,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `additionalOverheads:${option.id}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(`additionalOverheads:${option.id}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`additionalOverheads:${option.id}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`additionalOverheads:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRates[option.id] || 0))}
                           />
                         </div>
                         </div>
@@ -2521,7 +2767,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
                             <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -2548,27 +2795,29 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `customAdditionalOverheads:${idx}:brdn`
                               setCustomAdditionalOverheadsFields(prev => {
                                 const u = [...prev]
                                 if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
                                 else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
                                 return u
                               })
-                              if (fieldLocks[`customAdditionalOverheads:${idx}`]?.locked) {
-                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(`customAdditionalOverheads:${idx}`, '')
-                                else updateFieldLockValue(`customAdditionalOverheads:${idx}`, Math.round(v * 100) / 100)
+                              if (fieldLocks[brdnPath]?.locked || fieldLocks[`customAdditionalOverheads:${idx}`]?.locked) {
+                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
+                                else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`customAdditionalOverheads:${idx}`]?.locked}
-                            onToggle={() => toggleFieldLock(`customAdditionalOverheads:${idx}`, () => customAdditionalOverheadsFields[idx]?.percent)}
+                            locked={!!(fieldLocks[`customAdditionalOverheads:${idx}:brdn`]?.locked || fieldLocks[`customAdditionalOverheads:${idx}`]?.locked)}
+                            onToggle={() => toggleFieldLock(`customAdditionalOverheads:${idx}:brdn`, () => customAdditionalOverheadsFields[idx]?.percent)}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -2578,10 +2827,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `customAdditionalOverheads:${idx}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customAdditionalOverheads:${idx}`]?.locked) updateFieldLockValue(`customAdditionalOverheads:${idx}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2589,8 +2839,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customAdditionalOverheads:${idx}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`customAdditionalOverheads:${idx}:hrly`, () => (safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                           <input
                             type="number"
                             step="0.01"
@@ -2600,17 +2854,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `customAdditionalOverheads:${idx}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customAdditionalOverheads:${idx}`]?.locked) updateFieldLockValue(`customAdditionalOverheads:${idx}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customAdditionalOverheads:${idx}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`customAdditionalOverheads:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0))}
                           />
                         </div>
                         </div>
@@ -2696,7 +2955,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
                             <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -2723,13 +2983,14 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `employeeCosts:${option.id}:brdn`
                               if (draft === '' || Number.isNaN(v)) {
                                 setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: '' }))
-                                if (fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(`employeeCosts:${option.id}`, '')
+                                if (fieldLocks[brdnPath]?.locked || fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(brdnPath, '')
                               } else {
                                 const nv = Math.round(v * 100) / 100
                                 setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: nv }))
-                                if (fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(`employeeCosts:${option.id}`, nv)
+                                if (fieldLocks[brdnPath]?.locked || fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
                               setEditingBrdnField(null)
                             }}
@@ -2737,12 +2998,13 @@ function LaborRateCalculator() {
                             placeholder="0.00"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`employeeCosts:${option.id}`]?.locked}
-                            onToggle={() => toggleFieldLock(`employeeCosts:${option.id}`, () => employeeCostsPercents[option.id])}
+                            locked={!!(fieldLocks[`employeeCosts:${option.id}:brdn`]?.locked || fieldLocks[`employeeCosts:${option.id}`]?.locked)}
+                            onToggle={() => toggleFieldLock(`employeeCosts:${option.id}:brdn`, () => employeeCostsPercents[option.id])}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -2752,10 +3014,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `employeeCosts:${option.id}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(`employeeCosts:${option.id}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2763,8 +3026,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`employeeCosts:${option.id}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`employeeCosts:${option.id}:hrly`, () => (safeCalculations.employeeCostsHourlyRates[option.id] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                           <input
                             type="number"
                             step="0.01"
@@ -2774,17 +3041,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `employeeCosts:${option.id}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
-                                  if (fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(`employeeCosts:${option.id}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`employeeCosts:${option.id}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`employeeCosts:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRates[option.id] || 0))}
                           />
                         </div>
                         </div>
@@ -2820,7 +3092,8 @@ function LaborRateCalculator() {
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
                             <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                          <div className="flex items-center justify-end min-w-0">
                           <input
                             type="number"
                             step="0.01"
@@ -2847,27 +3120,29 @@ function LaborRateCalculator() {
                                 return
                               }
                               const v = parseFloat(draft)
+                              const brdnPath = `customEmployeeCosts:${idx}:brdn`
                               setCustomEmployeeCosts(prev => {
                                 const u = [...prev]
                                 if (draft === '' || Number.isNaN(v)) u[idx] = { ...u[idx], percent: '' }
                                 else u[idx] = { ...u[idx], percent: Math.round(v * 100) / 100 }
                                 return u
                               })
-                              if (fieldLocks[`customEmployeeCosts:${idx}`]?.locked) {
-                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(`customEmployeeCosts:${idx}`, '')
-                                else updateFieldLockValue(`customEmployeeCosts:${idx}`, Math.round(v * 100) / 100)
+                              if (fieldLocks[brdnPath]?.locked || fieldLocks[`customEmployeeCosts:${idx}`]?.locked) {
+                                if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
+                                else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                           />
                           <span className="text-gray-500 text-xs ml-0.5">%</span>
+                          </div>
                           <FieldLockButton
-                            locked={!!fieldLocks[`customEmployeeCosts:${idx}`]?.locked}
-                            onToggle={() => toggleFieldLock(`customEmployeeCosts:${idx}`, () => customEmployeeCosts[idx]?.percent)}
+                            locked={!!(fieldLocks[`customEmployeeCosts:${idx}:brdn`]?.locked || fieldLocks[`customEmployeeCosts:${idx}`]?.locked)}
+                            onToggle={() => toggleFieldLock(`customEmployeeCosts:${idx}:brdn`, () => customEmployeeCosts[idx]?.percent)}
                           />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <input
                             type="number"
                             step="0.01"
@@ -2877,10 +3152,11 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 const v = parseFloat(e.target.value)
+                                const hrlyPath = `customEmployeeCosts:${idx}:hrly`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customEmployeeCosts:${idx}`]?.locked) updateFieldLockValue(`customEmployeeCosts:${idx}`, pct)
+                                  if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2888,8 +3164,12 @@ function LaborRateCalculator() {
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customEmployeeCosts:${idx}:hrly`]?.locked}
+                            onToggle={() => toggleFieldLock(`customEmployeeCosts:${idx}:hrly`, () => (safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0))}
+                          />
                         </div>
-                        <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                        <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                           <input
                             type="number"
                             step="0.01"
@@ -2899,17 +3179,22 @@ function LaborRateCalculator() {
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 const v = parseFloat(e.target.value)
+                                const annualPath = `customEmployeeCosts:${idx}:annual`
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
-                                  if (fieldLocks[`customEmployeeCosts:${idx}`]?.locked) updateFieldLockValue(`customEmployeeCosts:${idx}`, pct)
+                                  if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
+                          />
+                          <FieldLockButton
+                            locked={!!fieldLocks[`customEmployeeCosts:${idx}:annual`]?.locked}
+                            onToggle={() => toggleFieldLock(`customEmployeeCosts:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0))}
                           />
                         </div>
                         </div>
@@ -3002,7 +3287,8 @@ function LaborRateCalculator() {
                     <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
                         <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                      <div className="flex items-center justify-end min-w-0">
                       <input
                         type="number"
                         step="0.01"
@@ -3025,11 +3311,11 @@ function LaborRateCalculator() {
                           const v = parseFloat(draft)
                           if (draft === '' || Number.isNaN(v)) {
                             setDivisionOverheadPercent('')
-                            if (fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent', '')
+                            if (fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent:brdn', '')
                           } else {
                             const nv = Math.round(v * 100) / 100
                             setDivisionOverheadPercent(nv)
-                            if (fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent', nv)
+                            if (fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent:brdn', nv)
                           }
                           setEditingBrdnField(null)
                         }}
@@ -3037,12 +3323,13 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
+                      </div>
                       <FieldLockButton
-                        locked={!!fieldLocks.divisionOverheadPercent?.locked}
-                        onToggle={() => toggleFieldLock('divisionOverheadPercent', () => divisionOverheadPercent)}
+                        locked={!!(fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked)}
+                        onToggle={() => toggleFieldLock('divisionOverheadPercent:brdn', () => divisionOverheadPercent)}
                       />
                     </div>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <input
                         type="number"
                         step="0.01"
@@ -3056,7 +3343,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
                               const pct = 100 * v / (base + v)
                               setDivisionOverheadPercent(pct)
-                              if (fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent', pct)
+                              if (fieldLocks['divisionOverheadPercent:hrly']?.locked) updateFieldLockValue('divisionOverheadPercent:hrly', v)
                             }
                             setEditingDollarField(null)
                           }
@@ -3064,8 +3351,12 @@ function LaborRateCalculator() {
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
+                      <FieldLockButton
+                        locked={!!fieldLocks['divisionOverheadPercent:hrly']?.locked}
+                        onToggle={() => toggleFieldLock('divisionOverheadPercent:hrly', () => safeCalculations.divisionOverheadHourlyRate)}
+                      />
                     </div>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                       <input
                         type="number"
                         step="0.01"
@@ -3081,13 +3372,17 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) {
                               const pct = 100 * hourly / (base + hourly)
                               setDivisionOverheadPercent(pct)
-                              if (fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent', pct)
+                              if (fieldLocks['divisionOverheadPercent:annual']?.locked) updateFieldLockValue('divisionOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
                           }
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
+                      />
+                      <FieldLockButton
+                        locked={!!fieldLocks['divisionOverheadPercent:annual']?.locked}
+                        onToggle={() => toggleFieldLock('divisionOverheadPercent:annual', () => safeCalculations.divisionOverheadAnnualSpend)}
                       />
                     </div>
                         </div>
@@ -3122,7 +3417,8 @@ function LaborRateCalculator() {
                     <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
                         <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                      <div className="flex items-center justify-end min-w-0">
                       <input
                         type="number"
                         step="0.01"
@@ -3145,11 +3441,11 @@ function LaborRateCalculator() {
                           const v = parseFloat(draft)
                           if (draft === '' || Number.isNaN(v)) {
                             setGeneralCompanyOverheadPercent('')
-                            if (fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent', '')
+                            if (fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent:brdn', '')
                           } else {
                             const nv = Math.round(v * 100) / 100
                             setGeneralCompanyOverheadPercent(nv)
-                            if (fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent', nv)
+                            if (fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent:brdn', nv)
                           }
                           setEditingBrdnField(null)
                         }}
@@ -3157,12 +3453,13 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
+                      </div>
                       <FieldLockButton
-                        locked={!!fieldLocks.generalCompanyOverheadPercent?.locked}
-                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent', () => generalCompanyOverheadPercent)}
+                        locked={!!(fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked)}
+                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent:brdn', () => generalCompanyOverheadPercent)}
                       />
                     </div>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <input
                         type="number"
                         step="0.01"
@@ -3176,7 +3473,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
                               const pct = 100 * v / (base + v)
                               setGeneralCompanyOverheadPercent(pct)
-                              if (fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent', pct)
+                              if (fieldLocks['generalCompanyOverheadPercent:hrly']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:hrly', v)
                             }
                             setEditingDollarField(null)
                           }
@@ -3184,8 +3481,12 @@ function LaborRateCalculator() {
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
+                      <FieldLockButton
+                        locked={!!fieldLocks['generalCompanyOverheadPercent:hrly']?.locked}
+                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent:hrly', () => safeCalculations.generalCompanyOverheadHourlyRate)}
+                      />
                     </div>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                       <input
                         type="number"
                         step="0.01"
@@ -3201,13 +3502,17 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) {
                               const pct = 100 * hourly / (base + hourly)
                               setGeneralCompanyOverheadPercent(pct)
-                              if (fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent', pct)
+                              if (fieldLocks['generalCompanyOverheadPercent:annual']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
                           }
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
+                      />
+                      <FieldLockButton
+                        locked={!!fieldLocks['generalCompanyOverheadPercent:annual']?.locked}
+                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent:annual', () => safeCalculations.generalCompanyOverheadAnnualSpend)}
                       />
                     </div>
                         </div>
@@ -3242,7 +3547,8 @@ function LaborRateCalculator() {
                     <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
                         <div className={`${STEP3_BURDEN3_GRID} items-center`}>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
+                      <div className="flex items-center justify-end min-w-0">
                       <input
                         type="number"
                         step="0.01"
@@ -3265,11 +3571,11 @@ function LaborRateCalculator() {
                           const v = parseFloat(draft)
                           if (draft === '' || Number.isNaN(v)) {
                             setProfitPercent('')
-                            if (fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent', '')
+                            if (fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent:brdn', '')
                           } else {
                             const nv = Math.round(v * 100) / 100
                             setProfitPercent(nv)
-                            if (fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent', nv)
+                            if (fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent:brdn', nv)
                           }
                           setEditingBrdnField(null)
                         }}
@@ -3277,12 +3583,13 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
+                      </div>
                       <FieldLockButton
-                        locked={!!fieldLocks.profitPercent?.locked}
-                        onToggle={() => toggleFieldLock('profitPercent', () => profitPercent)}
+                        locked={!!(fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked)}
+                        onToggle={() => toggleFieldLock('profitPercent:brdn', () => profitPercent)}
                       />
                     </div>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <input
                         type="number"
                         step="0.01"
@@ -3296,7 +3603,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
                               const pct = 100 * v / (base + v)
                               setProfitPercent(pct)
-                              if (fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent', pct)
+                              if (fieldLocks['profitPercent:hrly']?.locked) updateFieldLockValue('profitPercent:hrly', v)
                             }
                             setEditingDollarField(null)
                           }
@@ -3304,8 +3611,12 @@ function LaborRateCalculator() {
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
                       />
+                      <FieldLockButton
+                        locked={!!fieldLocks['profitPercent:hrly']?.locked}
+                        onToggle={() => toggleFieldLock('profitPercent:hrly', () => safeCalculations.profitHourlyRate)}
+                      />
                     </div>
-                    <div className="flex items-center justify-end min-w-0 overflow-visible pl-0.5 pr-2">
+                    <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible pl-0.5 pr-2">
                       <input
                         type="number"
                         step="0.01"
@@ -3320,13 +3631,17 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) {
                               const pct = 100 * hourly / (base + hourly)
                               setProfitPercent(pct)
-                              if (fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent', pct)
+                              if (fieldLocks['profitPercent:annual']?.locked) updateFieldLockValue('profitPercent:annual', v)
                             }
                             setEditingDollarField(null)
                           }
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                         placeholder="0.00"
+                      />
+                      <FieldLockButton
+                        locked={!!fieldLocks['profitPercent:annual']?.locked}
+                        onToggle={() => toggleFieldLock('profitPercent:annual', () => annualSpendFromEarnedHourly(safeCalculations.profitCharged))}
                       />
                     </div>
                         </div>
@@ -3562,9 +3877,10 @@ function LaborRateCalculator() {
                   Adjust Overhead & Profit
                 </h3>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-gray-700 text-sm font-medium pr-3">Division Overhead:</label>
-                    <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <label className="text-gray-700 text-sm font-medium pr-3 pt-1">Division Overhead:</label>
+                    <div className="flex flex-col items-end gap-0.5 shrink-0">
+                      <div className="flex items-center gap-2">
                       <input
                         type="number"
                         step="0.01"
@@ -3587,11 +3903,11 @@ function LaborRateCalculator() {
                           const v = parseFloat(draft)
                           if (draft === '' || Number.isNaN(v)) {
                             setDivisionOverheadPercent('')
-                            if (fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent', '')
+                            if (fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent:brdn', '')
                           } else {
                             const nv = Math.round(v * 100) / 100
                             setDivisionOverheadPercent(nv)
-                            if (fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent', nv)
+                            if (fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent:brdn', nv)
                           }
                           setEditingBrdnField(null)
                         }}
@@ -3599,15 +3915,17 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
+                      </div>
                       <FieldLockButton
-                        locked={!!fieldLocks.divisionOverheadPercent?.locked}
-                        onToggle={() => toggleFieldLock('divisionOverheadPercent', () => divisionOverheadPercent)}
+                        locked={!!(fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked)}
+                        onToggle={() => toggleFieldLock('divisionOverheadPercent:brdn', () => divisionOverheadPercent)}
                       />
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <label className="text-gray-700 text-sm font-medium pr-3">General Company Overhead:</label>
-                    <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <label className="text-gray-700 text-sm font-medium pr-3 pt-1">General Company Overhead:</label>
+                    <div className="flex flex-col items-end gap-0.5 shrink-0">
+                      <div className="flex items-center gap-2">
                       <input
                         type="number"
                         step="0.01"
@@ -3630,11 +3948,11 @@ function LaborRateCalculator() {
                           const v = parseFloat(draft)
                           if (draft === '' || Number.isNaN(v)) {
                             setGeneralCompanyOverheadPercent('')
-                            if (fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent', '')
+                            if (fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent:brdn', '')
                           } else {
                             const nv = Math.round(v * 100) / 100
                             setGeneralCompanyOverheadPercent(nv)
-                            if (fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent', nv)
+                            if (fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent:brdn', nv)
                           }
                           setEditingBrdnField(null)
                         }}
@@ -3642,15 +3960,17 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
+                      </div>
                       <FieldLockButton
-                        locked={!!fieldLocks.generalCompanyOverheadPercent?.locked}
-                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent', () => generalCompanyOverheadPercent)}
+                        locked={!!(fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked)}
+                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent:brdn', () => generalCompanyOverheadPercent)}
                       />
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <label className="text-gray-700 text-sm font-medium pr-3">Profit:</label>
-                    <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <label className="text-gray-700 text-sm font-medium pr-3 pt-1">Profit:</label>
+                    <div className="flex flex-col items-end gap-0.5 shrink-0">
+                      <div className="flex items-center gap-2">
                       <input
                         type="number"
                         step="0.01"
@@ -3673,11 +3993,11 @@ function LaborRateCalculator() {
                           const v = parseFloat(draft)
                           if (draft === '' || Number.isNaN(v)) {
                             setProfitPercent('')
-                            if (fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent', '')
+                            if (fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent:brdn', '')
                           } else {
                             const nv = Math.round(v * 100) / 100
                             setProfitPercent(nv)
-                            if (fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent', nv)
+                            if (fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent:brdn', nv)
                           }
                           setEditingBrdnField(null)
                         }}
@@ -3685,9 +4005,10 @@ function LaborRateCalculator() {
                         placeholder="0.00"
                       />
                       <span className="text-gray-500 text-xs w-6">%</span>
+                      </div>
                       <FieldLockButton
-                        locked={!!fieldLocks.profitPercent?.locked}
-                        onToggle={() => toggleFieldLock('profitPercent', () => profitPercent)}
+                        locked={!!(fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked)}
+                        onToggle={() => toggleFieldLock('profitPercent:brdn', () => profitPercent)}
                       />
                     </div>
                   </div>

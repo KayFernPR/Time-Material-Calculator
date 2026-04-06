@@ -1514,50 +1514,40 @@ function LaborRateCalculator() {
                 Step 2: Wage Burden
               </h2>
               <p className="text-xs text-gray-600 mb-4 leading-snug">
-                Use the <span className="font-semibold text-primary">lock</span> under Workers Wage or under Brdn (%), Hrly ($), or Spend/yr ($) to keep that value when you switch employees. Unlock to use different values per person.
+                Use the <span className="font-semibold text-primary">lock</span> under Brdn (%), Hrly ($), or Spend/yr ($) to keep that value when you switch employees. Unlock to use different values per person.
               </p>
 
               {/* Workers Wage Box */}
-              <div className="mb-6 p-4 border-2 border-primary rounded-lg min-w-0">
+              <div className="mb-6 p-4 border-2 border-primary rounded-lg min-w-0 overflow-hidden">
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Workers Wage
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <label className="text-gray-700 font-medium pt-1">
+                <div className="space-y-3 min-w-0">
+                  <div className="flex flex-col gap-2 min-w-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                    <label className="text-gray-700 font-medium shrink-0 min-w-0">
                       Workers Wage:
                     </label>
-                    <div className="flex flex-col items-end gap-0.5 shrink-0">
-                      <div className="flex items-center gap-2 flex-wrap justify-end">
-                      <span className="text-gray-500">$</span>
+                    <div className="flex min-w-0 max-w-full items-center gap-1.5 flex-wrap sm:justify-end">
+                      <span className="text-gray-500 shrink-0">$</span>
                       <input
                         type="number"
                         step="0.01"
                         value={workersWage}
-                        onChange={(e) => {
-                          const v = e.target.value
-                          setWorkersWage(v)
-                          if (fieldLocks.workersWage?.locked) updateFieldLockValue('workersWage', v)
-                        }}
-                        className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold no-spinner"
+                        onChange={(e) => setWorkersWage(e.target.value)}
+                        className="min-w-0 w-24 max-w-[min(100%,7rem)] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold no-spinner"
                       />
-                      <span className="text-gray-500">/hr</span>
-                      </div>
-                      <FieldLockButton
-                        locked={!!fieldLocks.workersWage?.locked}
-                        onToggle={() => toggleFieldLock('workersWage', () => workersWage)}
-                      />
+                      <span className="text-gray-500 shrink-0">/hr</span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-primary/20">
-                    <label className="text-gray-700 font-medium">
+                  <div className="flex flex-col gap-2 pt-2 border-t border-primary/20 min-w-0 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                    <label className="text-gray-700 font-medium shrink-0 min-w-0">
                       Burden/hour to charge:
                     </label>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-primary">
+                    <div className="text-right min-w-0 max-w-full">
+                      <div className="text-lg font-bold text-primary break-words">
                         ${safeCalculations.workersWageCharged.toFixed(2)}/hr
                       </div>
-                      <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
+                      <div className="text-xs text-gray-500 mt-1 break-words sm:whitespace-nowrap sm:break-normal">
                         = ${(parseFloat(workersWage) || 0).toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                       </div>
                     </div>

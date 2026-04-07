@@ -595,9 +595,9 @@ function LaborRateCalculator() {
   }, [effectiveAnnualSpend])
 
   /**
-   * When Spend/yr was the last committed column, Brdn (%) and Hrly ($) must be derived from
-   * effective annual ÷ 2080 — not from stored % → round(wage×%) → hrly, or $1500 and $1497.60
-   * both collapse to the same 2.88% / $0.72.
+   * When Spend/yr was the last committed column, Brdn (%) and Hrly ($) are derived from
+   * effective annual ÷ paid capacity (rounded to 2 decimals for display), not from the
+   * stored % → hrly chain that can disagree with a direct Spend/yr entry.
    */
   const getWageRowBurdDisplayWhenNotEditing = useCallback(
     (basePath, storedPercent, workersWageNum, annualPath, computedAnnualFromHrly) => {
@@ -606,7 +606,7 @@ function LaborRateCalculator() {
       if (getEnteredField(basePath) === 'annual' && w > 0 && a > 0) {
         const earnedHrly = a / PAID_CAPACITY
         const pct = (earnedHrly / w) * 100
-        return pct.toFixed(4)
+        return pct.toFixed(2)
       }
       return formatBrdnPercentForDisplay(storedPercent)
     },
@@ -619,7 +619,7 @@ function LaborRateCalculator() {
       const a = effectiveAnnualSpend(annualPath, computedAnnualFromHrly)
       if (getEnteredField(basePath) === 'annual' && w > 0 && a > 0) {
         const earnedHrly = a / PAID_CAPACITY
-        return earnedHrly.toFixed(4)
+        return earnedHrly.toFixed(2)
       }
       return computedHrly > 0 ? computedHrly.toFixed(2) : ''
     },
@@ -1962,7 +1962,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`payrollTax:${option.id}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`payrollTax:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.payrollTaxHourlyRates[option.id] || 0))}
+                            onToggle={() => toggleFieldLock(`payrollTax:${option.id}:annual`, () => effectiveAnnualSpend(`payrollTax:${option.id}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -2117,7 +2117,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`customPayrollTax:${idx}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`customPayrollTax:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] ?? 0))}
+                            onToggle={() => toggleFieldLock(`customPayrollTax:${idx}:annual`, () => effectiveAnnualSpend(`customPayrollTax:${idx}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -2314,7 +2314,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`workerBurden:${option.id}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`workerBurden:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRates[option.id] || 0))}
+                            onToggle={() => toggleFieldLock(`workerBurden:${option.id}:annual`, () => effectiveAnnualSpend(`workerBurden:${option.id}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -2461,7 +2461,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`customWorkerBurden:${idx}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`customWorkerBurden:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] ?? 0))}
+                            onToggle={() => toggleFieldLock(`customWorkerBurden:${idx}:annual`, () => effectiveAnnualSpend(`customWorkerBurden:${idx}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -2691,7 +2691,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`benefits:${option.id}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`benefits:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRates[option.id] || 0))}
+                            onToggle={() => toggleFieldLock(`benefits:${option.id}:annual`, () => effectiveAnnualSpend(`benefits:${option.id}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -2837,7 +2837,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`customBenefits:${idx}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`customBenefits:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0))}
+                            onToggle={() => toggleFieldLock(`customBenefits:${idx}:annual`, () => effectiveAnnualSpend(`customBenefits:${idx}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -3032,7 +3032,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`additionalOverheads:${option.id}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`additionalOverheads:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRates[option.id] || 0))}
+                            onToggle={() => toggleFieldLock(`additionalOverheads:${option.id}:annual`, () => effectiveAnnualSpend(`additionalOverheads:${option.id}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -3178,7 +3178,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`customAdditionalOverheads:${idx}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`customAdditionalOverheads:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0))}
+                            onToggle={() => toggleFieldLock(`customAdditionalOverheads:${idx}:annual`, () => effectiveAnnualSpend(`customAdditionalOverheads:${idx}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -3373,7 +3373,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`employeeCosts:${option.id}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`employeeCosts:${option.id}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRates[option.id] || 0))}
+                            onToggle={() => toggleFieldLock(`employeeCosts:${option.id}:annual`, () => effectiveAnnualSpend(`employeeCosts:${option.id}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -3519,7 +3519,7 @@ function LaborRateCalculator() {
                           />
                           <FieldLockButton
                             locked={!!fieldLocks[`customEmployeeCosts:${idx}:annual`]?.locked}
-                            onToggle={() => toggleFieldLock(`customEmployeeCosts:${idx}:annual`, () => annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0))}
+                            onToggle={() => toggleFieldLock(`customEmployeeCosts:${idx}:annual`, () => effectiveAnnualSpend(`customEmployeeCosts:${idx}:annual`, annualSpend))}
                           />
                         </div>
                         </div>
@@ -3715,7 +3715,7 @@ function LaborRateCalculator() {
                       />
                       <FieldLockButton
                         locked={!!fieldLocks['divisionOverheadPercent:annual']?.locked}
-                        onToggle={() => toggleFieldLock('divisionOverheadPercent:annual', () => safeCalculations.divisionOverheadAnnualSpend)}
+                        onToggle={() => toggleFieldLock('divisionOverheadPercent:annual', () => effectiveAnnualSpend('divisionOverheadPercent:annual', safeCalculations.divisionOverheadAnnualSpend))}
                       />
                     </div>
                         </div>
@@ -3853,7 +3853,7 @@ function LaborRateCalculator() {
                       />
                       <FieldLockButton
                         locked={!!fieldLocks['generalCompanyOverheadPercent:annual']?.locked}
-                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent:annual', () => safeCalculations.generalCompanyOverheadAnnualSpend)}
+                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent:annual', () => effectiveAnnualSpend('generalCompanyOverheadPercent:annual', safeCalculations.generalCompanyOverheadAnnualSpend))}
                       />
                     </div>
                         </div>
@@ -3990,7 +3990,7 @@ function LaborRateCalculator() {
                       />
                       <FieldLockButton
                         locked={!!fieldLocks['profitPercent:annual']?.locked}
-                        onToggle={() => toggleFieldLock('profitPercent:annual', () => annualSpendFromEarnedHourly(safeCalculations.profitCharged))}
+                        onToggle={() => toggleFieldLock('profitPercent:annual', () => effectiveAnnualSpend('profitPercent:annual', annualSpendFromEarnedHourly(safeCalculations.profitCharged)))}
                       />
                     </div>
                         </div>

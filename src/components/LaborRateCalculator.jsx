@@ -1274,8 +1274,8 @@ function LaborRateCalculator() {
                     const percent = safeCalculations.hoursNotWorkedPercentages[option.id] || 0
                     const isCustomHoursNotWorked = customHoursNotWorked.some(c => c.id === option.id)
                     return (
-                      <div key={option.id} className="grid gap-1 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
-                        <div className="flex items-center gap-1.5 min-w-0 px-1">
+                      <div key={option.id} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0 px-1 mb-1">
                           <label className="text-gray-700 text-xs font-medium break-words line-clamp-2 leading-tight min-w-0">
                             {option.label}
                           </label>
@@ -1297,24 +1297,27 @@ function LaborRateCalculator() {
                             </button>
                           )}
                         </div>
-                        <div className="flex flex-col items-center justify-center gap-0.5 w-full min-w-0 px-0.5">
-                          <div className="flex items-center justify-center gap-0.5 flex-wrap">
-                          <input
-                            type="number"
-                            step="1"
-                            value={hoursNotWorked[option.id] || ''}
-                            onChange={(e) => {
-                              const v = e.target.value
-                              setHoursNotWorked(prev => ({ ...prev, [option.id]: v }))
-                            }}
-                            className="w-11 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
-                            placeholder="0"
-                          />
-                          <span className="text-gray-500 text-xs shrink-0">hrs</span>
+                        <div className="grid gap-1 items-center min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
+                          <div className="min-w-0 px-1"></div>
+                          <div className="flex flex-col items-center justify-center gap-0.5 w-full min-w-0 px-0.5">
+                            <div className="flex items-center justify-center gap-0.5 flex-wrap">
+                            <input
+                              type="number"
+                              step="1"
+                              value={hoursNotWorked[option.id] || ''}
+                              onChange={(e) => {
+                                const v = e.target.value
+                                setHoursNotWorked(prev => ({ ...prev, [option.id]: v }))
+                              }}
+                              className="w-11 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                              placeholder="0"
+                            />
+                            <span className="text-gray-500 text-xs shrink-0">hrs</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="w-full text-center text-xs font-semibold text-primary px-1 min-w-0">
-                          {percent.toFixed(2)}%
+                          <div className="w-full text-center text-xs font-semibold text-primary px-1 min-w-0">
+                            {percent.toFixed(2)}%
+                          </div>
                         </div>
                       </div>
                     )
@@ -1377,8 +1380,8 @@ function LaborRateCalculator() {
                     const percent = safeCalculations.nonBillableHoursPercentages[option.id] || 0
                     const isCustomNonBillable = customNonBillable.some(c => c.id === option.id)
                     return (
-                      <div key={option.id} className={`grid gap-1 items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem] ${option.tooltip ? 'overflow-visible' : ''}`}>
-                        <div className={`flex items-center gap-2 min-w-0 px-1 ${option.tooltip ? 'overflow-visible' : 'overflow-hidden'}`}>
+                      <div key={option.id} className={`p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 ${option.tooltip ? 'overflow-visible' : ''}`}>
+                        <div className={`flex items-center gap-2 min-w-0 px-1 mb-1 ${option.tooltip ? 'overflow-visible' : 'overflow-hidden'}`}>
                           <label className="text-gray-700 text-xs font-medium whitespace-pre-line break-words line-clamp-2 leading-tight min-w-0 overflow-hidden">
                             {option.label}
                           </label>
@@ -1415,25 +1418,27 @@ function LaborRateCalculator() {
                             </div>
                           )}
                         </div>
-                        <div className="flex flex-col items-center justify-center gap-0.5 w-full min-w-0 px-0.5">
-                          <div className="flex items-center justify-center gap-0.5 flex-wrap">
-                          <input
-                            type="number"
-                            step="1"
-                            value={nonBillableHours[option.id] || ''}
-                            onChange={(e) => {
-                              const v = e.target.value
-                              setNonBillableHours(prev => ({ ...prev, [option.id]: v }))
-                            }}
-                            className="w-11 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
-                            placeholder="0"
-                          />
-                          <span className="text-gray-500 text-xs shrink-0">hrs</span>
+                        <div className="grid gap-1 items-center min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
+                          <div className="min-w-0 px-1"></div>
+                          <div className="flex flex-col items-center justify-center gap-0.5 w-full min-w-0 px-0.5">
+                            <div className="flex items-center justify-center gap-0.5 flex-wrap">
+                            <input
+                              type="number"
+                              step="1"
+                              value={nonBillableHours[option.id] || ''}
+                              onChange={(e) => {
+                                const v = e.target.value
+                                setNonBillableHours(prev => ({ ...prev, [option.id]: v }))
+                              }}
+                              className="w-11 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                              placeholder="0"
+                            />
+                            <span className="text-gray-500 text-xs shrink-0">hrs</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="w-full text-center text-xs font-semibold text-primary px-1 min-w-0">
-                            {percent.toFixed(2)}%
-                          </div>
+                          <div className="w-full text-center text-xs font-semibold text-primary px-1 min-w-0">
+                              {percent.toFixed(2)}%
+                            </div>
                         </div>
                       )
                     })}

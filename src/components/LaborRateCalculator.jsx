@@ -1428,9 +1428,26 @@ function LaborRateCalculator() {
                     return (
                       <div key={option.id} className={`p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 ${option.tooltip ? 'overflow-visible' : ''}`}>
                         <div className={`flex items-start justify-between gap-2 min-w-0 px-1 mb-1 ${option.tooltip ? 'overflow-visible' : 'overflow-hidden'}`}>
-                          <label className="text-gray-700 text-xs font-medium whitespace-pre-line break-words line-clamp-2 leading-tight min-w-0 overflow-hidden">
-                            {option.label}
-                          </label>
+                          <div className={`flex items-start gap-1.5 min-w-0 ${option.tooltip ? 'overflow-visible' : 'overflow-hidden'}`}>
+                            <label className="text-gray-700 text-xs font-medium whitespace-pre-line break-words line-clamp-2 leading-tight min-w-0 overflow-hidden">
+                              {option.label}
+                            </label>
+                            {option.tooltip && (
+                              <div className="relative group flex-shrink-0">
+                                <svg
+                                  className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                                </svg>
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
+                                  {option.tooltip}
+                                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                           {isCustomNonBillable && (
                             <button
                               type="button"
@@ -1447,21 +1464,6 @@ function LaborRateCalculator() {
                             >
                               ×
                             </button>
-                          )}
-                          {option.tooltip && (
-                            <div className="relative group flex-shrink-0">
-                              <svg
-                                className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                              </svg>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none">
-                                {option.tooltip}
-                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                              </div>
-                            </div>
                           )}
                         </div>
                         <div className="grid gap-1 items-center min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">

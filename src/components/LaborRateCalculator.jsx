@@ -3302,6 +3302,10 @@ function LaborRateCalculator() {
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
                       </div>
+                      <FieldLockButton
+                        locked={!!(fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked)}
+                        onToggle={() => toggleFieldLock('divisionOverheadPercent:brdn', () => divisionOverheadPercent)}
+                      />
                     </div>
                     <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <input
@@ -3428,6 +3432,10 @@ function LaborRateCalculator() {
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
                       </div>
+                      <FieldLockButton
+                        locked={!!(fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked)}
+                        onToggle={() => toggleFieldLock('generalCompanyOverheadPercent:brdn', () => generalCompanyOverheadPercent)}
+                      />
                     </div>
                     <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <input
@@ -3554,6 +3562,10 @@ function LaborRateCalculator() {
                       />
                       <span className="text-gray-500 text-xs ml-0.5">%</span>
                       </div>
+                      <FieldLockButton
+                        locked={!!(fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked)}
+                        onToggle={() => toggleFieldLock('profitPercent:brdn', () => profitPercent)}
+                      />
                     </div>
                     <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <input

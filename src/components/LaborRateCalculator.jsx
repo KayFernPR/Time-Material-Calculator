@@ -97,7 +97,9 @@ function createDefaultCalculatorSnapshot() {
     generalCompanyOverheadPercent: 0,
     profitPercent: 0,
     /** Per-employee Spend/yr ($) values committed from direct entry when annual lock is off (avoids hrly×2080 rounding). */
-    committedAnnualSpend: {}
+    committedAnnualSpend: {},
+    /** Per-row input source last committed by user: brdn|hrly|annual (for Step 2/3 field highlighting). */
+    enteredFieldByRow: {}
   }
 }
 
@@ -469,6 +471,8 @@ function LaborRateCalculator() {
   const [fieldLocks, setFieldLocks] = useState(createDefaultFieldLocks)
   /** When Spend/yr is not cross-employee locked, stores the last committed direct entry so UI is not overwritten by hrly×2080 rounding. */
   const [committedAnnualSpend, setCommittedAnnualSpend] = useState({})
+  /** Per-row source field last committed by user (brdn|hrly|annual) for Step 2/3 visual highlighting. */
+  const [enteredFieldByRow, setEnteredFieldByRow] = useState({})
 
   const toggleFieldLock = useCallback((path, readCurrentValue) => {
     setFieldLocks(prev => {
@@ -565,6 +569,13 @@ function LaborRateCalculator() {
     })
   }, [])
 
+  const markEnteredFieldByLockPath = useCallback((lockPath, field) => {
+    const basePath = lockPath.replace(/:(brdn|hrly|annual)$/, '')
+    setEnteredFieldByRow(prev => ({ ...prev, [basePath]: field }))
+  }, [])
+
+  const getEnteredField = useCallback((basePath) => enteredFieldByRow[basePath] || '', [enteredFieldByRow])
+
   const effectiveAnnualSpend = useCallback((lockPath, computedAnnual) => {
     const lockMeta = fieldLocks[lockPath]
     if (lockMeta?.locked) {
@@ -610,7 +621,8 @@ function LaborRateCalculator() {
     divisionOverheadPercent,
     generalCompanyOverheadPercent,
     profitPercent,
-    committedAnnualSpend
+    committedAnnualSpend,
+    enteredFieldByRow
   }), [
     employeeName,
     hoursNotWorked,
@@ -638,7 +650,8 @@ function LaborRateCalculator() {
     divisionOverheadPercent,
     generalCompanyOverheadPercent,
     profitPercent,
-    committedAnnualSpend
+    committedAnnualSpend,
+    enteredFieldByRow
   ])
 
   const applyCalculatorSnapshot = useCallback((raw) => {
@@ -671,6 +684,7 @@ function LaborRateCalculator() {
     setGeneralCompanyOverheadPercent(m.generalCompanyOverheadPercent)
     setProfitPercent(m.profitPercent)
     setCommittedAnnualSpend(m.committedAnnualSpend && typeof m.committedAnnualSpend === 'object' ? m.committedAnnualSpend : {})
+    setEnteredFieldByRow(m.enteredFieldByRow && typeof m.enteredFieldByRow === 'object' ? m.enteredFieldByRow : {})
     setEditingDollarField(null)
     setEditingBrdnField(null)
   }, [fieldLocks])
@@ -1798,7 +1812,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
-                            <div className={`${STEP2_BURDEN_GRID} items-center`}>
+                            <div className={`${STEP2_BURDEN_GRID} items-center`} data-entered-field={getEnteredField(`payrollTax:${option.id}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -1836,7 +1850,7 @@ function LaborRateCalculator() {
                                 setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`payrollTax:${option.id}`)
+                              clearWageRowHrlyAnnualLocks(`payrollTax:${option.id}`)`r`n                              markEnteredFieldByLockPath(`payrollTax:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1869,6 +1883,7 @@ function LaborRateCalculator() {
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`payrollTax:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`payrollTax:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -1903,6 +1918,7 @@ function LaborRateCalculator() {
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`payrollTax:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -1948,7 +1964,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
-                            <div className={`${STEP2_BURDEN_GRID} items-center`}>
+                            <div className={`${STEP2_BURDEN_GRID} items-center`} data-entered-field={getEnteredField(`customPayrollTax:${idx}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -1988,7 +2004,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customPayrollTax:${idx}`)
+                              clearWageRowHrlyAnnualLocks(`customPayrollTax:${idx}`)`r`n                              markEnteredFieldByLockPath(`customPayrollTax:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2021,6 +2037,7 @@ function LaborRateCalculator() {
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customPayrollTax:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`customPayrollTax:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -2055,6 +2072,7 @@ function LaborRateCalculator() {
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customPayrollTax:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2152,7 +2170,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
-                            <div className={`${STEP2_BURDEN_GRID} items-center`}>
+                            <div className={`${STEP2_BURDEN_GRID} items-center`} data-entered-field={getEnteredField(`workerBurden:${option.id}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -2190,7 +2208,7 @@ function LaborRateCalculator() {
                                 setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`workerBurden:${option.id}`)
+                              clearWageRowHrlyAnnualLocks(`workerBurden:${option.id}`)`r`n                              markEnteredFieldByLockPath(`workerBurden:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2219,6 +2237,7 @@ function LaborRateCalculator() {
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`workerBurden:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`workerBurden:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -2249,6 +2268,7 @@ function LaborRateCalculator() {
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`workerBurden:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2294,7 +2314,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP2_BURDEN_WRAP}>
-                            <div className={`${STEP2_BURDEN_GRID} items-center`}>
+                            <div className={`${STEP2_BURDEN_GRID} items-center`} data-entered-field={getEnteredField(`customWorkerBurden:${idx}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 px-0.5 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -2334,7 +2354,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customWorkerBurden:${idx}`)
+                              clearWageRowHrlyAnnualLocks(`customWorkerBurden:${idx}`)`r`n                              markEnteredFieldByLockPath(`customWorkerBurden:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2363,6 +2383,7 @@ function LaborRateCalculator() {
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customWorkerBurden:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`customWorkerBurden:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -2393,6 +2414,7 @@ function LaborRateCalculator() {
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customWorkerBurden:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2523,7 +2545,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
-                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField(`benefits:${option.id}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -2561,7 +2583,7 @@ function LaborRateCalculator() {
                                 setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`benefits:${option.id}`)
+                              clearWageRowHrlyAnnualLocks(`benefits:${option.id}`)`r`n                              markEnteredFieldByLockPath(`benefits:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2590,6 +2612,7 @@ function LaborRateCalculator() {
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`benefits:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`benefits:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -2620,6 +2643,7 @@ function LaborRateCalculator() {
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`benefits:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2665,7 +2689,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
-                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField(`customBenefits:${idx}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -2705,7 +2729,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customBenefits:${idx}`)
+                              clearWageRowHrlyAnnualLocks(`customBenefits:${idx}`)`r`n                              markEnteredFieldByLockPath(`customBenefits:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2733,6 +2757,7 @@ function LaborRateCalculator() {
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customBenefits:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`customBenefits:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -2763,6 +2788,7 @@ function LaborRateCalculator() {
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customBenefits:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2858,7 +2884,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
-                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField(`additionalOverheads:${option.id}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -2896,7 +2922,7 @@ function LaborRateCalculator() {
                                 setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`additionalOverheads:${option.id}`)
+                              clearWageRowHrlyAnnualLocks(`additionalOverheads:${option.id}`)`r`n                              markEnteredFieldByLockPath(`additionalOverheads:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2925,6 +2951,7 @@ function LaborRateCalculator() {
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`additionalOverheads:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`additionalOverheads:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -2955,6 +2982,7 @@ function LaborRateCalculator() {
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`additionalOverheads:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3000,7 +3028,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
-                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField(`customAdditionalOverheads:${idx}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -3040,7 +3068,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customAdditionalOverheads:${idx}`)
+                              clearWageRowHrlyAnnualLocks(`customAdditionalOverheads:${idx}`)`r`n                              markEnteredFieldByLockPath(`customAdditionalOverheads:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3068,6 +3096,7 @@ function LaborRateCalculator() {
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customAdditionalOverheads:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`customAdditionalOverheads:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -3098,6 +3127,7 @@ function LaborRateCalculator() {
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customAdditionalOverheads:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3193,7 +3223,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
-                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField(`employeeCosts:${option.id}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -3231,7 +3261,7 @@ function LaborRateCalculator() {
                                 setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`employeeCosts:${option.id}`)
+                              clearWageRowHrlyAnnualLocks(`employeeCosts:${option.id}`)`r`n                              markEnteredFieldByLockPath(`employeeCosts:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3260,6 +3290,7 @@ function LaborRateCalculator() {
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`employeeCosts:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`employeeCosts:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -3290,6 +3321,7 @@ function LaborRateCalculator() {
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`employeeCosts:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3335,7 +3367,7 @@ function LaborRateCalculator() {
                         </div>
                         <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                           <div className={STEP3_BURDEN3_WRAP}>
-                            <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                            <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField(`customEmployeeCosts:${idx}`)}>
                         <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                           <div className="flex items-center justify-end min-w-0">
                           <input
@@ -3375,7 +3407,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customEmployeeCosts:${idx}`)
+                              clearWageRowHrlyAnnualLocks(`customEmployeeCosts:${idx}`)`r`n                              markEnteredFieldByLockPath(`customEmployeeCosts:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3403,6 +3435,7 @@ function LaborRateCalculator() {
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customEmployeeCosts:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  markEnteredFieldByLockPath(hrlyPath, 'hrly')
                                   clearCommittedAnnualPath(`customEmployeeCosts:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
@@ -3433,6 +3466,7 @@ function LaborRateCalculator() {
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customEmployeeCosts:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3535,7 +3569,7 @@ function LaborRateCalculator() {
                     </div>
                     <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
-                        <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                        <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField('divisionOverheadPercent')}>
                     <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <div className="flex items-center justify-end min-w-0">
                       <input
@@ -3567,6 +3601,7 @@ function LaborRateCalculator() {
                             if (fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent:brdn', nv)
                           }
                           clearStep3PercentHrlyAnnualLocks('divisionOverheadPercent')
+                          markEnteredFieldByLockPath('divisionOverheadPercent:brdn', 'brdn')
                           setEditingBrdnField(null)
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3595,6 +3630,7 @@ function LaborRateCalculator() {
                               setDivisionOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('divisionOverheadPercent')
                               if (fieldLocks['divisionOverheadPercent:hrly']?.locked) updateFieldLockValue('divisionOverheadPercent:hrly', v)
+                              markEnteredFieldByLockPath('divisionOverheadPercent:hrly', 'hrly')
                               clearCommittedAnnualPath('divisionOverheadPercent:annual')
                             }
                             setEditingDollarField(null)
@@ -3626,6 +3662,7 @@ function LaborRateCalculator() {
                               setDivisionOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('divisionOverheadPercent')
                               if (fieldLocks['divisionOverheadPercent:annual']?.locked) updateFieldLockValue('divisionOverheadPercent:annual', v)
+                              markEnteredFieldByLockPath('divisionOverheadPercent:annual', 'annual')
                               else patchCommittedAnnual('divisionOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
@@ -3670,7 +3707,7 @@ function LaborRateCalculator() {
                     </label>
                     <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
-                        <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                        <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField('generalCompanyOverheadPercent')}>
                     <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <div className="flex items-center justify-end min-w-0">
                       <input
@@ -3702,6 +3739,7 @@ function LaborRateCalculator() {
                             if (fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent:brdn', nv)
                           }
                           clearStep3PercentHrlyAnnualLocks('generalCompanyOverheadPercent')
+                          markEnteredFieldByLockPath('generalCompanyOverheadPercent:brdn', 'brdn')
                           setEditingBrdnField(null)
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3730,6 +3768,7 @@ function LaborRateCalculator() {
                               setGeneralCompanyOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('generalCompanyOverheadPercent')
                               if (fieldLocks['generalCompanyOverheadPercent:hrly']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:hrly', v)
+                              markEnteredFieldByLockPath('generalCompanyOverheadPercent:hrly', 'hrly')
                               clearCommittedAnnualPath('generalCompanyOverheadPercent:annual')
                             }
                             setEditingDollarField(null)
@@ -3761,6 +3800,7 @@ function LaborRateCalculator() {
                               setGeneralCompanyOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('generalCompanyOverheadPercent')
                               if (fieldLocks['generalCompanyOverheadPercent:annual']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:annual', v)
+                              markEnteredFieldByLockPath('generalCompanyOverheadPercent:annual', 'annual')
                               else patchCommittedAnnual('generalCompanyOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
@@ -3805,7 +3845,7 @@ function LaborRateCalculator() {
                     </label>
                     <div className="flex w-full min-w-0 justify-end translate-x-[5px]">
                       <div className={STEP3_BURDEN3_WRAP}>
-                        <div className={`${STEP3_BURDEN3_GRID} items-center`}>
+                        <div className={`${STEP3_BURDEN3_GRID} items-center`} data-entered-field={getEnteredField('profitPercent')}>
                     <div className="flex flex-col items-end justify-center gap-0.5 min-w-0 overflow-visible">
                       <div className="flex items-center justify-end min-w-0">
                       <input
@@ -3837,6 +3877,7 @@ function LaborRateCalculator() {
                             if (fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent:brdn', nv)
                           }
                           clearStep3PercentHrlyAnnualLocks('profitPercent')
+                          markEnteredFieldByLockPath('profitPercent:brdn', 'brdn')
                           setEditingBrdnField(null)
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3865,6 +3906,7 @@ function LaborRateCalculator() {
                               setProfitPercent(pct)
                               clearStep3PercentBrdnLocks('profitPercent')
                               if (fieldLocks['profitPercent:hrly']?.locked) updateFieldLockValue('profitPercent:hrly', v)
+                              markEnteredFieldByLockPath('profitPercent:hrly', 'hrly')
                               clearCommittedAnnualPath('profitPercent:annual')
                             }
                             setEditingDollarField(null)
@@ -3895,6 +3937,7 @@ function LaborRateCalculator() {
                               setProfitPercent(pct)
                               clearStep3PercentBrdnLocks('profitPercent')
                               if (fieldLocks['profitPercent:annual']?.locked) updateFieldLockValue('profitPercent:annual', v)
+                              markEnteredFieldByLockPath('profitPercent:annual', 'annual')
                               else patchCommittedAnnual('profitPercent:annual', v)
                             }
                             setEditingDollarField(null)
@@ -4430,3 +4473,7 @@ function LaborRateCalculator() {
 }
 
 export default LaborRateCalculator
+
+
+
+

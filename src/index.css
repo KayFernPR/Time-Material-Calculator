@@ -78,6 +78,14 @@ input.burden-input::placeholder {
   color: #9ca3af;
 }
 
+/* Highlight the specific Step 2/3 input column the user last committed in a row. */
+[data-entered-field="brdn"] > div:nth-child(1) input.burden-input,
+[data-entered-field="hrly"] > div:nth-child(2) input.burden-input,
+[data-entered-field="annual"] > div:nth-child(3) input.burden-input {
+  background-color: #ecfdf5 !important;
+  border-color: #86efac !important;
+}
+
 /* Step 4: fit on one printed page (compact type + margins + slight zoom where supported) */
 @media print {
   @page {

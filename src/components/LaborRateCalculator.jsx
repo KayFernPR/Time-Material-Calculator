@@ -3647,8 +3647,77 @@ function LaborRateCalculator() {
                 </p>
               ) : null}
 
+              {/* Full print report: Step 1 -> Step 4 */}
+              <div className="hidden print:block space-y-3 text-[11px] leading-snug">
+                <div className="border-b border-gray-300 pb-1">
+                  <div className="text-sm font-bold text-primary">Labor Rate Calculator Report</div>
+                  {(employeeName || '').trim() ? (
+                    <div className="text-xs text-gray-700 mt-0.5">Employee: {(employeeName || '').trim()}</div>
+                  ) : null}
+                </div>
+
+                <section>
+                  <h3 className="text-xs font-bold text-primary mb-1">Step 1: Paid Capacity</h3>
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between"><span>Paid Capacity</span><span className="font-semibold">{PAID_CAPACITY} hrs</span></div>
+                    <div className="flex justify-between"><span>Total Hours Not Worked</span><span className="font-semibold">{safeCalculations.totalHoursNotWorked} hrs ({safeCalculations.totalHoursNotWorkedPercent.toFixed(2)}%)</span></div>
+                    {allHoursNotWorkedOptions.map(option => {
+                      const hrs = parseFloat(hoursNotWorked[option.id]) || 0
+                      const pct = safeCalculations.hoursNotWorkedPercentages[option.id] || 0
+                      return (
+                        <div key={`print-hnw-${option.id}`} className="flex justify-between text-gray-700">
+                          <span>{option.label}</span>
+                          <span>{hrs} hrs ({pct.toFixed(2)}%)</span>
+                        </div>
+                      )
+                    })}
+                    <div className="flex justify-between"><span>Total Non-Billable Hours</span><span className="font-semibold">{safeCalculations.totalNonBillableHours} hrs ({safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%)</span></div>
+                    {allNonBillableOptions.map(option => {
+                      const hrs = parseFloat(nonBillableHours[option.id]) || 0
+                      const pct = safeCalculations.nonBillableHoursPercentages[option.id] || 0
+                      return (
+                        <div key={`print-nbh-${option.id}`} className="flex justify-between text-gray-700">
+                          <span>{option.label}</span>
+                          <span>{hrs} hrs ({pct.toFixed(2)}%)</span>
+                        </div>
+                      )
+                    })}
+                    <div className="flex justify-between border-t border-gray-200 pt-0.5"><span>Total Hours Available For Work</span><span className="font-semibold">{safeCalculations.totalHoursAvailable.toFixed(0)} hrs ({(safeCalculations.utilizationPercent * 100).toFixed(2)}%)</span></div>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-xs font-bold text-primary mb-1">Step 2: Wage Burden</h3>
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between"><span>Workers Wage (Earned)</span><span className="font-semibold">${(parseFloat(workersWage) || 0).toFixed(2)}/hr</span></div>
+                    <div className="flex justify-between"><span>Burden/hour to charge</span><span className="font-semibold">${safeCalculations.workersWageCharged.toFixed(2)}/hr</span></div>
+                    <div className="flex justify-between"><span>Total Mandatory Burden</span><span className="font-semibold">${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}/hr</span></div>
+                    <div className="flex justify-between"><span>Total Benefits Burden</span><span className="font-semibold">${safeCalculations.benefitsBurdenHourlyRate.toFixed(2)}/hr</span></div>
+                    <div className="flex justify-between"><span>Total Additional Overheads</span><span className="font-semibold">${safeCalculations.additionalOverheadsHourlyRate.toFixed(2)}/hr</span></div>
+                    <div className="flex justify-between"><span>Total Employee Costs</span><span className="font-semibold">${safeCalculations.employeeCostsHourlyRate.toFixed(2)}/hr</span></div>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-xs font-bold text-primary mb-1">Step 3: Overhead and Profit</h3>
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between"><span>Division Overhead ({(parseFloat(divisionOverheadPercent) || 0).toFixed(2)}%)</span><span className="font-semibold">${safeCalculations.divisionOverheadCharged.toFixed(2)}/hr</span></div>
+                    <div className="flex justify-between"><span>General Company Overhead ({(parseFloat(generalCompanyOverheadPercent) || 0).toFixed(2)}%)</span><span className="font-semibold">${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}/hr</span></div>
+                    <div className="flex justify-between"><span>Profit ({(parseFloat(profitPercent) || 0).toFixed(2)}%)</span><span className="font-semibold">${safeCalculations.profitCharged.toFixed(2)}/hr</span></div>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="text-xs font-bold text-primary mb-1">Step 4: Results</h3>
+                  <div className="flex justify-between border-t border-b border-primary py-1 text-sm">
+                    <span className="font-bold">Total Labor Rate</span>
+                    <span className="font-bold text-primary">${safeCalculations.totalLaborRate.toFixed(2)}/hr</span>
+                  </div>
+                </section>
+              </div>
+
               {/* Key Calculation Display */}
-              <div className="mb-3 p-3 bg-primary/10 rounded-lg border-2 border-primary print:mb-1.5 print:p-2 print:border">
+              <div className="mb-3 p-3 bg-primary/10 rounded-lg border-2 border-primary print:hidden">
                 <div className="space-y-1.5 print:space-y-1">
                   <div>
                     <div className="text-xs text-gray-600 print:text-[10px]">Workers Wage (Earned)</div>
@@ -3665,7 +3734,7 @@ function LaborRateCalculator() {
               </div>
 
               {/* Detailed Breakdown */}
-              <div className="bg-gray-50 rounded-lg p-3 mb-3 print:p-2 print:mb-2 print:rounded-md">
+              <div className="bg-gray-50 rounded-lg p-3 mb-3 print:hidden">
                 <h3 className="text-sm font-semibold text-neutral mb-2 print:text-xs print:mb-1 print:leading-tight">
                   Detailed Breakdown
                 </h3>
@@ -3837,7 +3906,7 @@ function LaborRateCalculator() {
               </div>
 
               {/* Total Labor Rate */}
-              <div className="bg-primary/10 rounded-lg p-4 mb-4 border-2 border-primary print:p-2 print:mb-0 print:rounded-md">
+              <div className="bg-primary/10 rounded-lg p-4 mb-4 border-2 border-primary print:hidden">
                 <h3 className="text-base font-semibold text-primary mb-2 print:text-sm print:mb-1">
                   Total Labor Rate
                 </h3>

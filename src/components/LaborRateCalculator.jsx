@@ -1919,8 +1919,8 @@ function LaborRateCalculator() {
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`payrollTax:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2074,8 +2074,8 @@ function LaborRateCalculator() {
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customPayrollTax:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2271,8 +2271,8 @@ function LaborRateCalculator() {
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`workerBurden:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2418,8 +2418,8 @@ function LaborRateCalculator() {
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customWorkerBurden:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2648,8 +2648,8 @@ function LaborRateCalculator() {
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`benefits:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2794,8 +2794,8 @@ function LaborRateCalculator() {
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customBenefits:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2989,8 +2989,8 @@ function LaborRateCalculator() {
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`additionalOverheads:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3135,8 +3135,8 @@ function LaborRateCalculator() {
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customAdditionalOverheads:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3330,8 +3330,8 @@ function LaborRateCalculator() {
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`employeeCosts:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3476,8 +3476,8 @@ function LaborRateCalculator() {
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customEmployeeCosts:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
-                                  markEnteredFieldByLockPath(annualPath, 'annual')`n                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                   else patchCommittedAnnual(annualPath, v)
+                                  markEnteredFieldByLockPath(annualPath, 'annual')
                                 }
                                 setEditingDollarField(null)
                               }

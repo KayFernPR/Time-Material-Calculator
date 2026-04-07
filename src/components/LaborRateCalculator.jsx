@@ -1518,36 +1518,36 @@ function LaborRateCalculator() {
               </p>
 
               {/* Workers Wage Box */}
-              <div className="mb-6 p-4 border-2 border-primary rounded-lg min-w-0 overflow-hidden">
-                <h3 className="text-lg font-semibold text-primary mb-3">
+              <div className="mb-6 p-3 sm:p-4 border-2 border-primary rounded-lg min-w-0 overflow-hidden">
+                <h3 className="text-[1.6rem] font-semibold text-primary mb-3 leading-tight">
                   Workers Wage
                 </h3>
-                <div className="space-y-3 min-w-0">
-                  <div className="flex flex-col gap-2 min-w-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-                    <label className="text-gray-700 font-medium shrink-0 min-w-0">
+                <div className="space-y-3 min-w-0 text-sm sm:text-base">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 min-w-0">
+                    <label className="text-gray-700 font-medium min-w-0">
                       Workers Wage:
                     </label>
-                    <div className="flex min-w-0 max-w-full items-center gap-1.5 flex-wrap sm:justify-end">
+                    <div className="flex min-w-0 items-center justify-end gap-1.5 whitespace-nowrap">
                       <span className="text-gray-500 shrink-0">$</span>
                       <input
                         type="number"
                         step="0.01"
                         value={workersWage}
                         onChange={(e) => setWorkersWage(e.target.value)}
-                        className="min-w-0 w-24 max-w-[min(100%,7rem)] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold no-spinner"
+                        className="w-20 sm:w-24 px-2.5 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right font-semibold no-spinner"
                       />
                       <span className="text-gray-500 shrink-0">/hr</span>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 pt-2 border-t border-primary/20 min-w-0 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-                    <label className="text-gray-700 font-medium shrink-0 min-w-0">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 gap-y-1 pt-2 border-t border-primary/20 min-w-0">
+                    <label className="text-gray-700 font-medium min-w-0">
                       Burden/hour to charge:
                     </label>
-                    <div className="text-right min-w-0 max-w-full">
-                      <div className="text-lg font-bold text-primary break-words">
+                    <div className="text-right min-w-0">
+                      <div className="text-xl font-bold text-primary leading-tight whitespace-nowrap">
                         ${safeCalculations.workersWageCharged.toFixed(2)}/hr
                       </div>
-                      <div className="text-xs text-gray-500 mt-1 break-words sm:whitespace-nowrap sm:break-normal">
+                      <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
                         = ${(parseFloat(workersWage) || 0).toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                       </div>
                     </div>

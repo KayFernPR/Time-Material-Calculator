@@ -1440,6 +1440,7 @@ function LaborRateCalculator() {
                               {percent.toFixed(2)}%
                             </div>
                         </div>
+                      </div>
                       )
                     })}
                   </div>

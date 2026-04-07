@@ -1515,25 +1515,31 @@ function LaborRateCalculator() {
                 </div>
                 
                 {/* Total Non-Billable Hours */}
-                <div className="mt-3 grid gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
-                  <div className="text-gray-700 text-xs font-semibold break-words leading-tight min-w-0 px-1">Total Non-Billable Hours</div>
-                  <div className="w-full text-center text-xs font-semibold text-gray-700 px-1 min-w-0 translate-x-[8px]">
-                    {safeCalculations.totalNonBillableHours} hrs
-                  </div>
-                  <div className="w-full text-center text-xs font-bold text-primary px-1 min-w-0 translate-x-[8px]">
-                    {safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%
+                <div className="mt-3 flex flex-col gap-1 p-2 border-2 border-primary rounded-lg bg-primary/5 min-w-0">
+                  <div className="text-gray-700 text-xs font-semibold leading-tight min-w-0 px-1 whitespace-nowrap">Total Non-Billable Hours</div>
+                  <div className="grid gap-1 items-center min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
+                    <div className="min-w-0 px-1"></div>
+                    <div className="w-full text-center text-xs font-semibold text-gray-700 px-1 min-w-0 translate-x-[8px]">
+                      {safeCalculations.totalNonBillableHours} hrs
+                    </div>
+                    <div className="w-full text-center text-xs font-bold text-primary px-1 min-w-0 translate-x-[8px]">
+                      {safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Total Hours Available For Work */}
-              <div className="mt-3 grid gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/10 min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
-                <div className="text-gray-700 text-xs font-bold break-words leading-tight min-w-0 px-1">Total Hours Available For Work</div>
-                <div className="w-full text-center text-xs font-bold text-gray-700 px-1 min-w-0 translate-x-[8px]">
-                  {safeCalculations.totalHoursAvailable.toFixed(2)} hrs
-                </div>
-                <div className="w-full text-center text-xs font-bold text-primary px-1 min-w-0 translate-x-[8px]">
-                  {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
+              <div className="mt-3 flex flex-col gap-1 p-2 border-2 border-primary rounded-lg bg-primary/10 min-w-0">
+                <div className="text-gray-700 text-xs font-bold leading-tight min-w-0 px-1 whitespace-nowrap">Total Hours Available For Work</div>
+                <div className="grid gap-1 items-center min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
+                  <div className="min-w-0 px-1"></div>
+                  <div className="w-full text-center text-xs font-bold text-gray-700 px-1 min-w-0 translate-x-[8px]">
+                    {safeCalculations.totalHoursAvailable.toFixed(2)} hrs
+                  </div>
+                  <div className="w-full text-center text-xs font-bold text-primary px-1 min-w-0 translate-x-[8px]">
+                    {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
+                  </div>
                 </div>
               </div>
             </div>

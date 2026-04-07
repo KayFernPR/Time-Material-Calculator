@@ -1270,10 +1270,6 @@ function LaborRateCalculator() {
                     <div>Chg (%)</div>
                   </div>
                 </div>
-                <p className="text-xs text-gray-600 mb-2 leading-snug">
-                  Use the <span className="font-semibold text-primary">lock</span> under each hour field to keep that allocation when you switch employees.
-                </p>
-                
                 <div className="space-y-1">
                   {allHoursNotWorkedOptions.map(option => {
                     const hours = parseFloat(hoursNotWorked[option.id]) || 0
@@ -1312,17 +1308,12 @@ function LaborRateCalculator() {
                             onChange={(e) => {
                               const v = e.target.value
                               setHoursNotWorked(prev => ({ ...prev, [option.id]: v }))
-                              if (fieldLocks[`hoursNotWorked:${option.id}`]?.locked) updateFieldLockValue(`hoursNotWorked:${option.id}`, v)
                             }}
                             className="w-11 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0"
                           />
                           <span className="text-gray-500 text-xs shrink-0">hrs</span>
                           </div>
-                          <FieldLockButton
-                            locked={!!fieldLocks[`hoursNotWorked:${option.id}`]?.locked}
-                            onToggle={() => toggleFieldLock(`hoursNotWorked:${option.id}`, () => hoursNotWorked[option.id])}
-                          />
                         </div>
                         <div className="w-full text-center text-xs font-semibold text-primary px-1 min-w-0">
                           {percent.toFixed(2)}%
@@ -1437,17 +1428,12 @@ function LaborRateCalculator() {
                             onChange={(e) => {
                               const v = e.target.value
                               setNonBillableHours(prev => ({ ...prev, [option.id]: v }))
-                              if (fieldLocks[`nonBillableHours:${option.id}`]?.locked) updateFieldLockValue(`nonBillableHours:${option.id}`, v)
                             }}
                             className="w-11 px-1.5 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0"
                           />
                           <span className="text-gray-500 text-xs shrink-0">hrs</span>
                           </div>
-                          <FieldLockButton
-                            locked={!!fieldLocks[`nonBillableHours:${option.id}`]?.locked}
-                            onToggle={() => toggleFieldLock(`nonBillableHours:${option.id}`, () => nonBillableHours[option.id])}
-                          />
                         </div>
                         <div className="w-full text-center text-xs font-semibold text-primary px-1 min-w-0">
                             {percent.toFixed(2)}%

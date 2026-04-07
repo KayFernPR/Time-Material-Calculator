@@ -95,7 +95,9 @@ function createDefaultCalculatorSnapshot() {
     newCustomEmployeeCost: { name: '', percent: 0 },
     divisionOverheadPercent: 0,
     generalCompanyOverheadPercent: 0,
-    profitPercent: 0
+    profitPercent: 0,
+    /** Per-employee Spend/yr ($) values committed from direct entry when annual lock is off (avoids hrly×2080 rounding). */
+    committedAnnualSpend: {}
   }
 }
 
@@ -465,6 +467,8 @@ function LaborRateCalculator() {
 
   /** Cross-employee locks: when locked, value is reused for every employee (path -> { locked, value }). */
   const [fieldLocks, setFieldLocks] = useState(createDefaultFieldLocks)
+  /** When Spend/yr is not cross-employee locked, stores the last committed direct entry so UI is not overwritten by hrly×2080 rounding. */
+  const [committedAnnualSpend, setCommittedAnnualSpend] = useState({})
 
   const toggleFieldLock = useCallback((path, readCurrentValue) => {
     setFieldLocks(prev => {
@@ -472,6 +476,12 @@ function LaborRateCalculator() {
       if (cur?.locked) {
         const next = { ...prev }
         delete next[path]
+        if (path.endsWith(':annual')) {
+          const v = parseFloat(cur.value)
+          if (!Number.isNaN(v) && v >= 0) {
+            setCommittedAnnualSpend(s => ({ ...s, [path]: v }))
+          }
+        }
         return next
       }
       return { ...prev, [path]: { locked: true, value: readCurrentValue() } }
@@ -503,6 +513,11 @@ function LaborRateCalculator() {
       delete next[`${basePath}:annual`]
       return next
     })
+    setCommittedAnnualSpend(prev => {
+      const next = { ...prev }
+      delete next[`${basePath}:annual`]
+      return next
+    })
   }, [])
 
   /** Division / General / Profit: clear Brdn lock when editing $ columns. */
@@ -524,16 +539,49 @@ function LaborRateCalculator() {
       delete next[`${prefix}:annual`]
       return next
     })
+    setCommittedAnnualSpend(prev => {
+      const next = { ...prev }
+      delete next[`${prefix}:annual`]
+      return next
+    })
   }, [])
 
-  const getAnnualInputDisplay = useCallback((lockPath, computedAnnual) => {
+  const clearCommittedAnnualPath = useCallback((annualPath) => {
+    setCommittedAnnualSpend(prev => {
+      if (!(annualPath in prev)) return prev
+      const next = { ...prev }
+      delete next[annualPath]
+      return next
+    })
+  }, [])
+
+  /** Persists a direct Spend/yr entry when the annual field is not cross-employee locked. */
+  const patchCommittedAnnual = useCallback((annualPath, v) => {
+    setCommittedAnnualSpend(prev => {
+      const next = { ...prev }
+      if (v === 0 || Number.isNaN(v)) delete next[annualPath]
+      else next[annualPath] = v
+      return next
+    })
+  }, [])
+
+  const effectiveAnnualSpend = useCallback((lockPath, computedAnnual) => {
     const lockMeta = fieldLocks[lockPath]
     if (lockMeta?.locked) {
       const n = parseFloat(lockMeta.value)
-      return !Number.isNaN(n) && n > 0 ? n.toFixed(2) : ''
+      return !Number.isNaN(n) && n >= 0 ? n : 0
     }
-    return computedAnnual > 0 ? computedAnnual.toFixed(2) : ''
-  }, [fieldLocks])
+    if (Object.prototype.hasOwnProperty.call(committedAnnualSpend, lockPath)) {
+      const n = committedAnnualSpend[lockPath]
+      return !Number.isNaN(n) && n >= 0 ? n : 0
+    }
+    return computedAnnual > 0 ? computedAnnual : 0
+  }, [fieldLocks, committedAnnualSpend])
+
+  const getAnnualInputDisplay = useCallback((lockPath, computedAnnual) => {
+    const n = effectiveAnnualSpend(lockPath, computedAnnual)
+    return n > 0 ? n.toFixed(2) : ''
+  }, [effectiveAnnualSpend])
 
   const collectCalculatorSnapshot = useCallback(() => ({
     employeeName,
@@ -561,7 +609,8 @@ function LaborRateCalculator() {
     newCustomEmployeeCost,
     divisionOverheadPercent,
     generalCompanyOverheadPercent,
-    profitPercent
+    profitPercent,
+    committedAnnualSpend
   }), [
     employeeName,
     hoursNotWorked,
@@ -588,7 +637,8 @@ function LaborRateCalculator() {
     newCustomEmployeeCost,
     divisionOverheadPercent,
     generalCompanyOverheadPercent,
-    profitPercent
+    profitPercent,
+    committedAnnualSpend
   ])
 
   const applyCalculatorSnapshot = useCallback((raw) => {
@@ -620,6 +670,7 @@ function LaborRateCalculator() {
     setDivisionOverheadPercent(m.divisionOverheadPercent)
     setGeneralCompanyOverheadPercent(m.generalCompanyOverheadPercent)
     setProfitPercent(m.profitPercent)
+    setCommittedAnnualSpend(m.committedAnnualSpend && typeof m.committedAnnualSpend === 'object' ? m.committedAnnualSpend : {})
     setEditingDollarField(null)
     setEditingBrdnField(null)
   }, [fieldLocks])
@@ -1251,6 +1302,71 @@ function LaborRateCalculator() {
       totalAfterGeneralOverhead: 0
   }
 
+  const step2PayrollAnnualTotal = useMemo(() => {
+    let s = 0
+    for (const opt of MANDATORY_PAYROLL_TAX_OPTIONS) {
+      const hrly = safeCalculations.payrollTaxHourlyRates[opt.id] || 0
+      s += effectiveAnnualSpend(`payrollTax:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    for (let idx = 0; idx < customPayrollTaxFields.length; idx++) {
+      const hrly = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] ?? 0
+      s += effectiveAnnualSpend(`customPayrollTax:${idx}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    return s
+  }, [safeCalculations, customPayrollTaxFields, effectiveAnnualSpend])
+
+  const step2WorkerAnnualTotal = useMemo(() => {
+    let s = 0
+    for (const opt of MANDATORY_WORKER_BURDEN_OPTIONS) {
+      const hrly = safeCalculations.workerBurdenHourlyRates[opt.id] || 0
+      s += effectiveAnnualSpend(`workerBurden:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    for (let idx = 0; idx < customWorkerBurdenFields.length; idx++) {
+      const hrly = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] ?? 0
+      s += effectiveAnnualSpend(`customWorkerBurden:${idx}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    return s
+  }, [safeCalculations, customWorkerBurdenFields, effectiveAnnualSpend])
+
+  const step3BenefitsAnnualTotal = useMemo(() => {
+    let s = 0
+    for (const opt of BENEFITS_BURDEN_OPTIONS) {
+      const hrly = safeCalculations.benefitsBurdenHourlyRates[opt.id] || 0
+      s += effectiveAnnualSpend(`benefits:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    for (let idx = 0; idx < customBenefitsBurdenFields.length; idx++) {
+      const hrly = safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0
+      s += effectiveAnnualSpend(`customBenefits:${idx}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    return s
+  }, [safeCalculations, customBenefitsBurdenFields, effectiveAnnualSpend])
+
+  const step3AdditionalAnnualTotal = useMemo(() => {
+    let s = 0
+    for (const opt of ADDITIONAL_OVERHEADS_OPTIONS) {
+      const hrly = safeCalculations.additionalOverheadsHourlyRates[opt.id] || 0
+      s += effectiveAnnualSpend(`additionalOverheads:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    for (let idx = 0; idx < customAdditionalOverheadsFields.length; idx++) {
+      const hrly = safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0
+      s += effectiveAnnualSpend(`customAdditionalOverheads:${idx}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    return s
+  }, [safeCalculations, customAdditionalOverheadsFields, effectiveAnnualSpend])
+
+  const step3EmployeeCostsAnnualTotal = useMemo(() => {
+    let s = 0
+    for (const opt of EMPLOYEE_COSTS_OPTIONS) {
+      const hrly = safeCalculations.employeeCostsHourlyRates[opt.id] || 0
+      s += effectiveAnnualSpend(`employeeCosts:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    for (let idx = 0; idx < customEmployeeCosts.length; idx++) {
+      const hrly = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0
+      s += effectiveAnnualSpend(`customEmployeeCosts:${idx}:annual`, annualSpendFromEarnedHourly(hrly))
+    }
+    return s
+  }, [safeCalculations, customEmployeeCosts, effectiveAnnualSpend])
+
   return (
     <div className="min-h-screen w-full min-w-0 bg-light py-4 sm:py-6 lg:py-8 overflow-x-hidden print:bg-white print:min-h-0 print:py-4">
       <div className="container mx-auto w-full min-w-0 px-4 sm:px-6 lg:px-8 max-w-7xl print:max-w-none">
@@ -1753,6 +1869,7 @@ function LaborRateCalculator() {
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`payrollTax:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`payrollTax:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1786,6 +1903,7 @@ function LaborRateCalculator() {
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`payrollTax:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1903,6 +2021,7 @@ function LaborRateCalculator() {
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customPayrollTax:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`customPayrollTax:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1936,6 +2055,7 @@ function LaborRateCalculator() {
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customPayrollTax:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -1990,7 +2110,7 @@ function LaborRateCalculator() {
                           ${safeCalculations.combinedFederalPayrollTaxHourlyRate.toFixed(2)}
                         </div>
                         <div className="text-right text-xs font-bold text-primary pl-0.5 pr-2">
-                          ${annualSpendFromEarnedHourly(safeCalculations.combinedFederalPayrollTaxHourlyRate).toFixed(2)}
+                          ${step2PayrollAnnualTotal.toFixed(2)}
                         </div>
                       </div>
                     </div>
@@ -2099,6 +2219,7 @@ function LaborRateCalculator() {
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`workerBurden:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`workerBurden:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2128,6 +2249,7 @@ function LaborRateCalculator() {
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`workerBurden:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2241,6 +2363,7 @@ function LaborRateCalculator() {
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customWorkerBurden:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`customWorkerBurden:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2270,6 +2393,7 @@ function LaborRateCalculator() {
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customWorkerBurden:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2324,7 +2448,7 @@ function LaborRateCalculator() {
                           ${safeCalculations.workerBurdenHourlyRate.toFixed(2)}
                         </div>
                         <div className="text-right text-xs font-bold text-primary pl-0.5 pr-2">
-                          ${annualSpendFromEarnedHourly(safeCalculations.workerBurdenHourlyRate).toFixed(2)}
+                          ${step2WorkerAnnualTotal.toFixed(2)}
                         </div>
                       </div>
                     </div>
@@ -2345,7 +2469,7 @@ function LaborRateCalculator() {
                         ${safeCalculations.totalMandatoryBurdenHourlyRate.toFixed(2)}
                       </div>
                       <div className="text-right text-xs font-bold text-primary pl-0.5 pr-2">
-                        ${annualSpendFromEarnedHourly(safeCalculations.totalMandatoryBurdenHourlyRate).toFixed(2)}
+                        ${(step2PayrollAnnualTotal + step2WorkerAnnualTotal).toFixed(2)}
                       </div>
                     </div>
                   </div>
@@ -2466,6 +2590,7 @@ function LaborRateCalculator() {
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`benefits:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`benefits:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2495,6 +2620,7 @@ function LaborRateCalculator() {
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`benefits:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2607,6 +2733,7 @@ function LaborRateCalculator() {
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customBenefits:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`customBenefits:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2636,6 +2763,7 @@ function LaborRateCalculator() {
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customBenefits:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2688,7 +2816,7 @@ function LaborRateCalculator() {
                             ${safeCalculations.benefitsBurdenHourlyRate.toFixed(2)}
                           </div>
                           <div className="text-right text-xs font-bold text-primary pl-0.5 pr-2">
-                            ${annualSpendFromEarnedHourly(safeCalculations.benefitsBurdenHourlyRate).toFixed(2)}
+                            ${step3BenefitsAnnualTotal.toFixed(2)}
                           </div>
                         </div>
                     </div>
@@ -2797,6 +2925,7 @@ function LaborRateCalculator() {
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`additionalOverheads:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`additionalOverheads:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2826,6 +2955,7 @@ function LaborRateCalculator() {
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`additionalOverheads:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2938,6 +3068,7 @@ function LaborRateCalculator() {
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customAdditionalOverheads:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`customAdditionalOverheads:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -2967,6 +3098,7 @@ function LaborRateCalculator() {
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customAdditionalOverheads:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3019,7 +3151,7 @@ function LaborRateCalculator() {
                             ${safeCalculations.additionalOverheadsHourlyRate.toFixed(2)}
                           </div>
                           <div className="text-right text-xs font-bold text-primary pl-0.5 pr-2">
-                            ${annualSpendFromEarnedHourly(safeCalculations.additionalOverheadsHourlyRate).toFixed(2)}
+                            ${step3AdditionalAnnualTotal.toFixed(2)}
                           </div>
                         </div>
                     </div>
@@ -3128,6 +3260,7 @@ function LaborRateCalculator() {
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`employeeCosts:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`employeeCosts:${option.id}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3157,6 +3290,7 @@ function LaborRateCalculator() {
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
                                   clearWageRowBurdLock(`employeeCosts:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3269,6 +3403,7 @@ function LaborRateCalculator() {
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customEmployeeCosts:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
+                                  clearCommittedAnnualPath(`customEmployeeCosts:${idx}:annual`)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3298,6 +3433,7 @@ function LaborRateCalculator() {
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
                                   clearWageRowBurdLock(`customEmployeeCosts:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
+                                  else patchCommittedAnnual(annualPath, v)
                                 }
                                 setEditingDollarField(null)
                               }
@@ -3350,7 +3486,7 @@ function LaborRateCalculator() {
                             ${safeCalculations.employeeCostsHourlyRate.toFixed(2)}
                           </div>
                           <div className="text-right text-xs font-bold text-primary pl-0.5 pr-2">
-                            ${annualSpendFromEarnedHourly(safeCalculations.employeeCostsHourlyRate).toFixed(2)}
+                            ${step3EmployeeCostsAnnualTotal.toFixed(2)}
                           </div>
                         </div>
                     </div>
@@ -3459,6 +3595,7 @@ function LaborRateCalculator() {
                               setDivisionOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('divisionOverheadPercent')
                               if (fieldLocks['divisionOverheadPercent:hrly']?.locked) updateFieldLockValue('divisionOverheadPercent:hrly', v)
+                              clearCommittedAnnualPath('divisionOverheadPercent:annual')
                             }
                             setEditingDollarField(null)
                           }
@@ -3475,8 +3612,8 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.divisionOverheadAnnualSpend > 0 ? safeCalculations.divisionOverheadAnnualSpend.toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'divisionOverhead', field: 'chgd', value: safeCalculations.divisionOverheadAnnualSpend > 0 ? safeCalculations.divisionOverheadAnnualSpend.toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay('divisionOverheadPercent:annual', safeCalculations.divisionOverheadAnnualSpend)}
+                        onFocus={() => setEditingDollarField({ section: 'divisionOverhead', field: 'chgd', value: getAnnualInputDisplay('divisionOverheadPercent:annual', safeCalculations.divisionOverheadAnnualSpend) })}
                         onChange={(e) => { if (editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'divisionOverhead' && editingDollarField?.field === 'chgd') {
@@ -3489,6 +3626,7 @@ function LaborRateCalculator() {
                               setDivisionOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('divisionOverheadPercent')
                               if (fieldLocks['divisionOverheadPercent:annual']?.locked) updateFieldLockValue('divisionOverheadPercent:annual', v)
+                              else patchCommittedAnnual('divisionOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
                           }
@@ -3592,6 +3730,7 @@ function LaborRateCalculator() {
                               setGeneralCompanyOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('generalCompanyOverheadPercent')
                               if (fieldLocks['generalCompanyOverheadPercent:hrly']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:hrly', v)
+                              clearCommittedAnnualPath('generalCompanyOverheadPercent:annual')
                             }
                             setEditingDollarField(null)
                           }
@@ -3608,8 +3747,8 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.generalCompanyOverheadAnnualSpend > 0 ? safeCalculations.generalCompanyOverheadAnnualSpend.toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'generalOverhead', field: 'chgd', value: safeCalculations.generalCompanyOverheadAnnualSpend > 0 ? safeCalculations.generalCompanyOverheadAnnualSpend.toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay('generalCompanyOverheadPercent:annual', safeCalculations.generalCompanyOverheadAnnualSpend)}
+                        onFocus={() => setEditingDollarField({ section: 'generalOverhead', field: 'chgd', value: getAnnualInputDisplay('generalCompanyOverheadPercent:annual', safeCalculations.generalCompanyOverheadAnnualSpend) })}
                         onChange={(e) => { if (editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'generalOverhead' && editingDollarField?.field === 'chgd') {
@@ -3622,6 +3761,7 @@ function LaborRateCalculator() {
                               setGeneralCompanyOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('generalCompanyOverheadPercent')
                               if (fieldLocks['generalCompanyOverheadPercent:annual']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:annual', v)
+                              else patchCommittedAnnual('generalCompanyOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
                           }
@@ -3725,6 +3865,7 @@ function LaborRateCalculator() {
                               setProfitPercent(pct)
                               clearStep3PercentBrdnLocks('profitPercent')
                               if (fieldLocks['profitPercent:hrly']?.locked) updateFieldLockValue('profitPercent:hrly', v)
+                              clearCommittedAnnualPath('profitPercent:annual')
                             }
                             setEditingDollarField(null)
                           }
@@ -3741,8 +3882,8 @@ function LaborRateCalculator() {
                       <input
                         type="number"
                         step="0.01"
-                        value={editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd' ? editingDollarField.value : (safeCalculations.profitCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.profitCharged).toFixed(2) : '')}
-                        onFocus={() => setEditingDollarField({ section: 'profit', field: 'chgd', value: safeCalculations.profitCharged > 0 ? annualSpendFromEarnedHourly(safeCalculations.profitCharged).toFixed(2) : '' })}
+                        value={editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay('profitPercent:annual', annualSpendFromEarnedHourly(safeCalculations.profitCharged))}
+                        onFocus={() => setEditingDollarField({ section: 'profit', field: 'chgd', value: getAnnualInputDisplay('profitPercent:annual', annualSpendFromEarnedHourly(safeCalculations.profitCharged)) })}
                         onChange={(e) => { if (editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                         onBlur={(e) => {
                           if (editingDollarField?.section === 'profit' && editingDollarField?.field === 'chgd') {
@@ -3754,6 +3895,7 @@ function LaborRateCalculator() {
                               setProfitPercent(pct)
                               clearStep3PercentBrdnLocks('profitPercent')
                               if (fieldLocks['profitPercent:annual']?.locked) updateFieldLockValue('profitPercent:annual', v)
+                              else patchCommittedAnnual('profitPercent:annual', v)
                             }
                             setEditingDollarField(null)
                           }
@@ -3833,12 +3975,12 @@ function LaborRateCalculator() {
                   </div>
 
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Mandatory Payroll Tax Burden</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
-                  {MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => { const pct = parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0; const hrly = safeCalculations.payrollTaxHourlyRates[opt.id] || 0; return <div key={`p2-mpt-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
-                  {customPayrollTaxFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] || 0; return <div key={`p2-cpt-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
+                  {MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => { const pct = parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0; const hrly = safeCalculations.payrollTaxHourlyRates[opt.id] || 0; return <div key={`p2-mpt-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`payrollTax:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
+                  {customPayrollTaxFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] || 0; return <div key={`p2-cpt-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`customPayrollTax:${idx}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
 
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Mandatory Worker Burden</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
-                  {MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => { const pct = parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0; const hrly = safeCalculations.workerBurdenHourlyRates[opt.id] || 0; return <div key={`p2-mwb-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
-                  {customWorkerBurdenFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] || 0; return <div key={`p2-cwb-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
+                  {MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => { const pct = parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0; const hrly = safeCalculations.workerBurdenHourlyRates[opt.id] || 0; return <div key={`p2-mwb-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`workerBurden:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
+                  {customWorkerBurdenFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] || 0; return <div key={`p2-cwb-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`customWorkerBurden:${idx}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
                   <div className="flex justify-between border-t border-primary pt-0.5 font-bold text-primary mt-1"><span>Total Wage Burden</span><span>${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}/hr</span></div>
                 </section>
 
@@ -3846,21 +3988,21 @@ function LaborRateCalculator() {
                   <h3 className="text-sm font-extrabold text-black mb-1 border-b border-gray-200 pb-0.5">Step 3: Overhead and Profit</h3>
 
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div className="text-xs font-bold text-black">Benefits Burden</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
-                  {BENEFITS_BURDEN_OPTIONS.map(opt => { const pct = parseFloat(benefitsBurdenPercents[opt.id]) || 0; const hrly = safeCalculations.benefitsBurdenHourlyRates[opt.id] || 0; return <div key={`p3-ben-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
-                  {customBenefitsBurdenFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cben-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
+                  {BENEFITS_BURDEN_OPTIONS.map(opt => { const pct = parseFloat(benefitsBurdenPercents[opt.id]) || 0; const hrly = safeCalculations.benefitsBurdenHourlyRates[opt.id] || 0; return <div key={`p3-ben-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`benefits:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
+                  {customBenefitsBurdenFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cben-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`customBenefits:${idx}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
 
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Additional Overheads</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
-                  {ADDITIONAL_OVERHEADS_OPTIONS.map(opt => { const pct = parseFloat(additionalOverheadsPercents[opt.id]) || 0; const hrly = safeCalculations.additionalOverheadsHourlyRates[opt.id] || 0; return <div key={`p3-ao-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
-                  {customAdditionalOverheadsFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cao-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
+                  {ADDITIONAL_OVERHEADS_OPTIONS.map(opt => { const pct = parseFloat(additionalOverheadsPercents[opt.id]) || 0; const hrly = safeCalculations.additionalOverheadsHourlyRates[opt.id] || 0; return <div key={`p3-ao-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`additionalOverheads:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
+                  {customAdditionalOverheadsFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cao-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`customAdditionalOverheads:${idx}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
 
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Employee Costs</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
-                  {EMPLOYEE_COSTS_OPTIONS.map(opt => { const pct = parseFloat(employeeCostsPercents[opt.id]) || 0; const hrly = safeCalculations.employeeCostsHourlyRates[opt.id] || 0; return <div key={`p3-ec-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
-                  {customEmployeeCosts.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cec-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
+                  {EMPLOYEE_COSTS_OPTIONS.map(opt => { const pct = parseFloat(employeeCostsPercents[opt.id]) || 0; const hrly = safeCalculations.employeeCostsHourlyRates[opt.id] || 0; return <div key={`p3-ec-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`employeeCosts:${opt.id}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
+                  {customEmployeeCosts.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cec-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend(`customEmployeeCosts:${idx}:annual`, annualSpendFromEarnedHourly(hrly)).toFixed(2)}</div></div> })}
 
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Division Overhead / General Company Overhead / Profit</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>Division Overhead</div><div className="text-right">{(parseFloat(divisionOverheadPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.divisionOverheadCharged.toFixed(2)}</div><div className="text-right">${safeCalculations.divisionOverheadAnnualSpend.toFixed(2)}</div></div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>General Company Overhead</div><div className="text-right">{(parseFloat(generalCompanyOverheadPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}</div><div className="text-right">${safeCalculations.generalCompanyOverheadAnnualSpend.toFixed(2)}</div></div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>Profit</div><div className="text-right">{(parseFloat(profitPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.profitCharged.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(safeCalculations.profitCharged).toFixed(2)}</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>Division Overhead</div><div className="text-right">{(parseFloat(divisionOverheadPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.divisionOverheadCharged.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend('divisionOverheadPercent:annual', safeCalculations.divisionOverheadAnnualSpend).toFixed(2)}</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>General Company Overhead</div><div className="text-right">{(parseFloat(generalCompanyOverheadPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend('generalCompanyOverheadPercent:annual', safeCalculations.generalCompanyOverheadAnnualSpend).toFixed(2)}</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>Profit</div><div className="text-right">{(parseFloat(profitPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.profitCharged.toFixed(2)}</div><div className="text-right">${effectiveAnnualSpend('profitPercent:annual', annualSpendFromEarnedHourly(safeCalculations.profitCharged)).toFixed(2)}</div></div>
                 </section>
 
                 <section style={{ breakBefore: 'page', pageBreakBefore: 'always' }}>

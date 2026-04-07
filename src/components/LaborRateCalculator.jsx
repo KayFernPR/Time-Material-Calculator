@@ -1083,7 +1083,7 @@ function LaborRateCalculator() {
   }
 
   const handleAddCustomEmployeeCost = () => {
-    if (newCustomEmployeeCost.name.trim() && newCustomEmployeeCost.percent > 0) {
+    if (newCustomEmployeeCost.name.trim()) {
       setCustomEmployeeCosts(prev => [...prev, {
         id: `custom-${Date.now()}`,
         label: newCustomEmployeeCost.name.trim(),

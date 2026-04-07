@@ -3719,7 +3719,7 @@ function LaborRateCalculator() {
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>Profit</div><div className="text-right">{(parseFloat(profitPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.profitCharged.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(safeCalculations.profitCharged).toFixed(2)}</div></div>
                 </section>
 
-                <section>
+                <section style={{ breakBefore: 'page', pageBreakBefore: 'always' }}>
                   <h3 className="text-sm font-extrabold text-black mb-1 border-b border-gray-200 pb-0.5">Step 4: Results - Burden / Hour Charged</h3>
                   <div className="text-xs font-bold text-black mb-0.5">Workers Wage</div>
                   <div className="grid grid-cols-[1fr_auto] gap-2">

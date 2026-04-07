@@ -99,6 +99,30 @@ function createDefaultCalculatorSnapshot() {
   }
 }
 
+/** Default cross-employee locks requested for Step 2/3 inputs. */
+function createDefaultFieldLocks() {
+  const locks = {}
+
+  MANDATORY_PAYROLL_TAX_OPTIONS.forEach(opt => {
+    locks[`payrollTax:${opt.id}:brdn`] = { locked: true, value: opt.defaultPercent ?? 0 }
+  })
+  MANDATORY_WORKER_BURDEN_OPTIONS.forEach(opt => {
+    locks[`workerBurden:${opt.id}:brdn`] = { locked: true, value: opt.defaultPercent ?? 0 }
+  })
+
+  BENEFITS_BURDEN_OPTIONS.forEach(opt => {
+    locks[`benefits:${opt.id}:brdn`] = { locked: true, value: opt.defaultPercent ?? 0 }
+  })
+  ADDITIONAL_OVERHEADS_OPTIONS.forEach(opt => {
+    locks[`additionalOverheads:${opt.id}:annual`] = { locked: true, value: 0 }
+  })
+  EMPLOYEE_COSTS_OPTIONS.forEach(opt => {
+    locks[`employeeCosts:${opt.id}:annual`] = { locked: true, value: 0 }
+  })
+
+  return locks
+}
+
 /**
  * Working on option text: real name; or numbered placeholders only until someone is named;
  * once any employee has a name, unnamed rows use no placeholder text.
@@ -439,7 +463,7 @@ function LaborRateCalculator() {
   const [editingBrdnField, setEditingBrdnField] = useState(null) // { key: string, value: string }
 
   /** Cross-employee locks: when locked, value is reused for every employee (path -> { locked, value }). */
-  const [fieldLocks, setFieldLocks] = useState({})
+  const [fieldLocks, setFieldLocks] = useState(createDefaultFieldLocks)
 
   const toggleFieldLock = useCallback((path, readCurrentValue) => {
     setFieldLocks(prev => {
@@ -1037,55 +1061,80 @@ function LaborRateCalculator() {
 
   const handleAddCustomPayrollTax = () => {
     if (newCustomPayrollTax.name.trim()) {
-      setCustomPayrollTaxFields(prev => [...prev, {
-        id: `custom-${Date.now()}`,
-        label: newCustomPayrollTax.name.trim(),
-        percent: parseFloat(newCustomPayrollTax.percent) || 0
-      }])
+      setCustomPayrollTaxFields(prev => {
+        const percent = parseFloat(newCustomPayrollTax.percent) || 0
+        const idx = prev.length
+        setFieldLocks(cur => ({ ...cur, [`customPayrollTax:${idx}:brdn`]: { locked: true, value: percent } }))
+        return [...prev, {
+          id: `custom-${Date.now()}`,
+          label: newCustomPayrollTax.name.trim(),
+          percent
+        }]
+      })
       setNewCustomPayrollTax({ name: '', percent: 0 })
     }
   }
 
   const handleAddCustomWorkerBurden = () => {
     if (newCustomWorkerBurden.name.trim()) {
-      setCustomWorkerBurdenFields(prev => [...prev, {
-        id: `custom-${Date.now()}`,
-        label: newCustomWorkerBurden.name.trim(),
-        percent: parseFloat(newCustomWorkerBurden.percent) || 0
-      }])
+      setCustomWorkerBurdenFields(prev => {
+        const percent = parseFloat(newCustomWorkerBurden.percent) || 0
+        const idx = prev.length
+        setFieldLocks(cur => ({ ...cur, [`customWorkerBurden:${idx}:brdn`]: { locked: true, value: percent } }))
+        return [...prev, {
+          id: `custom-${Date.now()}`,
+          label: newCustomWorkerBurden.name.trim(),
+          percent
+        }]
+      })
       setNewCustomWorkerBurden({ name: '', percent: 0 })
     }
   }
 
   const handleAddCustomBenefitsBurden = () => {
     if (newCustomBenefitsBurden.name.trim()) {
-      setCustomBenefitsBurdenFields(prev => [...prev, {
-        id: `custom-${Date.now()}`,
-        label: newCustomBenefitsBurden.name.trim(),
-        percent: parseFloat(newCustomBenefitsBurden.percent) || 0
-      }])
+      setCustomBenefitsBurdenFields(prev => {
+        const percent = parseFloat(newCustomBenefitsBurden.percent) || 0
+        const idx = prev.length
+        setFieldLocks(cur => ({ ...cur, [`customBenefits:${idx}:brdn`]: { locked: true, value: percent } }))
+        return [...prev, {
+          id: `custom-${Date.now()}`,
+          label: newCustomBenefitsBurden.name.trim(),
+          percent
+        }]
+      })
       setNewCustomBenefitsBurden({ name: '', percent: 0 })
     }
   }
 
   const handleAddCustomAdditionalOverheads = () => {
     if (newCustomAdditionalOverheads.name.trim()) {
-      setCustomAdditionalOverheadsFields(prev => [...prev, {
-        id: `custom-${Date.now()}`,
-        label: newCustomAdditionalOverheads.name.trim(),
-        percent: parseFloat(newCustomAdditionalOverheads.percent) || 0
-      }])
+      setCustomAdditionalOverheadsFields(prev => {
+        const percent = parseFloat(newCustomAdditionalOverheads.percent) || 0
+        const idx = prev.length
+        setFieldLocks(cur => ({ ...cur, [`customAdditionalOverheads:${idx}:annual`]: { locked: true, value: 0 } }))
+        return [...prev, {
+          id: `custom-${Date.now()}`,
+          label: newCustomAdditionalOverheads.name.trim(),
+          percent
+        }]
+      })
       setNewCustomAdditionalOverheads({ name: '', percent: 0 })
     }
   }
 
   const handleAddCustomEmployeeCost = () => {
     if (newCustomEmployeeCost.name.trim()) {
-      setCustomEmployeeCosts(prev => [...prev, {
-        id: `custom-${Date.now()}`,
-        label: newCustomEmployeeCost.name.trim(),
-        percent: parseFloat(newCustomEmployeeCost.percent) || 0
-      }])
+      setCustomEmployeeCosts(prev => {
+        const percent = parseFloat(newCustomEmployeeCost.percent) || 0
+        const idx = prev.length
+        setFieldLocks(cur => ({ ...cur, [`customEmployeeCosts:${idx}:annual`]: { locked: true, value: 0 } }))
+        return [...prev, {
+          id: `custom-${Date.now()}`,
+          label: newCustomEmployeeCost.name.trim(),
+          percent
+        }]
+      })
       setNewCustomEmployeeCost({ name: '', percent: 0 })
     }
   }

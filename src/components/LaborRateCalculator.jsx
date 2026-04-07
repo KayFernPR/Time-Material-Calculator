@@ -3652,16 +3652,15 @@ function LaborRateCalculator() {
                 <div className="text-center border-b border-gray-300 pb-2">
                   <img src="/logo.png" alt="Profitable Restorer" className="h-12 w-auto mx-auto object-contain" />
                   <div className="text-base font-bold text-primary mt-1">Labor Rate Calculator</div>
-                  <div className="mt-3 text-sm font-bold text-neutral">
+                  <div className="mt-3 text-sm font-bold text-black">
                     Employee: {(employeeName || '').trim() || '________________________'}
                   </div>
                 </div>
 
                 <section>
                   <h3 className="text-sm font-extrabold text-black mb-1 border-b border-gray-200 pb-0.5">Step 1: Paid Capacity</h3>
-                  <div className="text-xs font-bold text-black mb-0.5">Hours Not Worked</div>
                   <div className="grid grid-cols-[1fr_5rem_5rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5">
-                    <div></div><div className="text-right">Hours Allocated</div><div className="text-right">Brdn Chg (%)</div>
+                    <div className="text-xs font-bold text-black">Hours Not Worked</div><div className="text-right">Hours Allocated</div><div className="text-right">Brdn Chg (%)</div>
                   </div>
                   {allHoursNotWorkedOptions.map(option => {
                     const hrs = parseFloat(hoursNotWorked[option.id]) || 0
@@ -3670,9 +3669,8 @@ function LaborRateCalculator() {
                   })}
                   <div className="grid grid-cols-[1fr_5rem_5rem] gap-2 border-t border-gray-200 pt-0.5 font-bold text-primary"><div>Total PTO, Holidays and Sick Time</div><div className="text-right">{safeCalculations.totalHoursNotWorked} hrs</div><div className="text-right">{safeCalculations.totalHoursNotWorkedPercent.toFixed(2)}%</div></div>
 
-                  <div className="text-xs font-bold text-black mt-2 mb-0.5">Non-Billable Hours</div>
-                  <div className="grid grid-cols-[1fr_5rem_5rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5">
-                    <div></div><div className="text-right">Hours Allocated</div><div className="text-right">Brdn Chg (%)</div>
+                  <div className="grid grid-cols-[1fr_5rem_5rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2">
+                    <div className="text-xs font-bold text-black">Non-Billable Hours</div><div className="text-right">Hours Allocated</div><div className="text-right">Brdn Chg (%)</div>
                   </div>
                   {allNonBillableOptions.map(option => {
                     const hrs = parseFloat(nonBillableHours[option.id]) || 0
@@ -3690,13 +3688,11 @@ function LaborRateCalculator() {
                     <div>Burden/hour to charge</div><div className="font-semibold">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
                   </div>
 
-                  <div className="text-xs font-bold text-black mt-2 mb-0.5">Mandatory Payroll Tax Burden</div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div></div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Mandatory Payroll Tax Burden</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
                   {MANDATORY_PAYROLL_TAX_OPTIONS.map(opt => { const pct = parseFloat(mandatoryPayrollTaxPercents[opt.id]) || 0; const hrly = safeCalculations.payrollTaxHourlyRates[opt.id] || 0; return <div key={`p2-mpt-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
                   {customPayrollTaxFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.payrollTaxHourlyRates[`custom-${idx}`] || 0; return <div key={`p2-cpt-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
 
-                  <div className="text-xs font-bold text-black mt-2 mb-0.5">Mandatory Worker Burden</div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div></div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Mandatory Worker Burden</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
                   {MANDATORY_WORKER_BURDEN_OPTIONS.map(opt => { const pct = parseFloat(mandatoryWorkerBurdenPercents[opt.id]) || 0; const hrly = safeCalculations.workerBurdenHourlyRates[opt.id] || 0; return <div key={`p2-mwb-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
                   {customWorkerBurdenFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.workerBurdenHourlyRates[`custom-${idx}`] || 0; return <div key={`p2-cwb-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
                   <div className="flex justify-between border-t border-primary pt-0.5 font-bold text-primary mt-1"><span>Total Wage Burden</span><span>${safeCalculations.totalMandatoryBurdenCharged.toFixed(2)}/hr</span></div>
@@ -3705,23 +3701,19 @@ function LaborRateCalculator() {
                 <section>
                   <h3 className="text-sm font-extrabold text-black mb-1 border-b border-gray-200 pb-0.5">Step 3: Overhead and Profit</h3>
 
-                  <div className="text-xs font-bold text-black mb-0.5">Benefits Burden</div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div></div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div className="text-xs font-bold text-black">Benefits Burden</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
                   {BENEFITS_BURDEN_OPTIONS.map(opt => { const pct = parseFloat(benefitsBurdenPercents[opt.id]) || 0; const hrly = safeCalculations.benefitsBurdenHourlyRates[opt.id] || 0; return <div key={`p3-ben-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
                   {customBenefitsBurdenFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.benefitsBurdenHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cben-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
 
-                  <div className="text-xs font-bold text-black mt-2 mb-0.5">Additional Overheads</div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div></div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Additional Overheads</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
                   {ADDITIONAL_OVERHEADS_OPTIONS.map(opt => { const pct = parseFloat(additionalOverheadsPercents[opt.id]) || 0; const hrly = safeCalculations.additionalOverheadsHourlyRates[opt.id] || 0; return <div key={`p3-ao-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
                   {customAdditionalOverheadsFields.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.additionalOverheadsHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cao-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
 
-                  <div className="text-xs font-bold text-black mt-2 mb-0.5">Employee Costs</div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div></div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Employee Costs</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
                   {EMPLOYEE_COSTS_OPTIONS.map(opt => { const pct = parseFloat(employeeCostsPercents[opt.id]) || 0; const hrly = safeCalculations.employeeCostsHourlyRates[opt.id] || 0; return <div key={`p3-ec-${opt.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{opt.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
                   {customEmployeeCosts.map((f, idx) => { const pct = parseFloat(f.percent) || 0; const hrly = safeCalculations.employeeCostsHourlyRates[`custom-${idx}`] || 0; return <div key={`p3-cec-${f.id}`} className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>{f.label}</div><div className="text-right">{pct.toFixed(2)}%</div><div className="text-right">${hrly.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(hrly).toFixed(2)}</div></div> })}
 
-                  <div className="text-xs font-bold text-black mt-2 mb-0.5">Division Overhead / General Company Overhead / Profit</div>
-                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5"><div></div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
+                  <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2 text-[10px] font-semibold border-b border-gray-200 pb-0.5 mt-2"><div className="text-xs font-bold text-black">Division Overhead / General Company Overhead / Profit</div><div className="text-right">Brdn (%)</div><div className="text-right">Hrly ($)</div><div className="text-right">Spend/yr ($)</div></div>
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>Division Overhead</div><div className="text-right">{(parseFloat(divisionOverheadPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.divisionOverheadCharged.toFixed(2)}</div><div className="text-right">${safeCalculations.divisionOverheadAnnualSpend.toFixed(2)}</div></div>
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>General Company Overhead</div><div className="text-right">{(parseFloat(generalCompanyOverheadPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.generalCompanyOverheadCharged.toFixed(2)}</div><div className="text-right">${safeCalculations.generalCompanyOverheadAnnualSpend.toFixed(2)}</div></div>
                   <div className="grid grid-cols-[1fr_3.2rem_3.5rem_4.2rem] gap-2"><div>Profit</div><div className="text-right">{(parseFloat(profitPercent) || 0).toFixed(2)}%</div><div className="text-right">${safeCalculations.profitCharged.toFixed(2)}</div><div className="text-right">${annualSpendFromEarnedHourly(safeCalculations.profitCharged).toFixed(2)}</div></div>
@@ -3733,7 +3725,7 @@ function LaborRateCalculator() {
                   <div className="grid grid-cols-[1fr_auto] gap-2">
                     <div>Workers Wage (Earned)</div><div className="font-semibold">${(parseFloat(workersWage) || 0).toFixed(2)}/hr</div>
                     <div>Workers Wage (Charged)</div><div className="font-semibold">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
-                    <div className="text-gray-600">Formula</div><div className="text-gray-600">= ${(parseFloat(workersWage) || 0).toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%</div>
+                    <div className="text-gray-600"></div><div className="text-gray-600">= ${(parseFloat(workersWage) || 0).toFixed(2)} ÷ {(safeCalculations.utilizationPercent * 100).toFixed(2)}%</div>
                   </div>
                   <div className="text-xs font-bold text-black mt-2 mb-0.5">Detailed Breakdown</div>
                   <div className="grid grid-cols-[1fr_auto] gap-2">

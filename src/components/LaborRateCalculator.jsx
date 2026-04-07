@@ -594,6 +594,38 @@ function LaborRateCalculator() {
     return n > 0 ? n.toFixed(2) : ''
   }, [effectiveAnnualSpend])
 
+  /**
+   * When Spend/yr was the last committed column, Brdn (%) and Hrly ($) must be derived from
+   * effective annual ÷ 2080 — not from stored % → round(wage×%) → hrly, or $1500 and $1497.60
+   * both collapse to the same 2.88% / $0.72.
+   */
+  const getWageRowBurdDisplayWhenNotEditing = useCallback(
+    (basePath, storedPercent, workersWageNum, annualPath, computedAnnualFromHrly) => {
+      const w = parseFloat(workersWageNum) || 0
+      const a = effectiveAnnualSpend(annualPath, computedAnnualFromHrly)
+      if (getEnteredField(basePath) === 'annual' && w > 0 && a > 0) {
+        const earnedHrly = a / PAID_CAPACITY
+        const pct = (earnedHrly / w) * 100
+        return pct.toFixed(4)
+      }
+      return formatBrdnPercentForDisplay(storedPercent)
+    },
+    [effectiveAnnualSpend, getEnteredField]
+  )
+
+  const getWageRowHrlyDisplayWhenNotEditing = useCallback(
+    (basePath, workersWageNum, annualPath, computedHrly, computedAnnualFromHrly) => {
+      const w = parseFloat(workersWageNum) || 0
+      const a = effectiveAnnualSpend(annualPath, computedAnnualFromHrly)
+      if (getEnteredField(basePath) === 'annual' && w > 0 && a > 0) {
+        const earnedHrly = a / PAID_CAPACITY
+        return earnedHrly.toFixed(4)
+      }
+      return computedHrly > 0 ? computedHrly.toFixed(2) : ''
+    },
+    [effectiveAnnualSpend, getEnteredField]
+  )
+
   const collectCalculatorSnapshot = useCallback(() => ({
     employeeName,
     hoursNotWorked,
@@ -1820,11 +1852,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `payrollTax:${option.id}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(mandatoryPayrollTaxPercents[option.id])
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`payrollTax:${option.id}`, mandatoryPayrollTaxPercents[option.id], workersWageNum, `payrollTax:${option.id}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `payrollTax:${option.id}`,
-                              value: formatBrdnPercentForDisplay(mandatoryPayrollTaxPercents[option.id])
+                              value: getWageRowBurdDisplayWhenNotEditing(`payrollTax:${option.id}`, mandatoryPayrollTaxPercents[option.id], workersWageNum, `payrollTax:${option.id}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `payrollTax:${option.id}`
@@ -1834,7 +1866,7 @@ function LaborRateCalculator() {
                               const k = `payrollTax:${option.id}`
                               if (editingBrdnField?.key !== k) return
                               const stored = mandatoryPayrollTaxPercents[option.id]
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`payrollTax:${option.id}`, stored, workersWageNum, `payrollTax:${option.id}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -1868,8 +1900,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'payrollTax', rowId: option.id, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`payrollTax:${option.id}`, workersWageNum, `payrollTax:${option.id}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'payrollTax', rowId: option.id, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`payrollTax:${option.id}`, workersWageNum, `payrollTax:${option.id}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => {
                               if (editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
                                 setEditingDollarField(prev => ({ ...prev, value: e.target.value }))
@@ -1973,11 +2005,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `payrollTaxCustom:${idx}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`customPayrollTax:${idx}`, field.percent, workersWageNum, `customPayrollTax:${idx}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `payrollTaxCustom:${idx}`,
-                              value: formatBrdnPercentForDisplay(field.percent)
+                              value: getWageRowBurdDisplayWhenNotEditing(`customPayrollTax:${idx}`, field.percent, workersWageNum, `customPayrollTax:${idx}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `payrollTaxCustom:${idx}`
@@ -1987,7 +2019,7 @@ function LaborRateCalculator() {
                               const k = `payrollTaxCustom:${idx}`
                               if (editingBrdnField?.key !== k) return
                               const stored = field.percent
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`customPayrollTax:${idx}`, stored, workersWageNum, `customPayrollTax:${idx}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -2023,8 +2055,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? Number(hourlyRate).toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'payrollTaxCustom', rowId: `custom-${idx}`, customIdx: idx, field: 'hrly', value: hourlyRate > 0 ? Number(hourlyRate).toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`customPayrollTax:${idx}`, workersWageNum, `customPayrollTax:${idx}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'payrollTaxCustom', rowId: `custom-${idx}`, customIdx: idx, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`customPayrollTax:${idx}`, workersWageNum, `customPayrollTax:${idx}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => {
                               if (editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
                                 setEditingDollarField(prev => ({ ...prev, value: e.target.value }))
@@ -2180,11 +2212,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `workerBurden:${option.id}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(mandatoryWorkerBurdenPercents[option.id])
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`workerBurden:${option.id}`, mandatoryWorkerBurdenPercents[option.id], workersWageNum, `workerBurden:${option.id}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `workerBurden:${option.id}`,
-                              value: formatBrdnPercentForDisplay(mandatoryWorkerBurdenPercents[option.id])
+                              value: getWageRowBurdDisplayWhenNotEditing(`workerBurden:${option.id}`, mandatoryWorkerBurdenPercents[option.id], workersWageNum, `workerBurden:${option.id}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `workerBurden:${option.id}`
@@ -2194,7 +2226,7 @@ function LaborRateCalculator() {
                               const k = `workerBurden:${option.id}`
                               if (editingBrdnField?.key !== k) return
                               const stored = mandatoryWorkerBurdenPercents[option.id]
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`workerBurden:${option.id}`, stored, workersWageNum, `workerBurden:${option.id}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -2228,8 +2260,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'workerBurden', rowId: option.id, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`workerBurden:${option.id}`, workersWageNum, `workerBurden:${option.id}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'workerBurden', rowId: option.id, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`workerBurden:${option.id}`, workersWageNum, `workerBurden:${option.id}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
@@ -2325,11 +2357,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `workerBurdenCustom:${idx}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`customWorkerBurden:${idx}`, field.percent, workersWageNum, `customWorkerBurden:${idx}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `workerBurdenCustom:${idx}`,
-                              value: formatBrdnPercentForDisplay(field.percent)
+                              value: getWageRowBurdDisplayWhenNotEditing(`customWorkerBurden:${idx}`, field.percent, workersWageNum, `customWorkerBurden:${idx}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `workerBurdenCustom:${idx}`
@@ -2339,7 +2371,7 @@ function LaborRateCalculator() {
                               const k = `workerBurdenCustom:${idx}`
                               if (editingBrdnField?.key !== k) return
                               const stored = field.percent
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`customWorkerBurden:${idx}`, stored, workersWageNum, `customWorkerBurden:${idx}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -2375,8 +2407,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? Number(hourlyRate).toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'workerBurdenCustom', customIdx: idx, field: 'hrly', value: hourlyRate > 0 ? Number(hourlyRate).toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`customWorkerBurden:${idx}`, workersWageNum, `customWorkerBurden:${idx}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'workerBurdenCustom', customIdx: idx, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`customWorkerBurden:${idx}`, workersWageNum, `customWorkerBurden:${idx}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
@@ -2557,11 +2589,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `benefits:${option.id}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(benefitsBurdenPercents[option.id])
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`benefits:${option.id}`, benefitsBurdenPercents[option.id], workersWageNum, `benefits:${option.id}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `benefits:${option.id}`,
-                              value: formatBrdnPercentForDisplay(benefitsBurdenPercents[option.id])
+                              value: getWageRowBurdDisplayWhenNotEditing(`benefits:${option.id}`, benefitsBurdenPercents[option.id], workersWageNum, `benefits:${option.id}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `benefits:${option.id}`
@@ -2571,7 +2603,7 @@ function LaborRateCalculator() {
                               const k = `benefits:${option.id}`
                               if (editingBrdnField?.key !== k) return
                               const stored = benefitsBurdenPercents[option.id]
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`benefits:${option.id}`, stored, workersWageNum, `benefits:${option.id}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -2605,8 +2637,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'benefits', rowId: option.id, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`benefits:${option.id}`, workersWageNum, `benefits:${option.id}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'benefits', rowId: option.id, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`benefits:${option.id}`, workersWageNum, `benefits:${option.id}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
@@ -2702,11 +2734,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `benefitsCustom:${idx}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`customBenefits:${idx}`, field.percent, workersWageNum, `customBenefits:${idx}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `benefitsCustom:${idx}`,
-                              value: formatBrdnPercentForDisplay(field.percent)
+                              value: getWageRowBurdDisplayWhenNotEditing(`customBenefits:${idx}`, field.percent, workersWageNum, `customBenefits:${idx}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `benefitsCustom:${idx}`
@@ -2716,7 +2748,7 @@ function LaborRateCalculator() {
                               const k = `benefitsCustom:${idx}`
                               if (editingBrdnField?.key !== k) return
                               const stored = field.percent
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`customBenefits:${idx}`, stored, workersWageNum, `customBenefits:${idx}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -2751,8 +2783,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'benefitsCustom', customIdx: idx, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`customBenefits:${idx}`, workersWageNum, `customBenefits:${idx}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'benefitsCustom', customIdx: idx, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`customBenefits:${idx}`, workersWageNum, `customBenefits:${idx}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
@@ -2898,11 +2930,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `additionalOverheads:${option.id}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(additionalOverheadsPercents[option.id])
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`additionalOverheads:${option.id}`, additionalOverheadsPercents[option.id], workersWageNum, `additionalOverheads:${option.id}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `additionalOverheads:${option.id}`,
-                              value: formatBrdnPercentForDisplay(additionalOverheadsPercents[option.id])
+                              value: getWageRowBurdDisplayWhenNotEditing(`additionalOverheads:${option.id}`, additionalOverheadsPercents[option.id], workersWageNum, `additionalOverheads:${option.id}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `additionalOverheads:${option.id}`
@@ -2912,7 +2944,7 @@ function LaborRateCalculator() {
                               const k = `additionalOverheads:${option.id}`
                               if (editingBrdnField?.key !== k) return
                               const stored = additionalOverheadsPercents[option.id]
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`additionalOverheads:${option.id}`, stored, workersWageNum, `additionalOverheads:${option.id}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -2946,8 +2978,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'additionalOverheads', rowId: option.id, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`additionalOverheads:${option.id}`, workersWageNum, `additionalOverheads:${option.id}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'additionalOverheads', rowId: option.id, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`additionalOverheads:${option.id}`, workersWageNum, `additionalOverheads:${option.id}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
@@ -3043,11 +3075,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `additionalOverheadsCustom:${idx}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(field.percent)
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`customAdditionalOverheads:${idx}`, field.percent, workersWageNum, `customAdditionalOverheads:${idx}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `additionalOverheadsCustom:${idx}`,
-                              value: formatBrdnPercentForDisplay(field.percent)
+                              value: getWageRowBurdDisplayWhenNotEditing(`customAdditionalOverheads:${idx}`, field.percent, workersWageNum, `customAdditionalOverheads:${idx}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `additionalOverheadsCustom:${idx}`
@@ -3057,7 +3089,7 @@ function LaborRateCalculator() {
                               const k = `additionalOverheadsCustom:${idx}`
                               if (editingBrdnField?.key !== k) return
                               const stored = field.percent
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`customAdditionalOverheads:${idx}`, stored, workersWageNum, `customAdditionalOverheads:${idx}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -3092,8 +3124,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'additionalOverheadsCustom', customIdx: idx, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`customAdditionalOverheads:${idx}`, workersWageNum, `customAdditionalOverheads:${idx}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'additionalOverheadsCustom', customIdx: idx, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`customAdditionalOverheads:${idx}`, workersWageNum, `customAdditionalOverheads:${idx}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {
@@ -3239,11 +3271,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `employeeCosts:${option.id}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(employeeCostsPercents[option.id])
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`employeeCosts:${option.id}`, employeeCostsPercents[option.id], workersWageNum, `employeeCosts:${option.id}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `employeeCosts:${option.id}`,
-                              value: formatBrdnPercentForDisplay(employeeCostsPercents[option.id])
+                              value: getWageRowBurdDisplayWhenNotEditing(`employeeCosts:${option.id}`, employeeCostsPercents[option.id], workersWageNum, `employeeCosts:${option.id}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `employeeCosts:${option.id}`
@@ -3253,7 +3285,7 @@ function LaborRateCalculator() {
                               const k = `employeeCosts:${option.id}`
                               if (editingBrdnField?.key !== k) return
                               const stored = employeeCostsPercents[option.id]
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`employeeCosts:${option.id}`, stored, workersWageNum, `employeeCosts:${option.id}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -3287,8 +3319,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'employeeCosts', rowId: option.id, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`employeeCosts:${option.id}`, workersWageNum, `employeeCosts:${option.id}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'employeeCosts', rowId: option.id, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`employeeCosts:${option.id}`, workersWageNum, `employeeCosts:${option.id}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'hrly') {
@@ -3384,11 +3416,11 @@ function LaborRateCalculator() {
                             step="0.01"
                             value={(() => {
                               const k = `employeeCostsCustom:${idx}`
-                              return editingBrdnField?.key === k ? editingBrdnField.value : formatBrdnPercentForDisplay(cost.percent)
+                              return editingBrdnField?.key === k ? editingBrdnField.value : getWageRowBurdDisplayWhenNotEditing(`customEmployeeCosts:${idx}`, cost.percent, workersWageNum, `customEmployeeCosts:${idx}:annual`, annualSpend)
                             })()}
                             onFocus={() => setEditingBrdnField({
                               key: `employeeCostsCustom:${idx}`,
-                              value: formatBrdnPercentForDisplay(cost.percent)
+                              value: getWageRowBurdDisplayWhenNotEditing(`customEmployeeCosts:${idx}`, cost.percent, workersWageNum, `customEmployeeCosts:${idx}:annual`, annualSpend)
                             })}
                             onChange={(e) => {
                               const k = `employeeCostsCustom:${idx}`
@@ -3398,7 +3430,7 @@ function LaborRateCalculator() {
                               const k = `employeeCostsCustom:${idx}`
                               if (editingBrdnField?.key !== k) return
                               const stored = cost.percent
-                              const before = formatBrdnPercentForDisplay(stored)
+                              const before = getWageRowBurdDisplayWhenNotEditing(`customEmployeeCosts:${idx}`, stored, workersWageNum, `customEmployeeCosts:${idx}:annual`, annualSpend)
                               const draft = editingBrdnField.value.trim()
                               if (draft === before || (before === '' && draft === '')) {
                                 setEditingBrdnField(null)
@@ -3433,8 +3465,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : (hourlyRate > 0 ? hourlyRate.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'employeeCostsCustom', customIdx: idx, field: 'hrly', value: hourlyRate > 0 ? hourlyRate.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly' ? editingDollarField.value : getWageRowHrlyDisplayWhenNotEditing(`customEmployeeCosts:${idx}`, workersWageNum, `customEmployeeCosts:${idx}:annual`, hourlyRate, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'employeeCostsCustom', customIdx: idx, field: 'hrly', value: getWageRowHrlyDisplayWhenNotEditing(`customEmployeeCosts:${idx}`, workersWageNum, `customEmployeeCosts:${idx}:annual`, hourlyRate, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'hrly') {

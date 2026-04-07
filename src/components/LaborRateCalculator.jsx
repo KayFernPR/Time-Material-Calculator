@@ -136,10 +136,10 @@ function workingOnOptionLabel(storedName, indexOneBased, hasAnyNamedEmployee) {
 
 // Step 2: Brdn / Hrly / Spend — fixed width = columns + gap-1.5×2 (headers, rows, totals share one track)
 const STEP2_BURDEN_WRAP = 'w-[11.5rem] max-w-full shrink-0'
-const STEP2_BURDEN_GRID = 'grid w-full min-w-0 grid-cols-[3.25rem_3.25rem_4.25rem] gap-1.5'
+const STEP2_BURDEN_GRID = 'grid w-full min-w-0 grid-cols-[3.25rem_3.25rem_5rem] gap-1.5'
 // Step 3: three-column burden grid (same as Division / General / Profit overhead rows)
-const STEP3_BURDEN3_WRAP = 'w-[10.5rem] max-w-full shrink-0'
-const STEP3_BURDEN3_GRID = 'grid w-full min-w-0 grid-cols-[3rem_3rem_3.75rem] gap-1.5'
+const STEP3_BURDEN3_WRAP = 'w-[11.75rem] max-w-full shrink-0'
+const STEP3_BURDEN3_GRID = 'grid w-full min-w-0 grid-cols-[3rem_3rem_5rem] gap-1.5'
 
 /** Spend/yr ($): annual cost = earned burden $/hr × paid hours/year (2080). */
 function annualSpendFromEarnedHourly(earnedHrly) {
@@ -1745,7 +1745,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -1892,7 +1892,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -2081,7 +2081,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -2220,7 +2220,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -2442,7 +2442,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -2580,7 +2580,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -2767,7 +2767,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -2905,7 +2905,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -3092,7 +3092,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton
@@ -3230,7 +3230,7 @@ function LaborRateCalculator() {
                                 setEditingDollarField(null)
                               }
                             }}
-                            className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
+                            className="burden-input w-[4.9rem] px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
                             placeholder="0.00"
                           />
                           <FieldLockButton

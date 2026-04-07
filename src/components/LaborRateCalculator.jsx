@@ -1850,7 +1850,8 @@ function LaborRateCalculator() {
                                 setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`payrollTax:${option.id}`)`r`n                              markEnteredFieldByLockPath(`payrollTax:${option.id}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`payrollTax:${option.id}`)
+                              markEnteredFieldByLockPath(`payrollTax:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2004,7 +2005,8 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customPayrollTax:${idx}`)`r`n                              markEnteredFieldByLockPath(`customPayrollTax:${idx}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`customPayrollTax:${idx}`)
+                              markEnteredFieldByLockPath(`customPayrollTax:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2208,7 +2210,8 @@ function LaborRateCalculator() {
                                 setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`workerBurden:${option.id}`)`r`n                              markEnteredFieldByLockPath(`workerBurden:${option.id}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`workerBurden:${option.id}`)
+                              markEnteredFieldByLockPath(`workerBurden:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2354,7 +2357,8 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customWorkerBurden:${idx}`)`r`n                              markEnteredFieldByLockPath(`customWorkerBurden:${idx}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`customWorkerBurden:${idx}`)
+                              markEnteredFieldByLockPath(`customWorkerBurden:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2583,7 +2587,8 @@ function LaborRateCalculator() {
                                 setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`benefits:${option.id}`)`r`n                              markEnteredFieldByLockPath(`benefits:${option.id}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`benefits:${option.id}`)
+                              markEnteredFieldByLockPath(`benefits:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2729,7 +2734,8 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customBenefits:${idx}`)`r`n                              markEnteredFieldByLockPath(`customBenefits:${idx}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`customBenefits:${idx}`)
+                              markEnteredFieldByLockPath(`customBenefits:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2922,7 +2928,8 @@ function LaborRateCalculator() {
                                 setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`additionalOverheads:${option.id}`)`r`n                              markEnteredFieldByLockPath(`additionalOverheads:${option.id}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`additionalOverheads:${option.id}`)
+                              markEnteredFieldByLockPath(`additionalOverheads:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3068,7 +3075,8 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customAdditionalOverheads:${idx}`)`r`n                              markEnteredFieldByLockPath(`customAdditionalOverheads:${idx}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`customAdditionalOverheads:${idx}`)
+                              markEnteredFieldByLockPath(`customAdditionalOverheads:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3261,7 +3269,8 @@ function LaborRateCalculator() {
                                 setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
-                              clearWageRowHrlyAnnualLocks(`employeeCosts:${option.id}`)`r`n                              markEnteredFieldByLockPath(`employeeCosts:${option.id}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`employeeCosts:${option.id}`)
+                              markEnteredFieldByLockPath(`employeeCosts:${option.id}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3407,7 +3416,8 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
-                              clearWageRowHrlyAnnualLocks(`customEmployeeCosts:${idx}`)`r`n                              markEnteredFieldByLockPath(`customEmployeeCosts:${idx}:brdn`, 'brdn')
+                              clearWageRowHrlyAnnualLocks(`customEmployeeCosts:${idx}`)
+                              markEnteredFieldByLockPath(`customEmployeeCosts:${idx}:brdn`, 'brdn')
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"

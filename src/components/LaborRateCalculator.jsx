@@ -3672,8 +3672,8 @@ function LaborRateCalculator() {
                               setDivisionOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('divisionOverheadPercent')
                               if (fieldLocks['divisionOverheadPercent:annual']?.locked) updateFieldLockValue('divisionOverheadPercent:annual', v)
-                              markEnteredFieldByLockPath('divisionOverheadPercent:annual', 'annual')
                               else patchCommittedAnnual('divisionOverheadPercent:annual', v)
+                              markEnteredFieldByLockPath('divisionOverheadPercent:annual', 'annual')
                             }
                             setEditingDollarField(null)
                           }
@@ -3810,8 +3810,8 @@ function LaborRateCalculator() {
                               setGeneralCompanyOverheadPercent(pct)
                               clearStep3PercentBrdnLocks('generalCompanyOverheadPercent')
                               if (fieldLocks['generalCompanyOverheadPercent:annual']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:annual', v)
-                              markEnteredFieldByLockPath('generalCompanyOverheadPercent:annual', 'annual')
                               else patchCommittedAnnual('generalCompanyOverheadPercent:annual', v)
+                              markEnteredFieldByLockPath('generalCompanyOverheadPercent:annual', 'annual')
                             }
                             setEditingDollarField(null)
                           }
@@ -3947,8 +3947,8 @@ function LaborRateCalculator() {
                               setProfitPercent(pct)
                               clearStep3PercentBrdnLocks('profitPercent')
                               if (fieldLocks['profitPercent:annual']?.locked) updateFieldLockValue('profitPercent:annual', v)
-                              markEnteredFieldByLockPath('profitPercent:annual', 'annual')
                               else patchCommittedAnnual('profitPercent:annual', v)
+                              markEnteredFieldByLockPath('profitPercent:annual', 'annual')
                             }
                             setEditingDollarField(null)
                           }

@@ -15,7 +15,7 @@ const NON_BILLABLE_HOURS_OPTIONS = [
   { id: 'drive-time', label: 'Drive Time', tooltip: 'Not billed to job' },
   { id: 'rework', label: 'Rework' },
   { id: 'administration', label: 'Admin' },
-  { id: 'downtime-cleaning', label: 'Downtime/\nCleaning' },
+  { id: 'downtime-cleaning', label: 'Downtime/Cleaning' },
   { id: 'minimum-weekly-hours', label: 'Minimum Weekly Hours' }
 ]
 

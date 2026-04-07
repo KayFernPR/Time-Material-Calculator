@@ -192,22 +192,23 @@ function resolveWageBurdenPercentFromLocks(fieldLocks, basePath, snapshotPercent
   const brdn = fieldLocks[`${basePath}:brdn`] ?? (legacy?.locked ? legacy : null)
   const hrly = fieldLocks[`${basePath}:hrly`]
   const annual = fieldLocks[`${basePath}:annual`]
-  if (brdn?.locked) {
-    const val = brdn.value
-    if (val === '' || val === undefined) return ''
-    const n = parseFloat(val)
-    return Number.isNaN(n) ? '' : Math.round(n * 100) / 100
-  }
-  if (hrly?.locked && w > 0) {
-    const h = parseFloat(hrly.value)
-    if (!Number.isNaN(h) && h >= 0) return burdenPercentFromEarnedHourly(h, w)
-  }
+  // Annual / hrly locks must win over Brdn (%) so entering $/yr or $/hr still drives the row when Brdn defaults are locked.
   if (annual?.locked && w > 0) {
     const a = parseFloat(annual.value)
     if (!Number.isNaN(a) && a >= 0) {
       const earnedHrly = a / PAID_CAPACITY
       return burdenPercentFromEarnedHourly(earnedHrly, w)
     }
+  }
+  if (hrly?.locked && w > 0) {
+    const h = parseFloat(hrly.value)
+    if (!Number.isNaN(h) && h >= 0) return burdenPercentFromEarnedHourly(h, w)
+  }
+  if (brdn?.locked) {
+    const val = brdn.value
+    if (val === '' || val === undefined) return ''
+    const n = parseFloat(val)
+    return Number.isNaN(n) ? '' : Math.round(n * 100) / 100
   }
   return snapshotPercent
 }
@@ -481,6 +482,47 @@ function LaborRateCalculator() {
     setFieldLocks(prev => {
       if (!prev[path]?.locked) return prev
       return { ...prev, [path]: { locked: true, value } }
+    })
+  }, [])
+
+  /** Clears Brdn (%) cross-employee lock for a wage burden row so Hrly / Spend/yr edits can update %. */
+  const clearWageRowBurdLock = useCallback((basePath) => {
+    setFieldLocks(prev => {
+      const next = { ...prev }
+      delete next[`${basePath}:brdn`]
+      delete next[basePath]
+      return next
+    })
+  }, [])
+
+  /** Clears Hrly / Spend/yr locks so Brdn (%) edit drives the row. */
+  const clearWageRowHrlyAnnualLocks = useCallback((basePath) => {
+    setFieldLocks(prev => {
+      const next = { ...prev }
+      delete next[`${basePath}:hrly`]
+      delete next[`${basePath}:annual`]
+      return next
+    })
+  }, [])
+
+  /** Division / General / Profit: clear Brdn lock when editing $ columns. */
+  const clearStep3PercentBrdnLocks = useCallback((prefix) => {
+    setFieldLocks(prev => {
+      const next = { ...prev }
+      delete next[`${prefix}:brdn`]
+      if (prefix === 'divisionOverheadPercent') delete next.divisionOverheadPercent
+      if (prefix === 'generalCompanyOverheadPercent') delete next.generalCompanyOverheadPercent
+      if (prefix === 'profitPercent') delete next.profitPercent
+      return next
+    })
+  }, [])
+
+  const clearStep3PercentHrlyAnnualLocks = useCallback((prefix) => {
+    setFieldLocks(prev => {
+      const next = { ...prev }
+      delete next[`${prefix}:hrly`]
+      delete next[`${prefix}:annual`]
+      return next
     })
   }, [])
 
@@ -894,16 +936,16 @@ function LaborRateCalculator() {
       const dA = fieldLocks['divisionOverheadPercent:annual']
       const base = costBaseBeforeOverheadAndProfit
       const H = totalHoursAvailable
-      if (dB?.locked && dB.value !== undefined) {
-        const val = dB.value
-        divPct = val === '' ? 0 : (parseFloat(val) || 0)
-      } else if (dH?.locked && dH.value !== undefined) {
-        const v = parseFloat(dH.value)
-        if (!Number.isNaN(v) && v >= 0 && base + v > 0) divPct = 100 * v / (base + v)
-      } else if (dA?.locked && dA.value !== undefined) {
+      if (dA?.locked && dA.value !== undefined) {
         const v = parseFloat(dA.value)
         const hourly = H > 0 ? v / H : 0
         if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) divPct = 100 * hourly / (base + hourly)
+      } else if (dH?.locked && dH.value !== undefined) {
+        const v = parseFloat(dH.value)
+        if (!Number.isNaN(v) && v >= 0 && base + v > 0) divPct = 100 * v / (base + v)
+      } else if (dB?.locked && dB.value !== undefined) {
+        const val = dB.value
+        divPct = val === '' ? 0 : (parseFloat(val) || 0)
       }
     }
 
@@ -927,16 +969,16 @@ function LaborRateCalculator() {
       const gA = fieldLocks['generalCompanyOverheadPercent:annual']
       const base = totalAfterDivisionOverhead
       const H = totalHoursAvailable
-      if (gB?.locked && gB.value !== undefined) {
-        const val = gB.value
-        genPct = val === '' ? 0 : (parseFloat(val) || 0)
-      } else if (gH?.locked && gH.value !== undefined) {
-        const v = parseFloat(gH.value)
-        if (!Number.isNaN(v) && v >= 0 && base + v > 0) genPct = 100 * v / (base + v)
-      } else if (gA?.locked && gA.value !== undefined) {
+      if (gA?.locked && gA.value !== undefined) {
         const v = parseFloat(gA.value)
         const hourly = H > 0 ? v / H : 0
         if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) genPct = 100 * hourly / (base + hourly)
+      } else if (gH?.locked && gH.value !== undefined) {
+        const v = parseFloat(gH.value)
+        if (!Number.isNaN(v) && v >= 0 && base + v > 0) genPct = 100 * v / (base + v)
+      } else if (gB?.locked && gB.value !== undefined) {
+        const val = gB.value
+        genPct = val === '' ? 0 : (parseFloat(val) || 0)
       }
     }
 
@@ -960,16 +1002,16 @@ function LaborRateCalculator() {
       const pA = fieldLocks['profitPercent:annual']
       const base = totalAfterGeneralOverhead
       const H = totalHoursAvailable
-      if (pB?.locked && pB.value !== undefined) {
-        const val = pB.value
-        profitPct = val === '' ? 0 : (parseFloat(val) || 0)
-      } else if (pH?.locked && pH.value !== undefined) {
-        const v = parseFloat(pH.value)
-        if (!Number.isNaN(v) && v >= 0 && base + v > 0) profitPct = 100 * v / (base + v)
-      } else if (pA?.locked && pA.value !== undefined) {
+      if (pA?.locked && pA.value !== undefined) {
         const v = parseFloat(pA.value)
         const hourly = v / PAID_CAPACITY
         if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) profitPct = 100 * hourly / (base + hourly)
+      } else if (pH?.locked && pH.value !== undefined) {
+        const v = parseFloat(pH.value)
+        if (!Number.isNaN(v) && v >= 0 && base + v > 0) profitPct = 100 * v / (base + v)
+      } else if (pB?.locked && pB.value !== undefined) {
+        const val = pB.value
+        profitPct = val === '' ? 0 : (parseFloat(val) || 0)
       }
     }
 
@@ -1678,6 +1720,7 @@ function LaborRateCalculator() {
                                 setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
+                              clearWageRowHrlyAnnualLocks(`payrollTax:${option.id}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1708,6 +1751,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`payrollTax:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -1740,6 +1784,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setMandatoryPayrollTaxPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`payrollTax:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -1825,6 +1870,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
+                              clearWageRowHrlyAnnualLocks(`customPayrollTax:${idx}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -1855,6 +1901,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customPayrollTax:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -1887,6 +1934,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomPayrollTaxFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customPayrollTax:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2022,6 +2070,7 @@ function LaborRateCalculator() {
                                 setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
+                              clearWageRowHrlyAnnualLocks(`workerBurden:${option.id}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2048,6 +2097,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`workerBurden:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2076,6 +2126,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setMandatoryWorkerBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`workerBurden:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2161,6 +2212,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
+                              clearWageRowHrlyAnnualLocks(`customWorkerBurden:${idx}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2187,6 +2239,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customWorkerBurden:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2215,6 +2268,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomWorkerBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customWorkerBurden:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2383,6 +2437,7 @@ function LaborRateCalculator() {
                                 setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`benefits:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
+                              clearWageRowHrlyAnnualLocks(`benefits:${option.id}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2409,6 +2464,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`benefits:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2437,6 +2493,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setBenefitsBurdenPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`benefits:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2522,6 +2579,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
+                              clearWageRowHrlyAnnualLocks(`customBenefits:${idx}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2547,6 +2605,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customBenefits:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2575,6 +2634,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomBenefitsBurdenFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customBenefits:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2708,6 +2768,7 @@ function LaborRateCalculator() {
                                 setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`additionalOverheads:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
+                              clearWageRowHrlyAnnualLocks(`additionalOverheads:${option.id}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2734,6 +2795,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`additionalOverheads:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2762,6 +2824,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setAdditionalOverheadsPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`additionalOverheads:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2847,6 +2910,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
+                              clearWageRowHrlyAnnualLocks(`customAdditionalOverheads:${idx}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -2872,6 +2936,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customAdditionalOverheads:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -2900,6 +2965,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomAdditionalOverheadsFields(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customAdditionalOverheads:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3033,6 +3099,7 @@ function LaborRateCalculator() {
                                 setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: nv }))
                                 if (fieldLocks[brdnPath]?.locked || fieldLocks[`employeeCosts:${option.id}`]?.locked) updateFieldLockValue(brdnPath, nv)
                               }
+                              clearWageRowHrlyAnnualLocks(`employeeCosts:${option.id}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3059,6 +3126,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`employeeCosts:${option.id}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3087,6 +3155,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setEmployeeCostsPercents(prev => ({ ...prev, [option.id]: pct }))
+                                  clearWageRowBurdLock(`employeeCosts:${option.id}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3172,6 +3241,7 @@ function LaborRateCalculator() {
                                 if (draft === '' || Number.isNaN(v)) updateFieldLockValue(brdnPath, '')
                                 else updateFieldLockValue(brdnPath, Math.round(v * 100) / 100)
                               }
+                              clearWageRowHrlyAnnualLocks(`customEmployeeCosts:${idx}`)
                               setEditingBrdnField(null)
                             }}
                             className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3197,6 +3267,7 @@ function LaborRateCalculator() {
                                 if (workersWageNum > 0 && !Number.isNaN(v) && v >= 0) {
                                   const pct = burdenPercentFromEarnedHourly(v, workersWageNum)
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customEmployeeCosts:${idx}`)
                                   if (fieldLocks[hrlyPath]?.locked) updateFieldLockValue(hrlyPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3225,6 +3296,7 @@ function LaborRateCalculator() {
                                   const earnedHrly = v / PAID_CAPACITY
                                   const pct = burdenPercentFromEarnedHourly(earnedHrly, workersWageNum)
                                   setCustomEmployeeCosts(prev => { const u = [...prev]; u[idx] = { ...u[idx], percent: pct }; return u })
+                                  clearWageRowBurdLock(`customEmployeeCosts:${idx}`)
                                   if (fieldLocks[annualPath]?.locked) updateFieldLockValue(annualPath, v)
                                 }
                                 setEditingDollarField(null)
@@ -3358,6 +3430,7 @@ function LaborRateCalculator() {
                             setDivisionOverheadPercent(nv)
                             if (fieldLocks['divisionOverheadPercent:brdn']?.locked || fieldLocks.divisionOverheadPercent?.locked) updateFieldLockValue('divisionOverheadPercent:brdn', nv)
                           }
+                          clearStep3PercentHrlyAnnualLocks('divisionOverheadPercent')
                           setEditingBrdnField(null)
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3384,6 +3457,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
                               const pct = 100 * v / (base + v)
                               setDivisionOverheadPercent(pct)
+                              clearStep3PercentBrdnLocks('divisionOverheadPercent')
                               if (fieldLocks['divisionOverheadPercent:hrly']?.locked) updateFieldLockValue('divisionOverheadPercent:hrly', v)
                             }
                             setEditingDollarField(null)
@@ -3413,6 +3487,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) {
                               const pct = 100 * hourly / (base + hourly)
                               setDivisionOverheadPercent(pct)
+                              clearStep3PercentBrdnLocks('divisionOverheadPercent')
                               if (fieldLocks['divisionOverheadPercent:annual']?.locked) updateFieldLockValue('divisionOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
@@ -3488,6 +3563,7 @@ function LaborRateCalculator() {
                             setGeneralCompanyOverheadPercent(nv)
                             if (fieldLocks['generalCompanyOverheadPercent:brdn']?.locked || fieldLocks.generalCompanyOverheadPercent?.locked) updateFieldLockValue('generalCompanyOverheadPercent:brdn', nv)
                           }
+                          clearStep3PercentHrlyAnnualLocks('generalCompanyOverheadPercent')
                           setEditingBrdnField(null)
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3514,6 +3590,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
                               const pct = 100 * v / (base + v)
                               setGeneralCompanyOverheadPercent(pct)
+                              clearStep3PercentBrdnLocks('generalCompanyOverheadPercent')
                               if (fieldLocks['generalCompanyOverheadPercent:hrly']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:hrly', v)
                             }
                             setEditingDollarField(null)
@@ -3543,6 +3620,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && H > 0 && base + hourly > 0) {
                               const pct = 100 * hourly / (base + hourly)
                               setGeneralCompanyOverheadPercent(pct)
+                              clearStep3PercentBrdnLocks('generalCompanyOverheadPercent')
                               if (fieldLocks['generalCompanyOverheadPercent:annual']?.locked) updateFieldLockValue('generalCompanyOverheadPercent:annual', v)
                             }
                             setEditingDollarField(null)
@@ -3618,6 +3696,7 @@ function LaborRateCalculator() {
                             setProfitPercent(nv)
                             if (fieldLocks['profitPercent:brdn']?.locked || fieldLocks.profitPercent?.locked) updateFieldLockValue('profitPercent:brdn', nv)
                           }
+                          clearStep3PercentHrlyAnnualLocks('profitPercent')
                           setEditingBrdnField(null)
                         }}
                         className="burden-input w-11 px-1 py-0.5 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary text-right text-xs no-spinner"
@@ -3644,6 +3723,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + v > 0) {
                               const pct = 100 * v / (base + v)
                               setProfitPercent(pct)
+                              clearStep3PercentBrdnLocks('profitPercent')
                               if (fieldLocks['profitPercent:hrly']?.locked) updateFieldLockValue('profitPercent:hrly', v)
                             }
                             setEditingDollarField(null)
@@ -3672,6 +3752,7 @@ function LaborRateCalculator() {
                             if (!Number.isNaN(v) && v >= 0 && base + hourly > 0) {
                               const pct = 100 * hourly / (base + hourly)
                               setProfitPercent(pct)
+                              clearStep3PercentBrdnLocks('profitPercent')
                               if (fieldLocks['profitPercent:annual']?.locked) updateFieldLockValue('profitPercent:annual', v)
                             }
                             setEditingDollarField(null)

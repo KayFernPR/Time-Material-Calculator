@@ -484,6 +484,15 @@ function LaborRateCalculator() {
     })
   }, [])
 
+  const getAnnualInputDisplay = useCallback((lockPath, computedAnnual) => {
+    const lockMeta = fieldLocks[lockPath]
+    if (lockMeta?.locked) {
+      const n = parseFloat(lockMeta.value)
+      return !Number.isNaN(n) && n > 0 ? n.toFixed(2) : ''
+    }
+    return computedAnnual > 0 ? computedAnnual.toFixed(2) : ''
+  }, [fieldLocks])
+
   const collectCalculatorSnapshot = useCallback(() => ({
     employeeName,
     hoursNotWorked,
@@ -1716,8 +1725,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'payrollTax', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`payrollTax:${option.id}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'payrollTax', rowId: option.id, field: 'chgd', value: getAnnualInputDisplay(`payrollTax:${option.id}:annual`, annualSpend) })}
                             onChange={(e) => {
                               if (editingDollarField?.section === 'payrollTax' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
                                 setEditingDollarField(prev => ({ ...prev, value: e.target.value }))
@@ -1863,8 +1872,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'payrollTaxCustom', rowId: `custom-${idx}`, customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`customPayrollTax:${idx}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'payrollTaxCustom', rowId: `custom-${idx}`, customIdx: idx, field: 'chgd', value: getAnnualInputDisplay(`customPayrollTax:${idx}:annual`, annualSpend) })}
                             onChange={(e) => {
                               if (editingDollarField?.section === 'payrollTaxCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
                                 setEditingDollarField(prev => ({ ...prev, value: e.target.value }))
@@ -2056,8 +2065,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'workerBurden', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`workerBurden:${option.id}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'workerBurden', rowId: option.id, field: 'chgd', value: getAnnualInputDisplay(`workerBurden:${option.id}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurden' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
@@ -2195,8 +2204,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'workerBurdenCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`customWorkerBurden:${idx}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'workerBurdenCustom', customIdx: idx, field: 'chgd', value: getAnnualInputDisplay(`customWorkerBurden:${idx}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'workerBurdenCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
@@ -2417,8 +2426,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'benefits', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`benefits:${option.id}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'benefits', rowId: option.id, field: 'chgd', value: getAnnualInputDisplay(`benefits:${option.id}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefits' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
@@ -2555,8 +2564,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'benefitsCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`customBenefits:${idx}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'benefitsCustom', customIdx: idx, field: 'chgd', value: getAnnualInputDisplay(`customBenefits:${idx}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'benefitsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
@@ -2742,8 +2751,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'additionalOverheads', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`additionalOverheads:${option.id}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'additionalOverheads', rowId: option.id, field: 'chgd', value: getAnnualInputDisplay(`additionalOverheads:${option.id}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheads' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
@@ -2880,8 +2889,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'additionalOverheadsCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`customAdditionalOverheads:${idx}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'additionalOverheadsCustom', customIdx: idx, field: 'chgd', value: getAnnualInputDisplay(`customAdditionalOverheads:${idx}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'additionalOverheadsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {
@@ -3067,8 +3076,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'employeeCosts', rowId: option.id, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`employeeCosts:${option.id}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'employeeCosts', rowId: option.id, field: 'chgd', value: getAnnualInputDisplay(`employeeCosts:${option.id}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCosts' && editingDollarField?.rowId === option.id && editingDollarField?.field === 'chgd') {
@@ -3205,8 +3214,8 @@ function LaborRateCalculator() {
                           <input
                             type="number"
                             step="0.01"
-                            value={editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : (annualSpend > 0 ? annualSpend.toFixed(2) : '')}
-                            onFocus={() => setEditingDollarField({ section: 'employeeCostsCustom', customIdx: idx, field: 'chgd', value: annualSpend > 0 ? annualSpend.toFixed(2) : '' })}
+                            value={editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd' ? editingDollarField.value : getAnnualInputDisplay(`customEmployeeCosts:${idx}:annual`, annualSpend)}
+                            onFocus={() => setEditingDollarField({ section: 'employeeCostsCustom', customIdx: idx, field: 'chgd', value: getAnnualInputDisplay(`customEmployeeCosts:${idx}:annual`, annualSpend) })}
                             onChange={(e) => { if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') setEditingDollarField(prev => ({ ...prev, value: e.target.value })) }}
                             onBlur={(e) => {
                               if (editingDollarField?.section === 'employeeCostsCustom' && editingDollarField?.customIdx === idx && editingDollarField?.field === 'chgd') {

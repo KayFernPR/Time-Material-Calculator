@@ -135,20 +135,17 @@ function overheadAnnualFromFormula(totalHoursAvailable, laborRateBeforeThisOverh
   return (H * R) / (1 - p) - H * R
 }
 
-/**
- * Brdn % from earned burden $/hr vs workers wage. Uses 6 decimal places so values
- * typed in Spend/yr ($) round-trip (1 decimal was snapping e.g. $200 → 0.2% → $166.40).
- */
+/** Brdn % from earned burden $/hr vs workers wage, rounded to 2 decimals. */
 function burdenPercentFromEarnedHourly(earnedHrly, workersWage) {
   const w = parseFloat(workersWage) || 0
   if (w <= 0 || !Number.isFinite(earnedHrly)) return 0
   const pct = (earnedHrly / w) * 100
-  return Math.round(pct * 1e6) / 1e6
+  return Math.round(pct * 100) / 100
 }
 
-/** $/hr burden amounts: 6 decimals so Spend/yr ($) = Hrly × 2080 round-trips after Brdn % precision. */
+/** $/hr burden amounts rounded to 2 decimals. */
 function roundBurdenDollar(x) {
-  return Math.round(x * 1e6) / 1e6
+  return Math.round(x * 100) / 100
 }
 
 /** Two-decimal display for Brdn % inputs; full precision stays in state until user edits this field. */
@@ -1482,7 +1479,7 @@ function LaborRateCalculator() {
               <div className="mt-3 grid gap-1 items-center p-2 border-2 border-primary rounded-lg bg-primary/10 min-w-0 grid-cols-[1fr_minmax(6.5rem,auto)_4rem]">
                 <div className="text-gray-700 text-xs font-bold break-words leading-tight min-w-0 px-1">Total Hours Available For Work</div>
                 <div className="w-full text-center text-xs font-bold text-gray-700 px-1 min-w-0 translate-x-[8px]">
-                  {safeCalculations.totalHoursAvailable.toFixed(0)} hrs
+                  {safeCalculations.totalHoursAvailable.toFixed(2)} hrs
                 </div>
                 <div className="w-full text-center text-xs font-bold text-primary px-1 min-w-0 translate-x-[8px]">
                   {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
@@ -3678,7 +3675,7 @@ function LaborRateCalculator() {
                     return <div key={`p1-nbh-${option.id}`} className="grid grid-cols-[1fr_5rem_5rem] gap-2"><div>{option.label}</div><div className="text-right">{hrs} hrs</div><div className="text-right">{pct.toFixed(2)}%</div></div>
                   })}
                   <div className="grid grid-cols-[1fr_5rem_5rem] gap-2 border-t border-gray-200 pt-0.5 font-bold text-primary"><div>Total Non-Billable Hours</div><div className="text-right">{safeCalculations.totalNonBillableHours} hrs</div><div className="text-right">{safeCalculations.totalNonBillableHoursPercent.toFixed(2)}%</div></div>
-                  <div className="grid grid-cols-[1fr_5rem_5rem] gap-2 border-t border-primary pt-0.5 font-bold text-primary mt-1"><div>Total Hours Available For Work</div><div className="text-right">{safeCalculations.totalHoursAvailable.toFixed(0)} hrs</div><div className="text-right">{(safeCalculations.utilizationPercent * 100).toFixed(2)}%</div></div>
+                  <div className="grid grid-cols-[1fr_5rem_5rem] gap-2 border-t border-primary pt-0.5 font-bold text-primary mt-1"><div>Total Hours Available For Work</div><div className="text-right">{safeCalculations.totalHoursAvailable.toFixed(2)} hrs</div><div className="text-right">{(safeCalculations.utilizationPercent * 100).toFixed(2)}%</div></div>
                 </section>
 
                 <section>
@@ -3729,7 +3726,7 @@ function LaborRateCalculator() {
                   </div>
                   <div className="text-xs font-bold text-black mt-2 mb-0.5">Detailed Breakdown</div>
                   <div className="grid grid-cols-[1fr_auto] gap-2">
-                    <div>Paid Capacity</div><div className="font-semibold">{(safeCalculations.utilizationPercent * 100).toFixed(1)}%</div>
+                    <div>Paid Capacity</div><div className="font-semibold">{(safeCalculations.utilizationPercent * 100).toFixed(2)}%</div>
                     <div>Workers Wage</div><div className="font-semibold">${safeCalculations.workersWageCharged.toFixed(2)}/hr</div>
                   </div>
 
@@ -3802,7 +3799,7 @@ function LaborRateCalculator() {
                     <div className="flex justify-between items-center gap-2 min-w-0">
                       <span className="font-semibold text-gray-700 min-w-0 truncate">Paid Capacity</span>
                       <span className="font-bold text-primary shrink-0">
-                        {(safeCalculations.utilizationPercent * 100).toFixed(1)}%
+                        {(safeCalculations.utilizationPercent * 100).toFixed(2)}%
                       </span>
                     </div>
                   </div>

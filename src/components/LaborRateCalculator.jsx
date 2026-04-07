@@ -1275,7 +1275,7 @@ function LaborRateCalculator() {
                     const isCustomHoursNotWorked = customHoursNotWorked.some(c => c.id === option.id)
                     return (
                       <div key={option.id} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0 px-1 mb-1">
+                        <div className="flex items-start justify-between gap-2 min-w-0 px-1 mb-1">
                           <label className="text-gray-700 text-xs font-medium break-words line-clamp-2 leading-tight min-w-0">
                             {option.label}
                           </label>
@@ -1381,7 +1381,7 @@ function LaborRateCalculator() {
                     const isCustomNonBillable = customNonBillable.some(c => c.id === option.id)
                     return (
                       <div key={option.id} className={`p-2 border border-gray-200 rounded-lg hover:bg-gray-50 min-w-0 ${option.tooltip ? 'overflow-visible' : ''}`}>
-                        <div className={`flex items-center gap-2 min-w-0 px-1 mb-1 ${option.tooltip ? 'overflow-visible' : 'overflow-hidden'}`}>
+                        <div className={`flex items-start justify-between gap-2 min-w-0 px-1 mb-1 ${option.tooltip ? 'overflow-visible' : 'overflow-hidden'}`}>
                           <label className="text-gray-700 text-xs font-medium whitespace-pre-line break-words line-clamp-2 leading-tight min-w-0 overflow-hidden">
                             {option.label}
                           </label>

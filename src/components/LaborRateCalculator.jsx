@@ -1160,7 +1160,7 @@ function LaborRateCalculator() {
         <div className="flex flex-col items-center mb-6 lg:mb-8 print:hidden">
           <img
             src="/logo.png"
-            alt="Time & Material Calculator"
+            alt="Labor Rate Calculator"
             className="h-12 sm:h-14 lg:h-16 w-auto object-contain"
           />
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mt-3 text-center">

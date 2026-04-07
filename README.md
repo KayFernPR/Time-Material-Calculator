@@ -1,4 +1,4 @@
-# ⏱️ Time & Material Calculator
+# Labor Rate Calculator
 
 A web application designed for restoration contractors to calculate time and material costs for jobs. Built with React, Vite, and Tailwind CSS.
 

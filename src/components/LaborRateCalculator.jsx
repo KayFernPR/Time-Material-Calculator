@@ -1426,7 +1426,7 @@ function LaborRateCalculator() {
             Building Your Labor Rate Calculator
           </h1>
           {(employeeName || '').trim() ? (
-            <p className="text-lg sm:text-xl font-semibold text-neutral mt-2 text-center">
+            <p className="text-lg sm:text-xl font-semibold text-black mt-2 text-center">
               {(employeeName || '').trim()}
             </p>
           ) : null}
@@ -1446,7 +1446,7 @@ function LaborRateCalculator() {
 
               <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
                 <div className="space-y-1.5">
-                  <label htmlFor="employee-name" className="block text-sm font-semibold text-neutral">
+                  <label htmlFor="employee-name" className="block text-sm font-semibold text-black">
                     Employee name
                   </label>
                   <input
@@ -1513,7 +1513,7 @@ function LaborRateCalculator() {
 
               {/* Hours Not Worked */}
               <div className="mb-6">
-                <h3 className="text-base font-semibold text-neutral mb-3">
+                <h3 className="text-base font-semibold text-black mb-3">
                   Hours Not Worked
                 </h3>
                 
@@ -1618,7 +1618,7 @@ function LaborRateCalculator() {
 
               {/* Non-Billable Hours */}
               <div className="mb-6">
-                <h3 className="text-base font-semibold text-neutral mb-3">
+                <h3 className="text-base font-semibold text-black mb-3">
                   Non-Billable Hours
                 </h3>
                 
@@ -1812,7 +1812,7 @@ function LaborRateCalculator() {
 
               {/* Mandatory Payroll Tax Burden */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+                <h3 className="text-lg font-semibold text-black mb-3">
                   Mandatory Payroll Tax Burden
                 </h3>
                 
@@ -2172,7 +2172,7 @@ function LaborRateCalculator() {
 
               {/* Mandatory Worker Burden */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-neutral mb-3">
+                <h3 className="text-lg font-semibold text-black mb-3">
                   Mandatory Worker Burden
                 </h3>
                 
@@ -2549,7 +2549,7 @@ function LaborRateCalculator() {
 
               {/* Benefits Burden */}
               <div className="mb-4 min-w-0">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+                <h3 className="text-base font-semibold text-black mb-2">
                   Benefits Burden
                 </h3>
                 
@@ -2890,7 +2890,7 @@ function LaborRateCalculator() {
 
               {/* Additional Overheads */}
               <div className="mb-4 min-w-0">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+                <h3 className="text-base font-semibold text-black mb-2">
                   Additional Overheads
                 </h3>
                 
@@ -3231,7 +3231,7 @@ function LaborRateCalculator() {
 
               {/* Employee Costs */}
               <div className="mb-4 min-w-0">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+                <h3 className="text-base font-semibold text-black mb-2">
                   Employee Costs
                 </h3>
                 
@@ -3572,7 +3572,7 @@ function LaborRateCalculator() {
 
               {/* Division Overhead */}
               <div className="mb-6 min-w-0">
-                <h3 className="text-base font-semibold text-neutral mb-3">
+                <h3 className="text-base font-semibold text-black mb-3">
                   Division Overhead
                 </h3>
                 
@@ -3727,7 +3727,7 @@ function LaborRateCalculator() {
 
               {/* General Company Overhead */}
               <div className="mb-4 min-w-0">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+                <h3 className="text-base font-semibold text-black mb-2">
                   General Company Overhead
                 </h3>
                 
@@ -3865,7 +3865,7 @@ function LaborRateCalculator() {
 
               {/* Profit */}
               <div className="mb-4 min-w-0">
-                <h3 className="text-base font-semibold text-neutral mb-2">
+                <h3 className="text-base font-semibold text-black mb-2">
                   Profit
                 </h3>
                 
@@ -4013,7 +4013,7 @@ function LaborRateCalculator() {
                 Step 4: Results - Burden / Hour Charged
               </h2>
               {(employeeName || '').trim() ? (
-                <p className="text-base font-semibold text-neutral mb-3 print:mb-2 print:text-sm">
+                <p className="text-base font-semibold text-black mb-3 print:mb-2 print:text-sm">
                   {(employeeName || '').trim()}
                 </p>
               ) : null}
@@ -4163,7 +4163,7 @@ function LaborRateCalculator() {
 
               {/* Detailed Breakdown */}
               <div className="bg-gray-50 rounded-lg p-3 mb-3 print:hidden">
-                <h3 className="text-sm font-semibold text-neutral mb-2 print:text-xs print:mb-1 print:leading-tight">
+                <h3 className="text-sm font-semibold text-black mb-2 print:text-xs print:mb-1 print:leading-tight">
                   Detailed Breakdown
                 </h3>
                 
@@ -4348,7 +4348,7 @@ function LaborRateCalculator() {
 
               {/* Step 3 Inputs — hidden when printing (values appear in breakdown above) */}
               <div className="bg-gray-50 rounded-lg p-4 print:hidden">
-                <h3 className="text-sm font-semibold text-neutral mb-3">
+                <h3 className="text-sm font-semibold text-black mb-3">
                   Adjust Overhead & Profit
                 </h3>
                 <div className="space-y-2">
